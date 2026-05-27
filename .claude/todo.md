@@ -61,37 +61,40 @@ External prerequisites (run in parallel where possible):
 - [ ] Admin audit-log trigger (deferred — implement when admin CRUD lands in Phase 2)
 
 ### 1.3 Auth
-- [ ] Google OAuth provider configured in Supabase
-- [ ] Magic-link email via Resend wired
-- [ ] `(auth)` route group + login UI
-- [ ] Auth middleware for `(app)` + `/admin` route groups
-- [ ] Profile auto-create trigger (`auth.users` insert → `profiles` insert)
-- [ ] `referral_code` auto-generated on profile create
+- [ ] Google OAuth provider configured in Supabase dashboard — **BLOCKED on Supabase project**
+- [x] Magic-link email via `signInWithOtp` wired (uses Supabase default SMTP until Resend domain verified; Resend SMTP override later)
+- [x] `(auth)` route group + login UI — Google + magic-link forms with server actions, `?next=` redirect threading, banners
+- [x] `app/auth/callback/route.ts` — OAuth code → session exchange + redirect
+- [x] Proxy (Next 16 middleware rename) gates `/admin`, `/me`, `/result` with `auth.uid()` + admin_users lookup
+- [x] Profile auto-create trigger (`auth.users` insert → `profiles` insert with email + name + avatar_url + auto-gen referral_code) — in migration 0001
+- [x] `referral_code` auto-generated on profile create — `encode(gen_random_bytes(6), 'hex')` default
 
 ### 1.4 Admin Gating
-- [ ] `admin_users` table seeded with own user_id
-- [ ] `/admin` middleware checks admin_users
-- [ ] Audit-log trigger writes to `admin_audit_log` on admin actions
+- [ ] `admin_users` table seeded with own user_id — **BLOCKED on Supabase project + first sign-in to know own auth.uid**
+- [x] `/admin` proxy checks admin_users with redirect to `/` when missing
+- [ ] Audit-log trigger writes to `admin_audit_log` on admin actions — deferred to Phase 2 when admin CRUD lands
 
 ### 1.5 Stripe Test Mode
-- [ ] Stripe SDK installed
-- [ ] Test products created (credit packs)
-- [ ] Webhook endpoint `/api/stripe/webhook` stub
-- [ ] `webhook_events` idempotency table tested with duplicate event
+- [x] Stripe SDK installed (`stripe@^22`)
+- [ ] Test products created (credit packs) — **BLOCKED on Stripe account**
+- [x] Webhook endpoint `/api/stripe/webhook` stub — runtime=nodejs, raw-body signature verify, idempotent insert into webhook_events, 503 when secret absent
+- [ ] `webhook_events` idempotency table tested with duplicate event — needs Stripe CLI + test mode; integration test in Phase 1.9 Verification
 
 ### 1.6 Observability
 - [x] PostHog SDK installed (posthog-js + posthog-node)
-- [x] Sentry SDK installed (@sentry/nextjs)
-- [ ] PostHog provider component + bootstrap (deferred — needs project key)
-- [ ] `pnpm dlx @sentry/wizard@latest -i nextjs` to generate sentry.client/server/edge config + wrap next.config.ts (deferred — needs DSN + auth token)
+- [x] Sentry SDK installed (@sentry/nextjs v10)
+- [x] PostHog provider component wired in `app/layout.tsx`; pageview tracking via usePathname + useSearchParams; env-driven no-op when key absent
+- [x] Sentry config files (sentry.client/server/edge.config.ts) + `instrumentation.ts` registering per-runtime + `next.config.ts` wrapped with `withSentryConfig` (gated on DSN + auth token + prod) — env-driven no-op when DSN absent
+- [ ] PostHog `identify` calls on signup/login + custom events: `trend_view`, `upload_started`, `generate_clicked`, `generate_completed`, `share_clicked`, `referral_redeemed` — wired during Phase 2-4 as features land
+- [ ] Sentry source-map upload tested in production deploy — needs SENTRY_AUTH_TOKEN
 
 ### 1.7 Test Stack
-- [x] Vitest installed + config (jsdom, 80% coverage threshold)
+- [x] Vitest installed + config (jsdom, 80% coverage threshold) — first smoke `lib/utils/cn.test.ts` (3/3 pass)
 - [x] @testing-library/react + jest-dom matchers wired in vitest.setup.ts
-- [x] Playwright installed + config (chromium, webkit, mobile-chrome, mobile-safari projects; webServer = pnpm dev)
-- [ ] `pnpm exec playwright install` to download browser binaries
-- [ ] CI workflow (.github/workflows/ci.yml): lint → typecheck → vitest → playwright
-- [ ] agent-browser installed for nightly cron (`cargo install agent-browser` or `npm i -g agent-browser`)
+- [x] Playwright installed + config (chromium, webkit, mobile-chrome, mobile-safari projects; webServer = pnpm dev) — first smoke `e2e/home.spec.ts` (heading + tagline + title)
+- [x] Browser binaries downloaded (chromium-1223, webkit) — local cache `%USERPROFILE%\AppData\Local\ms-playwright`
+- [x] CI workflow (`.github/workflows/ci.yml`): static (lint+format+typecheck) → unit (vitest + coverage artifact) → e2e (playwright with chromium+webkit, report artifact on failure)
+- [ ] agent-browser installed for nightly cron — deferred until MVP launch (Phase 4 polish)
 
 ### 1.8 Anonymous Trial Infrastructure
 - [ ] `anonymous_attempts (id, fingerprint_hash, ip_hash, trend_id, attempted_at, completed bool)` table + indexes

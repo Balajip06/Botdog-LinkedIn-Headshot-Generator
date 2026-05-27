@@ -14,6 +14,52 @@ Format:
 
 ---
 
+## 2026-05-27 — Phase 1 continued: auth + Stripe stub + CI + Sentry/PostHog + Next 16 proxy
+
+**Done (this session continuation):**
+- `pnpm exec playwright install chromium webkit` — browser binaries cached locally
+- CI workflow `.github/workflows/ci.yml`: static (lint + format + typecheck) → unit (vitest + coverage artifact) → e2e (playwright with chromium+webkit + report artifact on failure); pnpm/action-setup + Node 22
+- First Vitest smoke `lib/utils/cn.test.ts` (3 cases, all pass)
+- First Playwright smoke `e2e/home.spec.ts` (heading + tagline + title metadata)
+- Env validator `lib/env.ts` with Zod schema for 20+ vars; `getServerEnv()` parses once + caches, `requireEnv(key)` for required-or-throw at call sites; `ANONYMOUS_DAILY_BUDGET_USD` coerced to number with default 20
+- Auth route group: `app/(auth)/layout.tsx` + `app/(auth)/login/page.tsx` (Google OAuth + magic-link server actions, `?next=` thread-through, banners) + `app/auth/callback/route.ts` (OAuth code → session)
+- Stripe webhook stub: `app/api/stripe/webhook/route.ts` — runtime=nodejs, dynamic=force-dynamic, raw-body signature verify, idempotent insert into webhook_events, 503 when secret absent
+- Rate limit util `lib/rate-limit.ts`: three Upstash sliding-window limiters (gen 20/hr, anon 5/d, signup 10/hr); env-aware pass-through when Upstash keys absent
+- Sentry config: `sentry.client/server/edge.config.ts` (replay integration on client with mask-all-text + block-all-media; 10% trace sample; gated on DSN + prod) + `instrumentation.ts` (per-runtime register + `onRequestError` re-export) + `next.config.ts` wrapped with `withSentryConfig` (gated on DSN + auth token + prod)
+- PostHog provider `components/providers/posthog-provider.tsx`: `usePathname` + `useSearchParams` pageview capture in Suspense boundary; env-driven no-op
+- `app/layout.tsx`: PostHog provider wrap + project metadata
+- `next.config.ts`: Supabase Storage image remote pattern, serverActions body-size 10mb
+- Database.types stub loosened (index signatures) — Supabase SDK insert/select compile without `pnpm supabase:types`
+- README.md replaced scaffold default with full project README
+- **Next 16 middleware → proxy rename**: `middleware.ts` → `proxy.ts`, exported function renamed (`middleware` → `proxy`); CLAUDE.md gotcha added
+- `pnpm build`: clean. `pnpm typecheck`: clean. `pnpm test`: 3/3 pass.
+
+**Commits this session:**
+- `ff8f84a` feat: phase 1 foundation scaffold
+- `a180e5f` chore: mark phase 1.1 + 1.2 schema + 1.6 SDKs + 1.7 configs done
+- `f490a7b` feat: phase 1.3 auth skeleton + 1.5 stripe webhook stub + 1.7 ci/tests + env validator
+- `8ae9ce0` feat: phase 1.6 sentry/posthog wiring + next 16 proxy rename
+
+**Open (all blocked on user-side creds/accounts):**
+- Supabase project (Docker local OR remote) → apply migrations + generate strict types
+- Sentry DSN + auth token → light up error capture in prod
+- PostHog project key → light up event capture
+- Stripe account → test mode credit-pack products + webhook secret
+- Gemini API key → Phase 3 generate route
+- Resend domain verified → magic-link from custom sender + email fallback
+- Turnstile keys → signup CAPTCHA + anonymous gate
+- Upstash Redis → rate limit + abuse budget counter
+
+**Next safe step:**
+- shadcn-style Button + Input primitives → wire into login page (currently raw HTML)
+- Phase 2 prep: SchemaBuilder + SchemaForm component sketches against migration 0002's `input_schema` JSONB
+- OR jump to Supabase project link when user is ready
+
+**Phase:** 1 — Foundation
+- 1.1 ✅ (scaffold) | 1.2 schema ✅ apply ⏳ blocked | 1.3 ✅ except OAuth-config | 1.4 ✅ except seed | 1.5 ✅ except test-mode | 1.6 ✅ env-driven no-op live | 1.7 ✅ except agent-browser | 1.8 ⏳ | 1.9 ⏳
+
+---
+
 ## 2026-05-27 — Phase 1 foundation scaffolded + committed
 
 **Done:**
