@@ -257,6 +257,7 @@ _(append as discovered)_
 - **`supabase` CLI** is a devDep (v2.101). Invoke as `pnpm supabase ...` not bare `supabase`.
 - **pnpm virtual store** is path-sensitive — if you ever move the project folder, run `rm -rf node_modules pnpm-lock.yaml && pnpm install` to relink.
 - **`api/stripe/webhook`** is excluded from Supabase middleware (raw-body handling).
+- **Next 16: `middleware.ts` → `proxy.ts`** + exported function renamed `middleware` → `proxy`. Old name builds with deprecation warning; new name is the convention. Helper file `lib/supabase/middleware.ts` keeps its name (internal module, only `updateSession` exported).
 
 ---
 
