@@ -1,0 +1,42 @@
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+type Limiter = {
+  limit: (identifier: string) => Promise<{ success: boolean; limit: number; remaining: number; reset: number }>
+}
+
+const passThroughLimiter: Limiter = {
+  async limit() {
+    return { success: true, limit: Infinity, remaining: Infinity, reset: 0 }
+  },
+}
+
+let cachedRedis: Redis | null = null
+function getRedis(): Redis | null {
+  if (cachedRedis) return cachedRedis
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  if (!url || !token) return null
+  cachedRedis = new Redis({ url, token })
+  return cachedRedis
+}
+
+function createLimiter(prefix: string, requests: number, window: `${number} ${'s' | 'm' | 'h' | 'd'}`): Limiter {
+  const redis = getRedis()
+  if (!redis) return passThroughLimiter
+  return new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(requests, window),
+    prefix,
+    analytics: true,
+  })
+}
+
+// 20 generations / hour / IP — per amended plan §"Non-Negotiables"
+export const generationIpLimiter = createLimiter('rl:gen:ip', 20, '1 h')
+
+// 5 anonymous attempts / day / fingerprint — extra guard beyond DB unique
+export const anonymousFingerprintLimiter = createLimiter('rl:anon:fp', 5, '1 d')
+
+// 10 signup attempts / hour / IP — block credential stuffing
+export const signupIpLimiter = createLimiter('rl:signup:ip', 10, '1 h')
