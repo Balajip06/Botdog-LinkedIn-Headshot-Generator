@@ -14,6 +14,38 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 3 impl loop closed: home grid + trend page upload wiring
+
+**Done:**
+- Removed root `app/page.tsx` placeholder (would collide with new `app/(public)/page.tsx` since route groups don't add URL segments)
+- `app/(public)/page.tsx` — public home grid RSC. Queries `listActiveTrends()` from repository. `revalidate = 600` (10-min ISR). Responsive 2/3/4-col grid. Falls back to text-only card when no thumbnail or sample image. Empty-state copy when no active trends.
+- `app/(public)/trend/[slug]/TrendUpload.tsx` — `'use client'` glue component. Receives `trendSlug` + `schema` props. `onSubmit` callback wires the full upload→generate→nav flow:
+  1. `supabase.auth.getUser` → redirect `/login?next=/trend/<slug>` if not signed in
+  2. `generateIdempotencyKey()` (32 hex chars)
+  3. Per image field × per file: `prepareImageForUpload` (HEIC dynamic-import, OffscreenCanvas resize to ≤2048, JPEG 0.9) → `supabase.storage.from('uploads').upload(${userId}/${idemKey}/${fieldName}_${idx}.jpg)` → `createSignedUrl(path, 3600)` (1h TTL — comfortable cushion for Edge Function fetch)
+  4. Replace file-field entries in `values` with signed URLs (string for max_count=1, string[] otherwise)
+  5. POST `/api/generate` with `idempotency-key` header + `{ trend_slug, values }` body
+  6. `router.push(`/result/${generation_id}`)` on success
+  Error path surfaces red message under form and resets `submitting`
+- `app/(public)/trend/[slug]/page.tsx` — replaced "Phase 3 placeholder" paragraph with `<TrendUpload trendSlug={trend.slug} schema={trend.input_schema} />`. SEO/metadata/JSON-LD/FAQ unchanged.
+
+**Cache lesson:**
+After deleting `app/page.tsx`, `.next/types/validator.ts` still referenced the removed module and `tsc` failed (`Cannot find module '../../app/page.js'`). Cleared `.next/` cache; subsequent typecheck + build clean.
+
+**Verification:**
+- `pnpm typecheck` clean
+- `pnpm test` 78/78 across 12 suites (unchanged)
+- `pnpm build` clean — 17 routes; `/` is now dynamic (ƒ) due to Supabase query in RSC, ISR keeps cache hot
+
+**Commits:**
+- `919e136` feat: phase 3 impl - close user-flow loop (home grid + trend page upload wiring) [amended; original commit-msg.txt write had failed silently producing wrong subject; safe to amend since local-only + fresh]
+- `2f7f6b7` chore: log phase 3 user-flow loop closed
+
+**End-to-end navigable flow (once creds in):**
+home grid (ISR 10m) → trend page (ISR 1h) → SchemaForm → upload + sign → /api/generate → DB webhook → Edge Function → Gemini → upload outputs → UPDATE generations → Realtime → result page → download
+
+---
+
 ## 2026-05-28 — Phase 3 impl: storage buckets + Deno Edge Function + result page Realtime + retry
 
 **Done:**
