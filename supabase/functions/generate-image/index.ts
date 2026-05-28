@@ -1,0 +1,357 @@
+// Supabase Edge Function — generate-image
+// Triggered by Database Webhook on `generations` INSERT.
+// Deno runtime; uses Web Fetch + AbortController for portability.
+//
+// Configure in Supabase Dashboard:
+//   1. Storage buckets `uploads` + `outputs` exist (see migration 0007)
+//   2. Database Webhook: table=generations, event=INSERT,
+//      URL=<edge-fn-url>, HTTP method=POST,
+//      header `Authorization: Bearer <service_role>`
+//   3. Function secrets: GEMINI_API_KEY, SUPABASE_URL,
+//      SUPABASE_SERVICE_ROLE_KEY (auto-injected by Supabase)
+//
+// Failure model per amended plan §"Phase 3":
+//   - safety   → status='failed' (DB trigger refunds quota)
+//   - timeout  → status='failed_retryable', attempts++
+//   - transient→ status='failed_retryable', attempts++
+//   - after 3 attempts → status='failed' (terminal, refund)
+
+// @ts-expect-error Deno-only import; not resolved by Node typecheck.
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+declare const Deno: { env: { get(name: string): string | undefined }; serve: (handler: (req: Request) => Response | Promise<Response>) => void }
+
+type GenerationStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'failed_retryable'
+
+interface GenerationRow {
+  id: string
+  user_id: string
+  trend_id: string
+  trend_version: number
+  idempotency_key: string
+  input_payload: {
+    values: Record<string, string | string[]>
+    image_urls?: string[]
+  }
+  status: GenerationStatus
+  attempts: number
+  error_message: string | null
+  model_used: string | null
+  cost_usd: number
+  output_image_url: string | null
+}
+
+interface TrendRow {
+  id: string
+  prompt_template: string
+  model: 'nano-banana' | 'nano-banana-pro'
+  aspect_ratio: string
+  version: number
+}
+
+interface WebhookPayload {
+  type: 'INSERT' | 'UPDATE' | 'DELETE'
+  table: string
+  record: GenerationRow
+  schema: string
+  old_record?: GenerationRow
+}
+
+const MAX_ATTEMPTS = 3
+const GEMINI_TIMEOUT_MS = 90_000
+const WALL_TIMEOUT_MS = 110_000
+const COST_USD: Record<TrendRow['model'], number> = {
+  'nano-banana': 0.0039,
+  'nano-banana-pro': 0.024,
+}
+const MODEL_ID: Record<TrendRow['model'], string> = {
+  'nano-banana': 'gemini-2.5-flash-image',
+  'nano-banana-pro': 'gemini-3.0-pro-image',
+}
+
+Deno.serve(async (req: Request) => {
+  if (req.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405 })
+  }
+
+  const expectedAuth = `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
+  if (req.headers.get('authorization') !== expectedAuth) {
+    return new Response('Unauthorized', { status: 401 })
+  }
+
+  let payload: WebhookPayload
+  try {
+    payload = (await req.json()) as WebhookPayload
+  } catch {
+    return jsonResponse({ error: 'invalid json' }, 400)
+  }
+
+  if (payload.type !== 'INSERT' || payload.table !== 'generations') {
+    return jsonResponse({ ignored: true })
+  }
+
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    { auth: { persistSession: false } }
+  )
+
+  const wallTimer = setTimeout(() => {
+    // No-op; consumed by individual fetch AbortControllers.
+  }, WALL_TIMEOUT_MS)
+
+  try {
+    await process(supabase, payload.record)
+    return jsonResponse({ ok: true })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'unknown'
+    return jsonResponse({ error: message }, 500)
+  } finally {
+    clearTimeout(wallTimer)
+  }
+})
+
+async function process(supabase: ReturnType<typeof createClient>, gen: GenerationRow) {
+  // 1. Claim the row by transitioning pending -> processing.
+  //    Conditional update prevents double-processing if Supabase retries the webhook.
+  const { data: claimed, error: claimError } = await supabase
+    .from('generations')
+    .update({ status: 'processing', attempts: gen.attempts + 1 })
+    .eq('id', gen.id)
+    .eq('status', 'pending')
+    .select()
+    .maybeSingle()
+
+  if (claimError) throw new Error(`claim failed: ${claimError.message}`)
+  if (!claimed) return // Already claimed by an earlier delivery; skip silently.
+
+  // 2. Load trend (prompt + model + version).
+  const { data: trendData, error: trendError } = await supabase
+    .from('trends')
+    .select('id, prompt_template, model, aspect_ratio, version')
+    .eq('id', gen.trend_id)
+    .maybeSingle<TrendRow>()
+
+  if (trendError || !trendData) {
+    await terminalFail(supabase, gen, 'trend not found')
+    return
+  }
+
+  // 3. Build prompt + collect image URLs.
+  const prompt = interpolate(trendData.prompt_template, gen.input_payload.values)
+  const imageUrls = gen.input_payload.image_urls ?? collectImagesFromValues(gen.input_payload.values)
+
+  // 4. Call Gemini.
+  const result = await callGemini(trendData.model, prompt, imageUrls)
+
+  if (!result.ok) {
+    if (result.reason === 'safety') {
+      await terminalFail(supabase, gen, `safety: ${result.message}`)
+      return
+    }
+    // transient / timeout / invalid
+    if (gen.attempts + 1 >= MAX_ATTEMPTS) {
+      await terminalFail(supabase, gen, `terminal after ${MAX_ATTEMPTS} attempts: ${result.message}`)
+    } else {
+      await markRetryable(supabase, gen, result.message)
+    }
+    return
+  }
+
+  // 5. Upload output PNG to storage.
+  const outputPath = `${gen.user_id}/${gen.id}.png`
+  const { error: uploadError } = await supabase.storage
+    .from('outputs')
+    .upload(outputPath, result.outputPng, {
+      contentType: 'image/png',
+      upsert: true,
+    })
+
+  if (uploadError) {
+    if (gen.attempts + 1 >= MAX_ATTEMPTS) {
+      await terminalFail(supabase, gen, `upload terminal: ${uploadError.message}`)
+    } else {
+      await markRetryable(supabase, gen, `upload failed: ${uploadError.message}`)
+    }
+    return
+  }
+
+  const { data: publicUrl } = supabase.storage.from('outputs').getPublicUrl(outputPath)
+
+  // 6. Mark completed with cost + URL.
+  await supabase
+    .from('generations')
+    .update({
+      status: 'completed',
+      output_image_url: publicUrl.publicUrl,
+      cost_usd: COST_USD[trendData.model],
+      model_used: MODEL_ID[trendData.model],
+      completed_at: new Date().toISOString(),
+    })
+    .eq('id', gen.id)
+}
+
+async function terminalFail(
+  supabase: ReturnType<typeof createClient>,
+  gen: GenerationRow,
+  message: string
+) {
+  // Setting status='failed' fires the refund-quota trigger (migration 0003).
+  await supabase
+    .from('generations')
+    .update({ status: 'failed', error_message: message, completed_at: new Date().toISOString() })
+    .eq('id', gen.id)
+}
+
+async function markRetryable(
+  supabase: ReturnType<typeof createClient>,
+  gen: GenerationRow,
+  message: string
+) {
+  await supabase
+    .from('generations')
+    .update({ status: 'failed_retryable', error_message: message })
+    .eq('id', gen.id)
+}
+
+// ---- Helpers (inlined for Deno standalone) ----
+
+function interpolate(template: string, values: Record<string, string | string[]>): string {
+  return template.replace(/\{\{\s*([a-z][a-z0-9_]*)\s*\}\}/g, (_, name: string) => {
+    const v = values[name]
+    if (v === undefined) return ''
+    return Array.isArray(v) ? v.join(', ') : v
+  })
+}
+
+function collectImagesFromValues(values: Record<string, string | string[]>): string[] {
+  const urls: string[] = []
+  for (const v of Object.values(values)) {
+    if (typeof v === 'string' && v.startsWith('http')) urls.push(v)
+    else if (Array.isArray(v)) for (const u of v) if (u.startsWith('http')) urls.push(u)
+  }
+  return urls
+}
+
+interface GeminiOk {
+  ok: true
+  outputPng: Uint8Array
+}
+interface GeminiFail {
+  ok: false
+  reason: 'safety' | 'timeout' | 'transient' | 'invalid'
+  message: string
+}
+
+async function callGemini(
+  model: TrendRow['model'],
+  prompt: string,
+  imageUrls: string[]
+): Promise<GeminiOk | GeminiFail> {
+  const apiKey = Deno.env.get('GEMINI_API_KEY')
+  if (!apiKey) return { ok: false, reason: 'invalid', message: 'GEMINI_API_KEY missing' }
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_ID[model]}:generateContent?key=${apiKey}`
+
+  let imageParts: Array<{ inlineData: { mimeType: string; data: string } }>
+  try {
+    imageParts = await Promise.all(imageUrls.map(fetchAsInlineData))
+  } catch (err) {
+    return {
+      ok: false,
+      reason: 'invalid',
+      message: err instanceof Error ? err.message : 'image fetch failed',
+    }
+  }
+
+  const body = {
+    contents: [{ role: 'user', parts: [{ text: prompt }, ...imageParts] }],
+    safetySettings: [
+      { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+      { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_MEDIUM_AND_ABOVE' },
+    ],
+  }
+
+  const controller = new AbortController()
+  const t = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS)
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+
+    if (!res.ok) {
+      const text = await res.text()
+      const transient = res.status === 429 || res.status >= 500
+      return {
+        ok: false,
+        reason: transient ? 'transient' : 'invalid',
+        message: `Gemini ${res.status}: ${text.slice(0, 200)}`,
+      }
+    }
+
+    interface GeminiResponse {
+      candidates?: Array<{
+        content?: { parts?: Array<{ inlineData?: { mimeType: string; data: string } }> }
+        finishReason?: string
+      }>
+      promptFeedback?: { blockReason?: string }
+    }
+    const json = (await res.json()) as GeminiResponse
+    const blocked = json.promptFeedback?.blockReason ?? json.candidates?.[0]?.finishReason
+    if (blocked && blocked !== 'STOP') {
+      return { ok: false, reason: 'safety', message: `Blocked: ${blocked}` }
+    }
+
+    const inline = json.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)?.inlineData
+    if (!inline?.data) return { ok: false, reason: 'invalid', message: 'no inlineData in response' }
+
+    return { ok: true, outputPng: decodeBase64(inline.data) }
+  } catch (err: unknown) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      return { ok: false, reason: 'timeout', message: 'Gemini call timed out' }
+    }
+    return {
+      ok: false,
+      reason: 'transient',
+      message: err instanceof Error ? err.message : 'unknown',
+    }
+  } finally {
+    clearTimeout(t)
+  }
+}
+
+async function fetchAsInlineData(
+  url: string
+): Promise<{ inlineData: { mimeType: string; data: string } }> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`image fetch ${res.status}: ${url}`)
+  const mimeType = res.headers.get('content-type') ?? 'image/jpeg'
+  const bytes = new Uint8Array(await res.arrayBuffer())
+  return { inlineData: { mimeType, data: encodeBase64(bytes) } }
+}
+
+function encodeBase64(bytes: Uint8Array): string {
+  let bin = ''
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+  return btoa(bin)
+}
+
+function decodeBase64(b64: string): Uint8Array {
+  const bin = atob(b64)
+  const out = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
+  return out
+}
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  })
+}
