@@ -13,7 +13,7 @@ create table public.profiles (
   credits_balance int  not null default 0 check (credits_balance >= 0),
   free_used_this_week  int not null default 0 check (free_used_this_week >= 0 and free_used_this_week <= 5),
   free_week_starts_at  timestamptz not null default date_trunc('week', now()),
-  referral_code        text unique not null default encode(gen_random_bytes(6), 'hex'),
+  referral_code        text unique not null default encode(extensions.gen_random_bytes(6), 'hex'),
   referred_by          uuid references public.profiles(id) on delete set null,
   bonus_credits_earned int not null default 0 check (bonus_credits_earned >= 0 and bonus_credits_earned <= 50),
   push_subscription    jsonb,
