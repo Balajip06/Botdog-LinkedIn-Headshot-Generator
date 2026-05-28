@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import Stripe from 'stripe'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import type { Json } from '@/lib/supabase/database.types'
 import { grantCredits } from '@/lib/payments/credits'
 import { findPack, isPackId } from '@/lib/payments/packs'
 
@@ -39,12 +40,13 @@ export async function POST(request: NextRequest) {
   const supabase = createServiceClient()
 
   // Idempotency gate: insert into webhook_events; UNIQUE (source, event_id) blocks duplicates.
-  // Cast required until `pnpm supabase:types` regenerates strict Database types.
+  // Stripe.Event is a complex SDK type whose recursive payload doesn't satisfy
+  // the generated `Json` type — JSONB column accepts it at runtime, so cast.
   const webhookRow = {
     source: 'stripe',
     event_id: event.id,
-    payload: event as unknown as Record<string, unknown>,
-  } as never
+    payload: event as unknown as Json,
+  }
 
   const { error: insertError } = await supabase.from('webhook_events').insert(webhookRow)
 
@@ -67,7 +69,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Mark processed
-  const processedUpdate = { processed_at: new Date().toISOString() } as never
+  const processedUpdate = { processed_at: new Date().toISOString() }
   await supabase
     .from('webhook_events')
     .update(processedUpdate)

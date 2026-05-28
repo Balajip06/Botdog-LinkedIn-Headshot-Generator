@@ -34,8 +34,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Cast required until `pnpm supabase:types` regenerates strict Database types.
-  const update = { push_subscription: body.subscription } as never
+  const update = { push_subscription: body.subscription }
   const { error } = await supabase.from('profiles').update(update).eq('id', user.id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

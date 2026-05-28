@@ -107,8 +107,8 @@ export async function POST(request: NextRequest) {
     fingerprint_hash: body.fingerprint_hash,
     ip_hash: ipHash,
     trend_id: trend.id,
-    status: 'pending',
-  } as never
+    status: 'pending' as const,
+  }
 
   const { data: inserted, error: insertError } = await supabase
     .from('anonymous_attempts')

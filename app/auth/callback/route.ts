@@ -86,8 +86,7 @@ export async function GET(request: NextRequest) {
         const referrer = (referrerRow as unknown as ReferrerLookup | null) ?? null
 
         if (referrer && referrer.id !== user.id) {
-          // Cast required until `pnpm supabase:types` regenerates strict Database types.
-          const update = { referred_by: referrer.id } as never
+          const update = { referred_by: referrer.id }
           const { error: updateErr } = await supabase
             .from('profiles')
             .update(update)
@@ -96,8 +95,8 @@ export async function GET(request: NextRequest) {
             const insertRow = {
               referrer_id: referrer.id,
               referred_id: user.id,
-              status: 'pending',
-            } as never
+              status: 'pending' as const,
+            }
             await supabase.from('referrals').insert(insertRow)
             referredBy = referrer.id
           }

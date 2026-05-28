@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     if (result.expired) {
       // 404/410 → clear stale subscription so future runs fall through to email.
-      const clear = { push_subscription: null } as never
+      const clear = { push_subscription: null }
       await supabase.from('profiles').update(clear).eq('id', gen.user_id)
     } else if (result.ok) {
       return NextResponse.json({ delivered: 'push' })

@@ -31,8 +31,7 @@ async function softDeleteAccount(): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
-  // Cast required until `pnpm supabase:types` regenerates strict Database types.
-  const update = { deleted_at: new Date().toISOString() } as never
+  const update = { deleted_at: new Date().toISOString() }
   await supabase.from('profiles').update(update).eq('id', user.id)
 
   trackServer(user.id, EVENTS.ACCOUNT_DELETED, {})

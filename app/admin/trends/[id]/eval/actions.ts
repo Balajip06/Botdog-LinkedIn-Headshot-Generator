@@ -42,7 +42,7 @@ export async function addEvalInput(trendId: string, formData: FormData): Promise
   }
 
   const supabase = createServiceClient()
-  const insertRow = { trend_id: trendId, ...parsed.data } as never
+  const insertRow = { trend_id: trendId, ...parsed.data }
   const { error } = await supabase.from('trend_eval_inputs').insert(insertRow)
   if (error) {
     redirect(`/admin/trends/${trendId}/eval?error=${encodeURIComponent(error.message)}`)
@@ -96,7 +96,7 @@ export async function runEval(trendId: string): Promise<void> {
         trend_id: trendId,
         prompt_version: trend!.version,
         eval_input_id: input.id,
-      } as never
+      }
       const { data: created, error: insertErr } = await supabase
         .from('trend_eval_runs')
         .insert(insertRow)
@@ -111,7 +111,7 @@ export async function runEval(trendId: string): Promise<void> {
         imageUrls: [input.image_url],
       })
       if (!result.ok) {
-        const update = { output_url: null, admin_rating: `error:${result.reason}` } as never
+        const update = { output_url: null, admin_rating: `error:${result.reason}` }
         await supabase.from('trend_eval_runs').update(update).eq('id', runId)
         return
       }
@@ -123,7 +123,7 @@ export async function runEval(trendId: string): Promise<void> {
       if (uploadErr) return
 
       const { data: publicUrl } = supabase.storage.from('outputs').getPublicUrl(path)
-      const update = { output_url: publicUrl.publicUrl } as never
+      const update = { output_url: publicUrl.publicUrl }
       await supabase.from('trend_eval_runs').update(update).eq('id', runId)
     })
   )
@@ -138,7 +138,7 @@ export async function rateEvalRun(
   rating: 'pass' | 'fail'
 ): Promise<void> {
   const supabase = createServiceClient()
-  const update = { admin_rating: rating } as never
+  const update = { admin_rating: rating }
   await supabase.from('trend_eval_runs').update(update).eq('id', runId)
   revalidatePath(`/admin/trends/${trendId}/eval`)
 }
@@ -148,7 +148,7 @@ export async function markTrendEval(
   status: 'passed' | 'failed' | 'untested'
 ): Promise<void> {
   const supabase = createServiceClient()
-  const update = { eval_status: status } as never
+  const update = { eval_status: status }
   const { error } = await supabase.from('trends').update(update).eq('id', trendId)
   if (error) {
     redirect(`/admin/trends/${trendId}/eval?error=${encodeURIComponent(error.message)}`)

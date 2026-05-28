@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 import { createClient } from '@/lib/supabase/server'
+import type { Json } from '@/lib/supabase/database.types'
 
 const FAQEntrySchema = z.object({
   question: z.string().min(1).max(300),
@@ -98,12 +99,16 @@ export async function createTrend(formData: FormData): Promise<void> {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-  // Cast required until `pnpm supabase:types` regenerates strict Database types.
+  // input_schema and faq are validated via parseJsonField against Zod schemas
+  // (TrendInputSchema, FAQSchema). They're typed as `unknown` here but the
+  // generated `Json` type can't accept `unknown` without a cast.
   const insertRow = {
     ...data,
+    input_schema: data.input_schema as Json,
+    faq: data.faq as Json,
     created_by: user?.id ?? null,
     is_active: false, // drafts start inactive; activation requires eval_status='passed'
-  } as never
+  }
 
   const { data: inserted, error } = await supabase
     .from('trends')
@@ -128,7 +133,12 @@ export async function updateTrend(id: string, formData: FormData): Promise<void>
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(msg)}`)
   }
 
-  const update = data as never
+  // input_schema and faq are Zod-validated `unknown`; narrow to Json for the DB type.
+  const update = {
+    ...data,
+    input_schema: data.input_schema as Json,
+    faq: data.faq as Json,
+  }
   const { error } = await supabase.from('trends').update(update).eq('id', id)
   if (error) {
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(error.message)}`)
@@ -141,7 +151,7 @@ export async function updateTrend(id: string, formData: FormData): Promise<void>
 
 export async function toggleActive(id: string, nextValue: boolean): Promise<void> {
   const supabase = await createClient()
-  const update = { is_active: nextValue } as never
+  const update = { is_active: nextValue }
   const { error } = await supabase.from('trends').update(update).eq('id', id)
   if (error) {
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(error.message)}`)

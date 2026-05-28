@@ -51,7 +51,7 @@ async function markReviewed(
     status,
     reviewed_by: user?.id ?? null,
     reviewed_at: new Date().toISOString(),
-  } as never
+  }
   await supabase.from('trend_suggestions').update(update).eq('id', suggestionId)
 }
 
@@ -73,11 +73,11 @@ export async function approveAutoSuggestion(suggestionId: string): Promise<void>
     prompt_template: auto.proposal.prompt_template,
     model: auto.proposal.model,
     input_schema: auto.proposal.input_schema,
-    aspect_ratio: '1:1',
+    aspect_ratio: '1:1' as const,
     display_order: 0,
     is_active: false,
     created_by: user?.id ?? null,
-  } as never
+  }
 
   const { data: created, error: insertError } = await supabase
     .from('trends')

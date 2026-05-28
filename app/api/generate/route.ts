@@ -74,15 +74,14 @@ export async function POST(request: NextRequest) {
 
   // 8. Insert generation row. UNIQUE (user_id, idempotency_key) makes replay safe;
   //    BEFORE-INSERT trigger consumes quota and raises on exhaustion.
-  //    Cast required until `pnpm supabase:types` regenerates strict Database types.
   const insertRow = {
     user_id: user.id,
     trend_id: trend.id,
     trend_version: 1, // TODO Phase 3 impl: read from full trend row
     idempotency_key: idem.key,
     input_payload: { values, image_urls: _imageUrls },
-    status: 'pending',
-  } as never
+    status: 'pending' as const,
+  }
 
   const { data: inserted, error: insertError } = await supabase
     .from('generations')

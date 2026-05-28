@@ -11,6 +11,7 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js'
+import type { Database, Json } from '@/lib/supabase/database.types'
 import { instagramSource } from './sources/instagram'
 import { redditSource } from './sources/reddit'
 import { tiktokSource } from './sources/tiktok'
@@ -40,7 +41,7 @@ export interface OrchestratorResult {
 }
 
 export async function runTrendDetector(
-  supabase: SupabaseClient,
+  supabase: SupabaseClient<Database>,
   options: OrchestratorOptions = {}
 ): Promise<OrchestratorResult> {
   const sources = options.sources ?? DEFAULT_SOURCES
@@ -97,11 +98,14 @@ export async function runTrendDetector(
         candidate,
         proposal,
       }
+      // AutoSuggestionPayload is a Zod-typed discriminated union whose
+      // discriminator (`type: 'auto'`) doesn't satisfy the recursive `Json`
+      // helper without a cast. Runtime shape is JSON-compatible.
       const row = {
-        source: 'auto',
-        payload: payload as unknown as Record<string, unknown>,
-        status: 'pending',
-      } as never
+        source: 'auto' as const,
+        payload: payload as unknown as Json,
+        status: 'pending' as const,
+      }
       const { error } = await supabase.from('trend_suggestions').insert(row)
       if (error) {
         errors.push(`insert ${candidate.source}:${candidate.external_id}: ${error.message}`)
