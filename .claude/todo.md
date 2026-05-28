@@ -213,7 +213,8 @@ External prerequisites (run in parallel where possible):
   - [ ] Turnstile on signup — needs `TURNSTILE_SITE_KEY`
 - [x] PostHog provider component + bind to `lib/analytics/client.ts` singleton on mount
 - [x] Client `track()` call sites: UPLOAD_STARTED, GENERATE_CLICKED, GENERATE_COMPLETED, GENERATE_FAILED, PUSH_PERMISSION_REQUESTED/GRANTED/DENIED, DOWNLOAD_CLICKED (9 of 15 events)
-- [ ] Server-side `track()` for SIGNUP_COMPLETED, ACCOUNT_DELETED, REFERRAL_REDEEMED, CHECKOUT_STARTED/COMPLETED — needs posthog-node identify-and-capture wrapper
+- [x] Server-side `track()` via `lib/analytics/server.ts` (posthog-node lazy singleton, flushAt:1, awaitable flushServer): SIGNUP_COMPLETED (auth callback, new-user heuristic), ACCOUNT_DELETED (settings server action), CHECKOUT_STARTED (stripe checkout route), CHECKOUT_COMPLETED (stripe webhook)
+- [ ] REFERRAL_REDEEMED — needs DB webhook on `referrals` UPDATE (status pending→rewarded) → POST `/api/analytics/referral` → `trackServer`
 - [x] SHARE_CLICKED — `ShareButtons` on `ResultView`: native Web Share with image-Blob attachment, X/Twitter intent, WhatsApp wa.me, Copy link; fires per-channel
 - [x] TREND_VIEW — posthog-js `$pageview` auto-capture in `posthog-provider.tsx`
 - [ ] Data export server action on settings — JSON zip of (profile + generations rows + presigned URLs)
