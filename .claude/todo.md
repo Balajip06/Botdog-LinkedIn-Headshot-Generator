@@ -140,7 +140,7 @@ External prerequisites (run in parallel where possible):
   - [ ] Eval grid UI shows outputs
   - [ ] Admin marks pass/fail → `eval_status` updated
   - [ ] Re-run triggered on `prompt_template` or `model` change (DB trigger already forces `eval_status='untested'` + `is_active=false` on change)
-- [ ] Public home grid lists `is_active=true` trends (replace placeholder `app/page.tsx`, move into `(public)`)
+- [x] Public home grid lists `is_active=true` trends — `app/(public)/page.tsx` shipped (RSC + ISR 600s + responsive 2/3/4-col)
 - [ ] Sample gallery placeholder under trend page (Phase 4 if public-gallery opt-in lands)
 - [ ] Wire SchemaForm into `/trend/[slug]/page.tsx` (Phase 3 — needs `/api/generate` first)
 - [ ] Verification: `curl /trend/<slug>` returns full HTML + meta + JSON-LD; eval gate blocks publish (DB constraint already in 0002)
@@ -161,8 +161,9 @@ External prerequisites (run in parallel where possible):
 - [x] `public/sw.js` — push event → showNotification; notificationclick → focus existing client or open window
 
 **Phase 3 implementation (mostly landed; rest blocked on creds):**
-- [ ] Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` (client component split + `/api/generate` POST + Storage upload + result-page navigation)
-- [ ] Multi-image upload to Supabase Storage with signed URLs (uses `prepareImageForUpload` then `supabase.storage.from('uploads').upload(...)`)
+- [x] Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` — `TrendUpload` client component handles HEIC→JPEG, resize, Storage upload, signed-URL, POST `/api/generate`, router push to `/result/[id]`
+- [x] Multi-image upload to Supabase Storage with signed URLs (1h TTL via `createSignedUrl`)
+- [x] Public home grid `app/(public)/page.tsx` replacing placeholder `app/page.tsx` (RSC + ISR 600s + responsive 2/3/4-col)
 - [x] **Edge Function `supabase/functions/generate-image/index.ts`** — Deno handler shipped:
   - [x] Service-role bearer auth, parses webhook payload, conditional UPDATE pending→processing (claim row + dedup retries)
   - [x] 90s Gemini timeout via AbortController; outer wall-time guard 110s
