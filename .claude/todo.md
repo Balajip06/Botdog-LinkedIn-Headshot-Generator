@@ -236,10 +236,25 @@ External prerequisites (run in parallel where possible):
 
 ## Phase 6 — Auto Trend Detector (post-MVP)
 
-- [ ] Polling worker (cron Edge Function) for TikTok/IG/Reddit trending
-- [ ] LLM proposer (Gemini for cost) — drafts prompt template
-- [ ] Inserts `trend_suggestions` with `source='auto'`
-- [ ] Admin inbox `/admin/suggestions` for review + approve→draft trend
+**Phase 6 prep complete (no creds needed):**
+- [x] `lib/trends/sources/types.ts` — common `TrendCandidate` + `SourceFetcher` interfaces
+- [x] `lib/trends/sources/tiktok.ts` — stub returning `[]` until `TIKTOK_CREATIVE_CENTER_KEY` set
+- [x] `lib/trends/sources/instagram.ts` — stub returning `[]` until `INSTAGRAM_SESSION_COOKIE` set
+- [x] `lib/trends/sources/reddit.ts` — working fetcher (public JSON, no auth) polling 5 subs, momentum = upvotes/hour
+- [x] `lib/trends/suggestions/payload.ts` + test — Zod discriminated union (`auto` vs `user`) for `trend_suggestions.payload` JSONB; AutoSuggestionPayload reuses `TrendInputSchema` for proposed input_schema
+- [x] `lib/trends/proposer.ts` + test — `Proposer` interface + `mockProposer` (deterministic stub); `getProposer()` returns mock when `GEMINI_API_KEY` absent; `slugify` helper exported
+- [x] `lib/trends/orchestrator.ts` — `runTrendDetector(supabase, options)`: parallel source fetch, dedup vs pending rows by `source:external_id`, proposer call per fresh candidate, insert with `source='auto'`, returns `{fetched, deduped, proposed, inserted, errors}` for cron observability
+- [x] `app/admin/suggestions/page.tsx` — RSC inbox skeleton, parses payload via `safeParse` (red warning on parse-fail rows), shows momentum + confidence + source link for auto entries
+
+**Phase 6 implementation (blocked on Supabase + Gemini + admin CRUD + creds):**
+- [ ] Real TikTok fetcher (TikTok Creative Center API + business account)
+- [ ] Real Instagram fetcher (Playwright + rotating proxies — grey area)
+- [ ] Real Gemini-Flash proposer (structured JSON output mirroring `TrendInputSchema`)
+- [ ] Approve / Reject server actions in `app/admin/suggestions/page.tsx`
+  - [ ] Approve → drafts a `trends` row from the proposal, marks suggestion `approved`, links by id, redirects to `/admin/trends/<new_id>/edit`
+  - [ ] Reject → marks `rejected` + archives
+- [ ] Supabase pg_cron daily job calling `runTrendDetector` via a Postgres function or webhook
+- [ ] Manual "Scan for trends" admin button → POST endpoint → orchestrator
 
 ---
 

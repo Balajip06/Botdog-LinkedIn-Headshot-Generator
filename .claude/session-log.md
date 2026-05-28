@@ -14,6 +14,37 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 6 prep: auto trend detector sources + proposer + orchestrator + admin inbox
+
+**Done:**
+- `lib/trends/sources/types.ts` — common `TrendCandidate` (source, external_id, title, description, exemplar_urls, momentum_score, source_url, observed_at) + `SourceFetcher` + `SourceFetchOptions { limit?, minMomentum? }`
+- `lib/trends/sources/tiktok.ts` — stub; returns `[]` unless `TIKTOK_CREATIVE_CENTER_KEY` set. TODO points to TikTok Creative Center API
+- `lib/trends/sources/instagram.ts` — stub; returns `[]` unless `INSTAGRAM_SESSION_COOKIE` set. Production path noted as scrape + Playwright + rotating proxies (grey-area)
+- `lib/trends/sources/reddit.ts` — working fetcher. Polls public `r/<sub>/top.json?t=day` across 5 image-creator subs (midjourney, StableDiffusion, AIGeneratedArt, Pics, PhotoshopRequest), filters NSFW + stickied, momentum = upvotes / hour-since-creation (clamped age ≥ 1h to avoid divide-by-zero spikes), sorts desc, returns top N. Per-sub try/catch — one failing sub doesn't poison the run
+- `lib/trends/suggestions/payload.ts` + test (8 cases) — Zod discriminated union (`type: 'auto' | 'user'`) for `trend_suggestions.payload` JSONB column. `AutoSuggestionPayload` packs `candidate + proposal { suggested_slug (kebab-case), suggested_title, suggested_description, prompt_template (>=10 chars), model (enum), input_schema (reuses TrendInputSchema), proposer_model, confidence (0..1) }`. `UserSuggestionPayload` packs `submitted_by (uuid), title, description, example_urls (>=1)`. Tests cover slug rule, confidence bounds, min prompt length, model enum, missing example URLs, unknown discriminator
+- `lib/trends/proposer.ts` + test (7 cases) — `Proposer` interface + `mockProposer` (deterministic stub producing plausible Proposal so admin inbox + approval flow exercise end-to-end without API calls). `slugify` helper exported (lowercase, alnum-only, hyphen-collapse, 80-char cap, `trend-<ts>` fallback when input empty). `getProposer()` returns mock when `GEMINI_API_KEY` absent
+- `lib/trends/orchestrator.ts` — `runTrendDetector(supabase, options)`: parallel `Promise.all` source fetch with per-source try/catch into errors array; dedup vs pending `trend_suggestions` rows by `source:external_id` (parses existing payload JSON); calls proposer per fresh candidate; inserts row with `source='auto'` + the typed payload; returns `{ fetched, deduped, proposed, inserted, errors }` so the cron job can alert on regressions
+- `app/admin/suggestions/page.tsx` — admin inbox RSC, `dynamic = 'force-dynamic'`, lists 100 most-recent pending rows, `TrendSuggestionPayloadSchema.safeParse` per row (failed parse → red banner for admin attention), shows momentum + confidence + source link for `type='auto'` and title/description for `type='user'`. Approve/Reject buttons visible-but-disabled (Phase 6 impl will wire server actions)
+- Zod 4 strict UUID quirk noted: v4 UUIDs require version-4 + variant-8 bytes (`xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx`); `'00000000-0000-0000-0000-000000000001'` fails validation in Zod 4
+
+**Verification:**
+- `pnpm typecheck` clean
+- `pnpm test`: 78/78 across 12 suites (+15 cases this turn — 8 payload, 7 proposer)
+- `pnpm build` clean — **16 routes** total (added `/admin/suggestions`)
+
+**Commits this session:**
+- `9b0aa97` feat: phase 6 prep - auto trend detector sources, LLM proposer, orchestrator, admin inbox
+
+**Phase 6 implementation (blocked):**
+- Real TikTok fetcher (Creative Center API + business account)
+- Real Instagram fetcher (Playwright + rotating proxies)
+- Real Gemini-Flash proposer with structured JSON output
+- Approve / Reject server actions in admin inbox + linking to draft trend
+- Supabase pg_cron daily job calling `runTrendDetector`
+- Manual "Scan for trends" admin button → POST endpoint → orchestrator
+
+---
+
 ## 2026-05-28 — Phase 5 prep: credit packs + Stripe checkout + webhook grant dispatcher + grant_credits SQL fn
 
 **Done:**
