@@ -3,19 +3,23 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   images: {
-    // Generation outputs + user uploads live on Supabase Storage. Admin-entered
-    // trend thumbnails (TrendForm) accept arbitrary HTTPS URLs from any CDN
-    // (Unsplash, Imgix, marketing assets, etc.), so we wildcard https hosts.
+    // Allowlist only the hosts we actually serve images from. Avoids turning
+    // /_next/image into an open proxy (SSRF risk against internal metadata
+    // endpoints if a wildcard is left in). Adding a new CDN means updating
+    // this list explicitly + redeploying.
     //
-    // Tradeoff: wildcard hosts = max flexibility for the admin tool at the cost
-    // of an open optimizer surface. Mitigated by (a) only admins can set those
-    // URLs, (b) optimizer enforces its own SSRF guards, and (c) all admin
-    // mutations are audit-logged. Tighten to an allowlist if we ever stop
-    // trusting the admin role.
+    // - *.supabase.co/storage/v1/object/{public,sign}/** — generation outputs,
+    //   user uploads, admin-entered thumbnails that we host ourselves.
+    // - images.unsplash.com — most common admin thumbnail source.
+    // - cdn.imgix.net — second-most-common.
+    // Add more hosts here as admin needs them. If an admin tries to set a
+    // thumbnail from an unsupported host, next/image returns 400 — that's
+    // the desired fail-loud behavior.
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/sign/**' },
-      { protocol: 'https', hostname: '**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'cdn.imgix.net', pathname: '/**' },
     ],
   },
   experimental: {

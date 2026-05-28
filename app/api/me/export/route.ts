@@ -7,6 +7,7 @@
 import { NextResponse } from 'next/server'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
 import { MOCK_GENERATIONS, MOCK_PROFILE, MOCK_TRENDS_ENABLED, MOCK_USER } from '@/lib/dev/mock-data'
+import { exportUserLimiter } from '@/lib/rate-limit'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import {
   buildExportFilename,
@@ -92,6 +93,17 @@ export async function GET() {
   } = await supabase.auth.getUser()
   if (!user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+
+  // Rate-limit per user: GDPR Article 15 is a real right but a single user
+  // hammering this endpoint would burst Supabase Storage signed-URL creation +
+  // PostHog event flushes. 5/hr/user is generous for legitimate use.
+  const rl = await exportUserLimiter.limit(user.id)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Rate limit exceeded. Try again in an hour.' },
+      { status: 429, headers: { 'retry-after': String(Math.max(1, rl.reset - Math.floor(Date.now() / 1000))) } }
+    )
   }
 
   const { data: profileRow, error: profileError } = await supabase

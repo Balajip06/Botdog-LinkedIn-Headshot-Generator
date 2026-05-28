@@ -45,7 +45,11 @@ export function FlashToasts({ flashes }: FlashToastsProps) {
       firedRef.current.add(fingerprint)
 
       const decoded = decodeURIComponent(raw)
-      const text = f.message ?? decoded
+      // Clamp the URL-derived text so a long PostgREST error (which can
+      // include table + constraint + rejected-value details) doesn't render
+      // schema internals to the admin UI.
+      const clamped = decoded.length > 200 ? decoded.slice(0, 197) + '...' : decoded
+      const text = f.message ?? clamped
       if (f.level === 'success') toast.success(text)
       else if (f.level === 'error') toast.error(text)
       else toast(text)
