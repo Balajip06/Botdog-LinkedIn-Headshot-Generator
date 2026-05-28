@@ -4,6 +4,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider } from 'posthog-js/react'
 import { Suspense, useEffect, type ReactNode } from 'react'
+import { bindAnalytics, unbindAnalytics } from '@/lib/analytics/client'
 
 let initialised = false
 
@@ -40,6 +41,11 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
       person_profiles: 'identified_only',
     })
     initialised = true
+    bindAnalytics(posthog)
+
+    return () => {
+      unbindAnalytics()
+    }
   }, [])
 
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {

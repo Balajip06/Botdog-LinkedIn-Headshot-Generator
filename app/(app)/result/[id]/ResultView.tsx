@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { analytics, EVENTS } from '@/lib/analytics/client'
 import { ensurePushSubscription, getPermissionState, isIosSafariNeedsInstall } from '@/lib/push/client'
 import { createClient } from '@/lib/supabase/client'
 
@@ -15,6 +16,9 @@ interface Initial {
   attempts: number
   idempotency_key: string
   trend_id: string
+  created_at: string
+  cost_usd: number
+  completed_at: string | null
 }
 
 interface Trend {
@@ -35,6 +39,34 @@ export function ResultView({ initial, trend }: ResultViewProps) {
   const askedRef = useRef(false)
 
   useEffect(() => {
+    if (row.status === 'completed') {
+      const durationMs = row.completed_at
+        ? new Date(row.completed_at).getTime() - new Date(row.created_at).getTime()
+        : 0
+      analytics.track(EVENTS.GENERATE_COMPLETED, {
+        trend_slug: trend.slug,
+        duration_ms: durationMs,
+        cost_usd: row.cost_usd,
+        attempts: row.attempts,
+      })
+    } else if (row.status === 'failed') {
+      const message = row.error_message ?? ''
+      const reason: 'safety' | 'timeout' | 'transient' | 'invalid' = message.startsWith('safety')
+        ? 'safety'
+        : message.includes('timed out') || message.includes('timeout')
+          ? 'timeout'
+          : message.startsWith('terminal after')
+            ? 'transient'
+            : 'invalid'
+      analytics.track(EVENTS.GENERATE_FAILED, {
+        trend_slug: trend.slug,
+        reason,
+        attempts: row.attempts,
+      })
+    }
+  }, [row.attempts, row.completed_at, row.cost_usd, row.created_at, row.error_message, row.status, trend.slug])
+
+  useEffect(() => {
     if (row.status !== 'completed') return
     if (askedRef.current) return
     askedRef.current = true
@@ -47,8 +79,13 @@ export function ResultView({ initial, trend }: ResultViewProps) {
       return
     }
 
+    analytics.track(EVENTS.PUSH_PERMISSION_REQUESTED, {})
     void ensurePushSubscription().then((res) => {
-      if (!res.ok && res.reason === 'needs_pwa_install') {
+      if (res.ok) {
+        analytics.track(EVENTS.PUSH_PERMISSION_GRANTED, {})
+      } else if (res.reason === 'denied') {
+        analytics.track(EVENTS.PUSH_PERMISSION_DENIED, {})
+      } else if (res.reason === 'needs_pwa_install') {
         setPushHint('Add this site to your Home Screen to enable push.')
       }
     })
@@ -133,6 +170,12 @@ export function ResultView({ initial, trend }: ResultViewProps) {
         {row.status === 'completed' && (
           <a
             href={downloadUrl}
+            onClick={() =>
+              analytics.track(EVENTS.DOWNLOAD_CLICKED, {
+                trend_slug: trend.slug,
+                watermarked: row.cost_usd > 0 ? false : true, // free tier = watermarked; cheap heuristic
+              })
+            }
             className="h-11 rounded-md bg-zinc-900 px-5 text-sm font-medium text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             Download

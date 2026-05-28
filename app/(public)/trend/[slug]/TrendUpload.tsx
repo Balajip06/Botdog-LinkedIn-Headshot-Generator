@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { SchemaForm } from '@/components/upload/SchemaForm'
+import { analytics, EVENTS } from '@/lib/analytics/client'
 import { generateIdempotencyKey } from '@/lib/idempotency'
 import { createClient } from '@/lib/supabase/client'
 import type { TrendInput } from '@/lib/trends/input-schema'
@@ -11,11 +12,12 @@ import { prepareImageForUpload } from '@/lib/utils/image'
 interface TrendUploadProps {
   trendSlug: string
   schema: TrendInput
+  model: 'nano-banana' | 'nano-banana-pro'
 }
 
 const SIGNED_URL_TTL_SECONDS = 3600
 
-export function TrendUpload({ trendSlug, schema }: TrendUploadProps) {
+export function TrendUpload({ trendSlug, schema, model }: TrendUploadProps) {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,6 +26,9 @@ export function TrendUpload({ trendSlug, schema }: TrendUploadProps) {
     async (payload: { values: Record<string, string | string[]>; files: Record<string, File[]> }) => {
       setSubmitting(true)
       setError(null)
+
+      const fileCount = Object.values(payload.files).reduce((n, fs) => n + fs.length, 0)
+      analytics.track(EVENTS.UPLOAD_STARTED, { trend_slug: trendSlug, file_count: fileCount })
 
       try {
         const supabase = createClient()
@@ -60,6 +65,12 @@ export function TrendUpload({ trendSlug, schema }: TrendUploadProps) {
           valuesWithUrls[fieldName] = signedUrls.length === 1 ? signedUrls[0] : signedUrls
         }
 
+        analytics.track(EVENTS.GENERATE_CLICKED, {
+          trend_slug: trendSlug,
+          model,
+          is_anonymous: false,
+        })
+
         const res = await fetch('/api/generate', {
           method: 'POST',
           headers: {
@@ -74,11 +85,17 @@ export function TrendUpload({ trendSlug, schema }: TrendUploadProps) {
         }
         router.push(`/result/${body.generation_id}`)
       } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : 'Something went wrong')
+        const message = err instanceof Error ? err.message : 'Something went wrong'
+        analytics.track(EVENTS.GENERATE_FAILED, {
+          trend_slug: trendSlug,
+          reason: 'invalid',
+          attempts: 0,
+        })
+        setError(message)
         setSubmitting(false)
       }
     },
-    [router, trendSlug]
+    [model, router, trendSlug]
   )
 
   return (

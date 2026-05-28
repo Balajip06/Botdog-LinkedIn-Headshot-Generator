@@ -14,6 +14,8 @@ interface InitialRow {
   attempts: number
   idempotency_key: string
   created_at: string
+  cost_usd: number
+  completed_at: string | null
 }
 
 interface TrendBrief {
@@ -36,7 +38,7 @@ export default async function ResultPage({ params }: ResultPageProps) {
 
   const { data: row } = await supabase
     .from('generations')
-    .select('id, user_id, trend_id, status, output_image_url, error_message, attempts, idempotency_key, created_at')
+    .select('id, user_id, trend_id, status, output_image_url, error_message, attempts, idempotency_key, created_at, cost_usd, completed_at')
     .eq('id', id)
     .maybeSingle()
 

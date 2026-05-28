@@ -21,6 +21,7 @@ export interface PublicTrend {
   sample_before_url: string | null
   sample_after_url: string | null
   aspect_ratio: '1:1' | '3:4' | '16:9' | '9:16'
+  model: 'nano-banana' | 'nano-banana-pro'
   input_schema: TrendInput
   seo_title: string | null
   seo_description: string | null
@@ -30,7 +31,7 @@ export interface PublicTrend {
 }
 
 const COLUMNS =
-  'id, slug, title, description, thumbnail_url, sample_before_url, sample_after_url, aspect_ratio, input_schema, seo_title, seo_description, faq, display_order, updated_at'
+  'id, slug, title, description, thumbnail_url, sample_before_url, sample_after_url, aspect_ratio, model, input_schema, seo_title, seo_description, faq, display_order, updated_at'
 
 function coerce(row: Record<string, unknown>): PublicTrend {
   const inputSchemaParse = TrendInputSchema.safeParse(row.input_schema)
@@ -47,6 +48,7 @@ function coerce(row: Record<string, unknown>): PublicTrend {
     sample_before_url: (row.sample_before_url as string | null) ?? null,
     sample_after_url: (row.sample_after_url as string | null) ?? null,
     aspect_ratio: (row.aspect_ratio as PublicTrend['aspect_ratio']) ?? '1:1',
+    model: (row.model as PublicTrend['model']) ?? 'nano-banana-pro',
     input_schema,
     seo_title: (row.seo_title as string | null) ?? null,
     seo_description: (row.seo_description as string | null) ?? null,

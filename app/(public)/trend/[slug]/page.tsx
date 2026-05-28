@@ -93,7 +93,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Try it</h2>
-        <TrendUpload trendSlug={trend.slug} schema={trend.input_schema} />
+        <TrendUpload trendSlug={trend.slug} schema={trend.input_schema} model={trend.model} />
       </section>
 
       {trend.faq.length > 0 && (
