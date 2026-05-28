@@ -4,6 +4,14 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { analytics, EVENTS } from '@/lib/analytics/client'
 import { ensurePushSubscription, getPermissionState, isIosSafariNeedsInstall } from '@/lib/push/client'
+import {
+  buildTwitterShareUrl,
+  buildWhatsappShareUrl,
+  copyToClipboard,
+  isWebShareSupported,
+  shareNative,
+  type ShareChannel,
+} from '@/lib/share/web-share'
 import { createClient } from '@/lib/supabase/client'
 
 type Status = 'pending' | 'processing' | 'completed' | 'failed' | 'failed_retryable'
@@ -199,9 +207,113 @@ export function ResultView({ initial, trend }: ResultViewProps) {
         </Link>
       </div>
 
+      {row.status === 'completed' && row.output_image_url && (
+        <ShareButtons
+          trendSlug={trend.slug}
+          trendTitle={trend.title}
+          outputImageUrl={row.output_image_url}
+        />
+      )}
+
       {retryError && <p className="text-sm text-red-600">{retryError}</p>}
       {pushHint && <p className="text-xs text-zinc-500">{pushHint}</p>}
     </section>
+  )
+}
+
+interface ShareButtonsProps {
+  trendSlug: string
+  trendTitle: string
+  outputImageUrl: string
+}
+
+function ShareButtons({ trendSlug, trendTitle, outputImageUrl }: ShareButtonsProps) {
+  const [copied, setCopied] = useState(false)
+  const [sharing, setSharing] = useState(false)
+
+  const siteUrl =
+    typeof window === 'undefined' ? '' : `${window.location.origin}/trend/${trendSlug}`
+  const text = `I tried the ${trendTitle} trend — check it out`
+
+  const fireTrack = (channel: ShareChannel) => {
+    analytics.track(EVENTS.SHARE_CLICKED, { trend_slug: trendSlug, channel })
+  }
+
+  const onNativeShare = async () => {
+    setSharing(true)
+    try {
+      let imageBlob: Blob | undefined
+      try {
+        const res = await fetch(outputImageUrl)
+        if (res.ok) imageBlob = await res.blob()
+      } catch {
+        // Network blip — proceed without file attachment; URL-only share still works.
+      }
+      const result = await shareNative({
+        title: trendTitle,
+        text,
+        url: siteUrl,
+        imageBlob,
+        imageFilename: `trend-${trendSlug}.jpg`,
+      })
+      if (result.ok) fireTrack('web_share')
+    } finally {
+      setSharing(false)
+    }
+  }
+
+  const onCopyLink = async () => {
+    const result = await copyToClipboard(siteUrl)
+    if (result.ok) {
+      fireTrack('copy_link')
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1800)
+    }
+  }
+
+  const showNative = typeof window !== 'undefined' && isWebShareSupported()
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-xs uppercase tracking-wide text-zinc-500">Share</p>
+      <div className="flex flex-wrap gap-2">
+        {showNative && (
+          <button
+            type="button"
+            onClick={onNativeShare}
+            disabled={sharing}
+            className="h-10 rounded-md bg-zinc-900 px-4 text-sm font-medium text-zinc-50 hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          >
+            {sharing ? 'Opening…' : 'Share'}
+          </button>
+        )}
+        <a
+          href={buildTwitterShareUrl(text, siteUrl)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => fireTrack('twitter')}
+          className="h-10 rounded-md border border-zinc-300 px-4 text-sm font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-800"
+        >
+          X / Twitter
+        </a>
+        <a
+          href={buildWhatsappShareUrl(text, siteUrl)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => fireTrack('whatsapp')}
+          className="h-10 rounded-md border border-zinc-300 px-4 text-sm font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-800"
+        >
+          WhatsApp
+        </a>
+        <button
+          type="button"
+          onClick={onCopyLink}
+          className="h-10 rounded-md border border-zinc-300 px-4 text-sm font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-800"
+        >
+          {copied ? 'Copied!' : 'Copy link'}
+        </button>
+      </div>
+    </div>
   )
 }
 
