@@ -90,6 +90,17 @@ Run after `pnpm supabase start && pnpm supabase db reset` succeeds (replaces the
 9. **Soft-delete** — `UPDATE profiles SET deleted_at = now()` → user can no longer read own profile (RLS filter).
 10. **Pg_cron** — `SELECT jobname FROM cron.job;` lists 4 jobs: `reset_free_weekly`, `purge_expired_generations`, `purge_expired_anonymous`, `purge_soft_deleted_profiles`.
 
+## Database Webhooks (configure in Supabase Dashboard)
+
+Bridges between Postgres state changes and the Next.js app.
+
+| Name | Table | Event | URL | Headers |
+|---|---|---|---|---|
+| `generate-on-insert` | `public.generations` | INSERT | `${SITE_URL}/functions/v1/generate-image` (the Edge Function) | `Authorization: Bearer <service-role-key>` |
+| `referral-redeemed` | `public.referrals` | UPDATE | `${SITE_URL}/api/analytics/referral` | `Authorization: Bearer <service-role-key>` |
+
+`referral-redeemed` filters internally for the `pending → rewarded` transition; other UPDATEs return `{ skipped: true }`.
+
 ## Plan + state docs
 
 | File | Purpose |
