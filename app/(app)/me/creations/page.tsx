@@ -1,4 +1,5 @@
 import { ImageIcon } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { GradientButton } from '@/components/brand/GradientButton'
@@ -99,11 +100,12 @@ export default async function CreationsPage() {
                 className="group relative block aspect-square overflow-hidden rounded-2xl border border-border/60 bg-card transition-transform hover:-translate-y-1 hover:shadow-pop"
               >
                 {c.output_image_url ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
+                  <Image
                     src={c.output_image_url}
                     alt="Creation"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gradient-hero/30 text-xs text-foreground">

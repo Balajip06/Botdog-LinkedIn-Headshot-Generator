@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { GradientButton } from '@/components/brand/GradientButton'
 import { Badge } from '@/components/ui/badge'
@@ -77,11 +78,13 @@ export default async function HomePage() {
               className="group relative block aspect-[4/5] overflow-hidden rounded-3xl border border-border/60 shadow-pop animate-pop-in"
             >
               {heroTrend.sample_after_url || heroTrend.thumbnail_url ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
+                <Image
                   src={(heroTrend.sample_after_url ?? heroTrend.thumbnail_url)!}
                   alt={heroTrend.title}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 540px"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (
                 <div className="h-full w-full bg-gradient-hero" />
@@ -123,11 +126,12 @@ export default async function HomePage() {
                   >
                     <div className="relative aspect-square overflow-hidden">
                       {t.thumbnail_url || t.sample_after_url ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
+                        <Image
                           src={(t.thumbnail_url ?? t.sample_after_url)!}
                           alt={t.title}
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                       ) : (
                         <div className="h-full w-full bg-gradient-hero" />

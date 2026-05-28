@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
@@ -150,16 +151,18 @@ export default async function TrendPage({ params }: TrendPageProps) {
               </div>
             </div>
 
-            <figure className="relative overflow-hidden rounded-3xl border border-border/60 shadow-pop animate-pop-in">
+            <figure className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border/60 shadow-pop animate-pop-in">
               {trend.sample_after_url ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img
+                <Image
                   src={trend.sample_after_url}
                   alt={`Sample output for ${trend.title}`}
-                  className="aspect-[4/5] w-full object-cover"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 540px"
+                  className="object-cover"
                 />
               ) : (
-                <div className="aspect-[4/5] bg-gradient-hero" />
+                <div className="h-full w-full bg-gradient-hero" />
               )}
             </figure>
           </section>

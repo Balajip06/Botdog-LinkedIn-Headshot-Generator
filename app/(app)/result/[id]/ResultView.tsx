@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowLeft, Copy, Download, ImageIcon, RefreshCw, Share2 } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -248,12 +249,15 @@ interface ResultCanvasProps {
 function ResultCanvas({ row, title }: ResultCanvasProps) {
   if (row.status === 'completed' && row.output_image_url) {
     return (
-      <figure className="relative overflow-hidden rounded-3xl border border-border/60 bg-card shadow-pop animate-pop-in">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <figure className="relative aspect-square overflow-hidden rounded-3xl border border-border/60 bg-card shadow-pop animate-pop-in">
+        <Image
           src={row.output_image_url}
           alt={title}
-          className="aspect-square w-full object-cover"
+          fill
+          priority
+          quality={95}
+          sizes="(max-width: 1024px) 100vw, 720px"
+          className="object-cover"
         />
         <div
           aria-hidden
