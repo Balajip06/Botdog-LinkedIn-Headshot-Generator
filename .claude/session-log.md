@@ -14,6 +14,36 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 4 prep: virality primitives, watermark composer, history + settings, download route
+
+**Done:**
+- `sharp` ^0.34.0 added as dep (native image composition for server-side watermark; Vercel + Node API-route compatible)
+- `lib/analytics/events.ts` — 15-event typed PostHog catalog with per-event payload interfaces; generic `track<E>(posthog, event, payload)` enforces payload shape at call site without hard-importing posthog
+- `lib/share/web-share.ts` + test — `shareNative` (prefers web-share-files for Android Chrome + iOS Safari 17+, falls back to url-only on older mobile, swallows `AbortError` as `'cancelled'`), `buildTwitterShareUrl` (x.com/intent/tweet), `buildWhatsappShareUrl` (wa.me), IG + TikTok native deep-link constants, `copyToClipboard` fallback
+- `lib/referrals/links.ts` + test (12 cases) — `buildReferralUrl(siteUrl, code, path?)`, `parseReferralFromUrl`, `parseReferralFromCookie`; 12-hex code validation matches migration 0001's `profiles.referral_code` default (`encode(gen_random_bytes(6), 'hex')`); `REFERRAL_COOKIE_NAME='tig_ref'` + 30-day max-age
+- `lib/watermark/compose.ts` + test (4 cases) — sharp-based `applyWatermark(buffer, options?)`: bottom-right pill-shaped SVG overlay composited via `sharp.composite({ gravity: 'southeast' })`; font size scales linearly with longest side (1024 → 22px, 4096 → 88px); custom wordmark override; opacity default 0.85; XML-escaped wordmark text to handle special chars from trend names safely; output dimensions preserved verified via metadata round-trip
+- `app/(app)/layout.tsx` — authed-area shell with header nav (`/me/creations`, `/me/settings`) + max-w-5xl content area, dark-mode aware
+- `app/(app)/me/creations/page.tsx` — RSC, `dynamic = 'force-dynamic'`, queries 60 most-recent generations by user via authed Supabase client, grid layout (2 / 3 / 4 cols responsive), pending/processing/failed status placeholder for non-completed rows
+- `app/(app)/me/settings/page.tsx` — RSC, force-dynamic; quota panel (free 5/week + credits + bonus 50-cap); referral link via `buildReferralUrl`; danger-zone soft-delete via Server Action that sets `profiles.deleted_at = now()` + `supabase.auth.signOut()` + redirect home
+- `app/api/download/[id]/route.ts` — Node-runtime authed download: ownership check, `status='completed'` gate, fetches `output_image_url` from Storage, checks `profiles.credits_balance > 0` to determine Pro vs Free, applies `applyWatermark` on Free, streams PNG with `content-disposition: attachment; filename=trend-<id>.png` and `cache-control: private, no-store`
+
+**Verification:**
+- `pnpm typecheck` clean
+- `pnpm test`: 54/54 across 9 suites (+18 cases this turn — 3 web-share, 12 referral, 4 watermark, plus minor)
+- `pnpm build` clean — **14 routes** total: `/`, `/_not-found`, `/api/download/[id]`, `/api/generate`, `/api/generate-anonymous`, `/api/stripe/webhook`, `/auth/callback`, `/login`, `/me/creations`, `/me/settings`, `/robots.txt`, `/sitemap.xml`, `/trend/[slug]`, `/trend/[slug]/opengraph-image-*`
+
+**Commits this session:**
+- `876648d` feat: phase 4 prep - virality primitives, watermark composer, history + settings, download route
+
+**Phase 4 implementation (blocked):**
+- Referral signup-cookie wiring (landing→cookie→signup→referrals row); reward trigger already exists in migration 0004
+- PostHog provider + `track()` calls at 15 event points
+- Data export Server Action on settings (zip of profile + generations rows)
+- Anomaly alert (PostHog funnel >5 gens/hr) — post-launch
+- Turnstile on signup — needs Turnstile site key
+
+---
+
 ## 2026-05-28 — Phase 1 working model closed; remote push deferred
 
 **Done:**

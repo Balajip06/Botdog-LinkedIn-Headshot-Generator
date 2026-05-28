@@ -188,22 +188,27 @@ External prerequisites (run in parallel where possible):
 
 ## Phase 4 — Virality + Polish (3 days)
 
-- [ ] Download composer — corner-tag watermark (free tier), no-watermark (Pro)
-- [ ] Web Share API integration; fallback copy-link + IG/TikTok deep links
-- [ ] Referral system:
-  - [ ] `referral_code` displayed in profile
-  - [ ] Signup with `?ref=` populates `referred_by`
-  - [ ] `referrals` row created
-  - [ ] Reward credited ONLY after referee's first completed generation
-  - [ ] Max bonus cap per referrer = 50 credits (5 referrals × 10)
-  - [ ] Turnstile on signup
-- [ ] `/me/creations` history grid
-- [ ] `/me/settings` — soft-delete account + data export (zip of generations + profile.json)
-- [ ] PostHog events: `trend_view`, `upload_started`, `generate_clicked`, `generate_completed`, `share_clicked`, `referral_redeemed`
-- [ ] pg_cron daily job: delete `generations` where `purge_at < now()` + Storage objects
-- [ ] pg_cron weekly job: reset `free_used_this_week = 0`, bump `free_week_starts_at` (Sunday 00:00 UTC)
-- [ ] pg_cron daily job: purge anonymous result rows where `created_at < now() - 24h` AND not saved
-- [ ] Anomaly alert: PostHog funnel if user spikes >5 gens/hr
+**Phase 4 prep complete (no creds needed):**
+- [x] `lib/watermark/compose.ts` + test — sharp-based corner-tag overlay, font size scales with longest side, opacity 0.85, XML-escaped wordmark, output dimensions preserved
+- [x] `lib/share/web-share.ts` + test — `shareNative` (web-share-files preferred, url-only fallback, AbortError-as-cancelled), Twitter + WhatsApp URL builders, IG + TikTok deep-link constants, `copyToClipboard` fallback
+- [x] `lib/referrals/links.ts` + test — `buildReferralUrl` (12-hex code validation), `parseReferralFromUrl`, `parseReferralFromCookie`, `REFERRAL_COOKIE_NAME='tig_ref'` + `REFERRAL_COOKIE_MAX_AGE_SECONDS=30d`
+- [x] `lib/analytics/events.ts` — typed PostHog event catalog (15 events) + payload interfaces + generic `track<E>()` helper
+- [x] `app/(app)/layout.tsx` — authed-area shell with header nav (creations + settings)
+- [x] `app/(app)/me/creations/page.tsx` — RSC, force-dynamic, queries 60 most-recent generations, grid layout
+- [x] `app/(app)/me/settings/page.tsx` — RSC, quota panel, referral link via `buildReferralUrl`, soft-delete server action (`profiles.deleted_at = now()` + `signOut` + redirect home)
+- [x] `app/api/download/[id]/route.ts` — Node runtime authed download: ownership check, status gate, Pro vs Free determines watermark via `applyWatermark`, content-disposition attachment streaming
+
+**Phase 4 implementation (blocked on Supabase running + PostHog key + Turnstile key):**
+- [ ] Referral signup wiring:
+  - [ ] Landing page sets `tig_ref` cookie when `?ref=<code>` present
+  - [ ] Signup server action reads cookie, populates `profiles.referred_by`, creates `referrals` row
+  - [x] Reward credited via trigger after referee's first completed gen (migration 0004)
+  - [x] Max bonus cap per referrer = 50 (DB constraint + trigger)
+  - [ ] Turnstile on signup — needs `TURNSTILE_SITE_KEY`
+- [ ] PostHog provider component + `track()` call sites at the 15 event points
+- [ ] Data export server action on settings — JSON zip of (profile + generations rows + presigned URLs)
+- [x] pg_cron daily/weekly jobs — already in migration 0005
+- [ ] Anomaly alert: PostHog funnel if user spikes >5 gens/hr (post-launch)
 - [ ] Verification: referral farming guard, GDPR delete cascades, pg_cron purge runs
 
 ---
