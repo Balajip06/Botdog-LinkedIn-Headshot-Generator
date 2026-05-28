@@ -14,6 +14,49 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 3 impl: storage buckets + Deno Edge Function + result page Realtime + retry
+
+**Done:**
+- `supabase/migrations/20260528000002_storage_buckets.sql` — idempotent bucket creation: `uploads` (private), `outputs` (public). RLS policies: uploads self-folder insert/read/delete (auth.uid() prefix match); outputs public-read + service-role write+delete only
+- `supabase/functions/generate-image/index.ts` — Deno Edge Function. Self-contained (no Node imports); inlines `interpolate`, `collectImagesFromValues`, Gemini call, base64 codec, cost map, model id map. Flow:
+  1. Verify `Authorization: Bearer <service-role-key>` (webhook auth, not user JWT)
+  2. Parse webhook payload, ignore non-INSERT or non-`generations`-table
+  3. Conditional `UPDATE generations SET status='processing', attempts=attempts+1 WHERE id=? AND status='pending'` — atomic claim that prevents double-processing on Supabase webhook retries
+  4. Fetch trend row (prompt_template, model, aspect_ratio, version)
+  5. Build prompt; collect image URLs from `input_payload.image_urls` (set by /api/generate) or fallback `collectImagesFromValues`
+  6. Call Gemini with all 4 safetySettings at `BLOCK_MEDIUM_AND_ABOVE`, 90s AbortController timeout
+  7. Upload output PNG to `outputs/{user_id}/{gen_id}.png` via service-role client
+  8. UPDATE generations SET status='completed', output_image_url, cost_usd, model_used, completed_at
+  Failure taxonomy:
+    - safety → terminal `failed` (DB trigger refunds quota)
+    - timeout/transient/upload error → `failed_retryable` until `attempts ≥ 3` then terminal `failed`
+- `supabase/functions/generate-image/README.md` — deploy command (`pnpm supabase functions deploy generate-image --no-verify-jwt` — flag required because webhook posts service-role key, not user JWT), secret list (`GEMINI_API_KEY`), Database Webhook config (table=generations, event=INSERT, method=POST, URL+Authorization header), local-testing curl
+- `app/(app)/result/[id]/page.tsx` — server shell: auth gate → redirect /login?next; fetch initial row + 404 on not-own (`notFound()` hides id existence); fetch trend slug+title for back-link
+- `app/(app)/result/[id]/ResultView.tsx` — `'use client'` Realtime + retry:
+  - `useEffect` subscribes to `postgres_changes` UPDATE on generations filter `id=eq.<id>`; exits early if status already terminal; `removeChannel` on unmount
+  - Retry button reuses original `Idempotency-Key` from row → duplicate-key replay path in `/api/generate` returns existing row without consuming quota
+  - Pills: pending / processing / completed / failed_retryable (shows attempts) / failed
+  - Download link to `/api/download/<id>` on completed
+  - Skeleton spinner + failure panel with error message
+- `tsconfig.json` — added `supabase/functions/**` to exclude. Edge Function uses URL imports + Deno globals; tsc must skip it
+- Windows vitest `spawn UNKNOWN` flake captured for lessons.md (transient; re-run usually clean)
+
+**Verification:**
+- `pnpm typecheck` clean
+- `pnpm test` 78/78 across 12 suites (first run flaked on Windows ForksPool spawn-UNKNOWN — re-ran clean)
+- `pnpm build` clean — **17 routes** (added `/result/[id]`)
+
+**Commits this session:**
+- `27afe7f` feat: phase 3 impl - storage buckets, Deno Edge Function, result page Realtime + retry
+
+**Phase 3 implementation remaining (mostly user-side):**
+- Wire `SchemaForm` into trend page (client component split + Storage upload + POST + result-page nav)
+- Service worker registration + push permission UX (after first completion)
+- Push + email fallback from Edge Function on completion
+- Deploy Edge Function + set `GEMINI_API_KEY` secret + configure Database Webhook in Supabase Dashboard
+
+---
+
 ## 2026-05-28 — Phase 6 prep: auto trend detector sources + proposer + orchestrator + admin inbox
 
 **Done:**

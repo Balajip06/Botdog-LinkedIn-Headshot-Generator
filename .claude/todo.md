@@ -160,28 +160,32 @@ External prerequisites (run in parallel where possible):
 - [x] `app/api/generate/route.ts` — Node runtime: idempotency parse → rate-limit per IP → auth gate → Zod body → trend lookup → input_schema re-validate → `interpolatePrompt` + `collectImageInputs` → insert generations row (quota trigger) → duplicate-key replay returns `{ generation_id, replayed: true }` → quota-exhausted maps HTTP 402
 - [x] `public/sw.js` — push event → showNotification; notificationclick → focus existing client or open window
 
-**Phase 3 implementation (blocked on Supabase running + Gemini key + Resend domain):**
-- [ ] Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` (client component split + `/api/generate` POST + Realtime subscribe + result-page navigation)
+**Phase 3 implementation (mostly landed; rest blocked on creds):**
+- [ ] Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` (client component split + `/api/generate` POST + Storage upload + result-page navigation)
 - [ ] Multi-image upload to Supabase Storage with signed URLs (uses `prepareImageForUpload` then `supabase.storage.from('uploads').upload(...)`)
-- [ ] Edge Function `supabase/functions/generate-image/index.ts`:
-  - [ ] Deno handler triggered by DB webhook on `generations` insert
-  - [ ] 110s soft wall-time cap; 90s Gemini timeout (lib/gemini/client.ts portable to Deno via fetch)
-  - [ ] Record `cost_usd` from `costForOutput`
-  - [ ] On success: upload result PNG to Storage, update row to `completed`
-  - [ ] On Gemini moderation reject: status=`failed`, refund-trigger fires automatically
-  - [ ] On transient error: status=`failed_retryable`, `attempts++`
-  - [ ] After 3 attempts: terminal `failed`, refund-trigger fires
-- [ ] Result page `/result/[id]`:
-  - [ ] Realtime subscription to `generations` row
-  - [ ] Retry button reuses idempotency key (no quota rededuct via duplicate-key replay path)
-  - [ ] Loading + completed + failed states
+- [x] **Edge Function `supabase/functions/generate-image/index.ts`** — Deno handler shipped:
+  - [x] Service-role bearer auth, parses webhook payload, conditional UPDATE pending→processing (claim row + dedup retries)
+  - [x] 90s Gemini timeout via AbortController; outer wall-time guard 110s
+  - [x] Records `cost_usd` from in-file COST_USD map (mirror of lib/gemini/cost.ts)
+  - [x] Uploads PNG → `outputs/{user_id}/{gen_id}.png`, marks `completed` with `output_image_url + cost_usd + model_used + completed_at`
+  - [x] On Gemini moderation → terminal `failed` (refund trigger fires)
+  - [x] On timeout / transient / upload err → `failed_retryable` + `attempts++`
+  - [x] After 3 attempts → terminal `failed` (refund)
+- [x] **Storage buckets + RLS** — migration `20260528000002_storage_buckets.sql` (uploads private self-folder, outputs public-read + service-role write)
+- [x] **Result page `/result/[id]`**:
+  - [x] Server shell auth-gates + initial row fetch + 404 on not-own
+  - [x] ResultView client component: Realtime postgres_changes subscribe filtered `id=eq.<id>`, exits subscription when terminal
+  - [x] Retry button reuses original Idempotency-Key (duplicate-key replay path, no quota rededuct)
+  - [x] Pills for pending / processing / completed / failed_retryable (shows attempts) / failed; download button on completed
 - [ ] Web Push wiring:
-  - [ ] VAPID env-stored ✅ template exists in `.env.local.example`
-  - [ ] Service worker registration in `app/(app)/layout.tsx` client effect ✅ `/sw.js` exists
+  - [x] VAPID env template in `.env.local.example`
+  - [x] Service worker file `/sw.js` exists
+  - [ ] Service worker registration in client layout effect
   - [ ] Permission asked AFTER first successful generation completes
   - [ ] iOS Safari detect → "Add to Home Screen" hint
   - [ ] Push send from Edge Function on completion via `lib/push/send.ts`
 - [ ] Email fallback via `buildResultReadyEmail` when push subscription null or expired
+- [ ] User-side: deploy Edge Function (`pnpm supabase functions deploy generate-image --no-verify-jwt`) + set `GEMINI_API_KEY` secret + configure Database Webhook
 - [ ] Verification: idempotency replay (1 row, 1 call), retry path, refund on fail, push fires <1s, email fallback <30s
 
 ---
