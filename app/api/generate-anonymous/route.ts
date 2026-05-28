@@ -7,6 +7,7 @@ import { isAnonymousBudgetExceeded } from '@/lib/gemini/cost'
 import { collectImageInputs, interpolatePrompt, type TrendInputValues } from '@/lib/trends/interpolate'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
+import { verifyTurnstile } from '@/lib/turnstile/verify'
 
 export const runtime = 'nodejs'
 
@@ -18,19 +19,6 @@ const BodySchema = z.object({
   /** SHA-256-hashed FingerprintJS visitor id; client computes hash to avoid raw fingerprint reaching server. */
   fingerprint_hash: z.string().regex(/^[0-9a-f]{64}$/),
 })
-
-async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY
-  if (!secret) return true // dev/test: no-op
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ secret, response: token, remoteip: ip }),
-  })
-  if (!res.ok) return false
-  const json = (await res.json()) as { success?: boolean }
-  return json.success === true
-}
 
 async function sha256Hex(input: string): Promise<string> {
   const data = new TextEncoder().encode(input)
