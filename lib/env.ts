@@ -16,16 +16,28 @@ const ServerEnvSchema = z.object({
   RESEND_FROM_EMAIL: z.string().email().optional(),
   NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().min(1).optional(),
   VAPID_PRIVATE_KEY: z.string().min(1).optional(),
-  VAPID_SUBJECT: z.string().min(1).optional(),
+  VAPID_SUBJECT: z
+    .string()
+    .regex(/^mailto:.+@.+/i, { message: 'must be a mailto: URL (e.g. mailto:owner@example.com)' })
+    .optional(),
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1).optional(),
   TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
   NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1).optional(),
   NEXT_PUBLIC_POSTHOG_HOST: z.string().url().optional(),
   SENTRY_DSN: z.string().url().optional(),
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  SENTRY_AUTH_TOKEN: z.string().min(1).optional(),
+  SENTRY_ORG: z.string().min(1).optional(),
+  SENTRY_PROJECT: z.string().min(1).optional(),
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
   ANONYMOUS_DAILY_BUDGET_USD: z.coerce.number().positive().default(20),
+  // Phase 6 (auto trend detector, post-MVP) — optional sources
+  TIKTOK_CREATIVE_CENTER_KEY: z.string().min(1).optional(),
+  INSTAGRAM_SESSION_COOKIE: z.string().min(1).optional(),
+  REDDIT_USER_AGENT: z.string().min(1).optional(),
+  // Dev-only: enable in-memory fixtures (string enum, not boolean — call sites do `=== 'true'`)
+  MOCK_TRENDS: z.enum(['true', 'false']).optional(),
 })
 
 export type ServerEnv = z.infer<typeof ServerEnvSchema>

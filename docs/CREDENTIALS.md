@@ -61,7 +61,7 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 | Var | Required | Where to get | Public | What breaks if missing |
 |---|---|---|---|---|
 | `RESEND_API_KEY` | optional | Resend Dashboard → API Keys → "Create API Key" (full-access during dev, scoped key in prod). | no | `lib/email/send.ts:12` returns a no-op result; push-expired users get no email fallback at `app/api/push/dispatch/route.ts`. |
-| `RESEND_FROM_EMAIL` | optional | Must be a verified domain or single-sender in Resend → Domains. SPF + DKIM + DMARC records live before send. | no | `lib/email/send.ts:32` throws when the API key is set but `FROM` is empty. Not in `lib/env.ts` Zod schema — caught at runtime instead. |
+| `RESEND_FROM_EMAIL` | optional | Must be a verified domain or single-sender in Resend → Domains. SPF + DKIM + DMARC records live before send. | no | `lib/email/send.ts:32` throws when the API key is set but `FROM` is empty. Zod schema enforces `.email()` format at startup. |
 
 ---
 
@@ -71,7 +71,7 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 |---|---|---|---|---|
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | optional | Generate once with `npx web-push generate-vapid-keys --json`. Keep both keys forever — rotating breaks existing subscriptions. | yes | `lib/push/client.ts` `ensurePushSubscription` returns `no_vapid_key`; service worker still registers but cannot subscribe. |
 | `VAPID_PRIVATE_KEY` | optional | Same command, paired with public key. | no | `lib/push/send.ts:13` throws on first send. |
-| `VAPID_SUBJECT` | optional | Any `mailto:owner@yourdomain.com` URL. Default in template is `mailto:you@example.com`. | no | `lib/push/send.ts:15` falls back to `mailto:noreply@example.com`. Not in `lib/env.ts` Zod schema. |
+| `VAPID_SUBJECT` | optional | Any `mailto:owner@yourdomain.com` URL. Default in template is `mailto:you@example.com`. | no | `lib/push/send.ts:15` falls back to `mailto:noreply@example.com`. Zod schema enforces `^mailto:` regex at startup. |
 
 ---
 
@@ -99,9 +99,11 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 |---|---|---|---|---|
 | `SENTRY_DSN` | optional | Sentry → Project → Settings → "Client Keys (DSN)". | no | `sentry.server.config.ts:3` + `sentry.edge.config.ts:3` skip init — server + edge errors are not captured. |
 | `NEXT_PUBLIC_SENTRY_DSN` | optional | Same DSN, exposed to the client bundle. | yes | `instrumentation-client.ts:3` skips browser SDK init; browser errors are not captured. |
-| `SENTRY_AUTH_TOKEN` | optional | Sentry → User Settings → Auth Tokens. Needs `project:releases` + `project:write` scopes. | no | `next.config.ts:17` skips `withSentryConfig` source-map upload — Sentry traces show minified frames. Not in `lib/env.ts` Zod schema. |
-| `SENTRY_ORG` | optional | The slug in your Sentry URL (e.g. `acme-co`). | no | Same — source-map upload is skipped. Not in `lib/env.ts` schema. |
-| `SENTRY_PROJECT` | optional | The Sentry project slug. | no | Same. Not in `lib/env.ts` schema. |
+| `SENTRY_AUTH_TOKEN` | optional | Sentry → User Settings → Auth Tokens. Needs `project:releases` + `project:write` scopes. | no | `next.config.ts:17` skips `withSentryConfig` source-map upload — Sentry traces show minified frames. |
+| `SENTRY_ORG` | optional | The slug in your Sentry URL (e.g. `acme-co`). | no | Same — source-map upload is skipped. |
+| `SENTRY_PROJECT` | optional | The Sentry project slug. | no | Same. |
+
+The Sentry trio is independently optional in the Zod schema. `next.config.ts` gates source-map upload on the AND of (`SENTRY_DSN`, `SENTRY_AUTH_TOKEN`), so partial config parses cleanly and only the upload step short-circuits.
 
 ---
 
@@ -118,9 +120,9 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 
 | Var | Required | Where to get | Public | What breaks if missing |
 |---|---|---|---|---|
-| `TIKTOK_CREATIVE_CENTER_KEY` | optional | TikTok Creative Center — business account required. | no | `lib/trends/sources/tiktok.ts:14` returns empty array; the orchestrator skips TikTok. Not in `lib/env.ts` schema. |
-| `INSTAGRAM_SESSION_COOKIE` | optional | Manual scrape — grey-area, deferred to post-MVP. | no | `lib/trends/sources/instagram.ts:12` returns empty array. Not in `lib/env.ts` schema. |
-| `REDDIT_USER_AGENT` | optional | Any descriptive string. | no | Defaults to `TrendImageGenerator/0.1` at `lib/trends/sources/reddit.ts:41`. Not in `lib/env.ts` schema. |
+| `TIKTOK_CREATIVE_CENTER_KEY` | optional | TikTok Creative Center — business account required. | no | `lib/trends/sources/tiktok.ts:14` returns empty array; the orchestrator skips TikTok. |
+| `INSTAGRAM_SESSION_COOKIE` | optional | Manual scrape — grey-area, deferred to post-MVP. | no | `lib/trends/sources/instagram.ts:12` returns empty array. |
+| `REDDIT_USER_AGENT` | optional | Any descriptive string. | no | Defaults to `TrendImageGenerator/0.1` at `lib/trends/sources/reddit.ts:41`. |
 
 ---
 
@@ -128,25 +130,8 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 
 | Var | Required | Notes |
 |---|---|---|
-| `MOCK_TRENDS` | dev only | Set to `'true'` to short-circuit Supabase reads with the in-memory fixtures at `lib/dev/mock-data.ts:4`. `proxy.ts` and `lib/supabase/middleware.ts:9` also bypass auth gates when this is on. **Never set in production.** |
+| `MOCK_TRENDS` | dev only | Set to `'true'` to short-circuit Supabase reads with the in-memory fixtures at `lib/dev/mock-data.ts:4`. `proxy.ts` and `lib/supabase/middleware.ts:9` also bypass auth gates when this is on. Zod schema accepts only `'true'` or `'false'`. **Never set in production.** |
 | `RUN_VISUAL_BASELINE` | test only | `cross-env RUN_VISUAL_BASELINE=true` opts into the 4 visual-baseline Playwright projects at `playwright.config.ts:11`. |
 | `VISUAL_OUTPUT_DIR` | test only | Output directory for visual baseline PNGs at `e2e/visual-baseline.spec.ts:12` (default `baseline`). |
 | `CI` | CI only | Playwright sets `forbidOnly`, retries, single worker, github reporter when present at `playwright.config.ts:16-19`. |
 
----
-
-## Known schema gaps
-
-These vars are read at runtime but are **not** declared in `lib/env.ts` Zod schema, so a missing/typoed value will not throw at startup — it will fail at the call site instead. Fix during the next env-schema pass:
-
-| Var | Read at | Behaviour on missing |
-|---|---|---|
-| `SENTRY_AUTH_TOKEN` | `next.config.ts:23` | Source-map upload skipped silently. |
-| `SENTRY_ORG` | `next.config.ts:21` | Same. |
-| `SENTRY_PROJECT` | `next.config.ts:22` | Same. |
-| `VAPID_SUBJECT` | `lib/push/send.ts:15` | Falls back to `mailto:noreply@example.com`. |
-| `RESEND_FROM_EMAIL` | `lib/email/send.ts:32` | Throws on first email send. |
-| `TIKTOK_CREATIVE_CENTER_KEY` | `lib/trends/sources/tiktok.ts:14` | Source returns `[]`. |
-| `INSTAGRAM_SESSION_COOKIE` | `lib/trends/sources/instagram.ts:12` | Source returns `[]`. |
-| `REDDIT_USER_AGENT` | `lib/trends/sources/reddit.ts:41` | Falls back to `TrendImageGenerator/0.1`. |
-| `MOCK_TRENDS` | `lib/dev/mock-data.ts:18` | Treats only `'true'` as enabled. |
