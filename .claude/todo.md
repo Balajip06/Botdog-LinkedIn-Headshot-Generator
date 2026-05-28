@@ -215,12 +215,21 @@ External prerequisites (run in parallel where possible):
 
 ## Phase 5 — Payments (when traction visible)
 
-- [ ] Stripe Checkout credit packs ($4.99=50, $14.99=200, $39.99=600 — final)
-- [ ] Webhook idempotency via `webhook_events.event_id`
-- [ ] `checkout.session.completed` → credit grant
-- [ ] Support refund flow (manual credit grant via admin route)
-- [ ] Daily margin dashboard from `generations.cost_usd` vs revenue
-- [ ] Gemini billing alerts (2 tiers)
+**Phase 5 prep complete (no creds needed):**
+- [x] `lib/payments/packs.ts` + test — `CREDIT_PACKS` catalog ($4.99=50 small, $14.99=200 medium, $39.99=600 large), `findPack`, `isPackId`, `requirePackPriceId` (throws on missing env)
+- [x] `lib/payments/credits.ts` — `grantCredits(supabase, {userId, amount, source, sourceRef})` wrapping the SQL function via `supabase.rpc`
+- [x] `supabase/migrations/20260528000001_grant_credits.sql` — `SECURITY DEFINER grant_credits(uuid, int, text, text)`: validates amount>0, skips soft-deleted profiles, writes `admin_audit_log` row; execute granted only to `service_role`
+- [x] `app/api/stripe/checkout/route.ts` — authed Node route; `Stripe.checkout.sessions.create` with `client_reference_id` + metadata `{user_id, pack_id, credits}` (portable across test/prod price ids)
+- [x] `app/api/stripe/webhook/route.ts` — full dispatcher: idempotency gate via `webhook_events` insert (duplicate-key short-circuit), `handleEvent` switch, `handleCheckoutCompleted` extracts metadata + calls `grantCredits`, `processed_at` stamped on success, throw→500→Stripe retry
+- [x] `.env.local.example` + `lib/env.ts` — `STRIPE_PRICE_ID_SMALL/MEDIUM/LARGE` slots
+
+**Phase 5 implementation (blocked on Stripe account):**
+- [ ] Create 3 Stripe products + recurring=false prices in test mode, paste IDs into `.env.local`
+- [ ] Configure Stripe webhook → `/api/stripe/webhook` w/ signing secret in `STRIPE_WEBHOOK_SECRET`
+- [ ] Settings/checkout UI surface (button on `/me/settings` → POST `/api/stripe/checkout` → window.location = checkout_url)
+- [ ] Support refund flow — manual credit grant admin route (depends on Phase 2 admin CRUD)
+- [ ] Daily margin dashboard — query `SUM(generations.cost_usd)` vs `SUM(payments)` (post-launch)
+- [ ] Gemini billing alerts (2 tiers — set in Google Cloud Console)
 - [ ] Verification: duplicate webhook → 1 grant only; refund flow works
 
 ---

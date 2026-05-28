@@ -14,6 +14,39 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 5 prep: credit packs + Stripe checkout + webhook grant dispatcher + grant_credits SQL fn
+
+**Done:**
+- `supabase/migrations/20260528000001_grant_credits.sql` — SECURITY DEFINER `grant_credits(uuid, int, text, text)`. Validates amount > 0, increments `profiles.credits_balance` (skips deleted), writes `admin_audit_log` row with `{ source, source_ref }` (so refunds + manual grants leave a trail). Execute privilege restricted to `service_role` — public users cannot call.
+- `lib/payments/packs.ts` + test (12 cases) — `CREDIT_PACKS` constant array of three `CreditPack` interfaces matching amended plan §"Pricing" R6: small=$4.99/50, medium=$14.99/200, large=$39.99/600. Volume-discount invariant tested. `findPack(id)` lookup, `isPackId` type guard, `requirePackPriceId(pack)` resolves `STRIPE_PRICE_ID_*` from env and throws when missing so misconfigured deploys fail loudly at first checkout.
+- `lib/payments/credits.ts` — `grantCredits(supabase, { userId, amount, source, sourceRef })` wraps `supabase.rpc('grant_credits', …)`. Idempotency note in docstring: enforcement lives in `webhook_events.event_id` unique constraint, not in this fn.
+- `app/api/stripe/checkout/route.ts` — Node runtime authed POST: Zod-validates `pack_id`, creates `Stripe.checkout.sessions` with `client_reference_id=user.id` + metadata `{ user_id, pack_id, credits }`. Metadata is the join key the webhook uses to grant — keeps logic portable across test/staging/prod (price ids differ per env). Success URL → `/me/creations?purchase=success&pack=…`, cancel URL → `/me/settings?purchase=cancelled`.
+- `app/api/stripe/webhook/route.ts` — rewrote the Phase 1 stub into the full dispatcher:
+  1. `webhook_events` insert (idempotency gate) — duplicate-key returns `{received: true, duplicate: true}` 200
+  2. `handleEvent(event)` switch on `event.type`
+  3. `handleCheckoutCompleted(session, eventId)` extracts metadata, calls `grantCredits` with `source='stripe'` and `sourceRef=event.id`
+  4. After success, stamp `webhook_events.processed_at = now()`
+  5. Handler throw → 500 so Stripe retries (event_id stays in DB; same event_id replay will short-circuit on the duplicate-key path, so retries are safe)
+- `.env.local.example` + `lib/env.ts` — `STRIPE_PRICE_ID_SMALL`, `STRIPE_PRICE_ID_MEDIUM`, `STRIPE_PRICE_ID_LARGE` slots (optional in Zod schema during dev)
+
+**Verification:**
+- `pnpm typecheck` clean
+- `pnpm test`: 63/63 across 10 suites (+9 cases this turn — packs)
+- `pnpm build` clean — **15 routes** total (added `/api/stripe/checkout`)
+
+**Commits this session:**
+- `ef3922e` feat: phase 5 prep - credit packs, checkout session, webhook grant dispatcher, grant_credits sql fn
+
+**Phase 5 implementation (blocked on Stripe account):**
+- Create 3 Stripe products + one-time prices in test mode, paste IDs into `.env.local`
+- Configure Stripe webhook → `/api/stripe/webhook` + signing secret in env
+- Settings/checkout UI surface — button on `/me/settings` POSTs to `/api/stripe/checkout` + redirects to returned `checkout_url`
+- Support refund flow — depends on Phase 2 admin CRUD
+- Daily margin dashboard, Gemini billing alerts (post-launch)
+- Verification: duplicate webhook → 1 grant only; refund flow works
+
+---
+
 ## 2026-05-28 — Phase 4 prep: virality primitives, watermark composer, history + settings, download route
 
 **Done:**
