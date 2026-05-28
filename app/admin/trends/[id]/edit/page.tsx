@@ -71,12 +71,20 @@ export default async function EditTrendPage({ params, searchParams }: EditTrendP
             {trend.is_active ? 'live' : 'draft'}
           </p>
         </div>
-        <Link
-          href="/admin/trends"
-          className="text-sm text-zinc-500 underline-offset-2 hover:underline"
-        >
-          ← Back
-        </Link>
+        <div className="flex items-center gap-4 text-sm">
+          <Link
+            href={`/admin/trends/${trend.id}/eval`}
+            className="rounded-md border border-zinc-300 px-3 py-1.5 text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            Eval →
+          </Link>
+          <Link
+            href="/admin/trends"
+            className="text-zinc-500 underline-offset-2 hover:underline"
+          >
+            ← Back
+          </Link>
+        </div>
       </header>
 
       <TrendForm
