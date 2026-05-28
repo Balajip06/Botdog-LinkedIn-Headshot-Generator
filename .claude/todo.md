@@ -135,12 +135,14 @@ External prerequisites (run in parallel where possible):
 - [x] `prompt_template_history` — DB trigger appends on edit (migration 0002); revert UI deferred (admin can copy from `prompt_template_history` jsonb manually)
 - [x] Activate button disabled in UI when `eval_status !== 'passed'` (mirrors DB constraint)
 - [ ] `SchemaBuilder` dnd-kit drag-and-drop UI — JSON textarea adequate for solo/small-team admin; defer until non-engineer admins
-- [ ] Eval workflow
-  - [ ] Upload eval reference photos to `trend_eval_inputs` (admin-side)
-  - [ ] "Test trend" button runs prompt × all eval inputs in parallel (8 concurrent)
-  - [ ] Eval grid UI shows outputs
-  - [ ] Admin marks pass/fail → `eval_status` updated
+- [x] Eval workflow — `/admin/trends/[id]/eval` shipped:
+  - [x] Add reference photo via URL (label + image_url + optional demographic_tag) → `trend_eval_inputs`
+  - [x] Remove reference photo
+  - [x] "Test now" button runs `generateImage` × all inputs in parallel via `Promise.allSettled`, uploads outputs to `outputs/eval/<trend_id>/<run_id>.png`, records `trend_eval_runs`. Mock-mode works without `GEMINI_API_KEY`.
+  - [x] Eval grid UI: input vs output side-by-side, per-row Pass/Fail buttons writing `admin_rating`
+  - [x] Overall "Mark passed" / "Mark failed" buttons gated by all rows rated; Pass disabled if any row marked fail. Writes `trends.eval_status`.
   - [x] Re-run triggered on `prompt_template` or `model` change — DB trigger forces `eval_status='untested'` + `is_active=false` (migration 0002)
+  - [ ] Text-field placeholder substitution in eval (currently skipped — trends with required text fields fall through; richer flow out of scope v1)
 - [x] Public home grid lists `is_active=true` trends — `app/(public)/page.tsx` shipped
 - [x] Wire SchemaForm into `/trend/[slug]/page.tsx` — `TrendUpload` client component shipped
 - [ ] Sample gallery placeholder under trend page (Phase 4 if public-gallery opt-in lands)
