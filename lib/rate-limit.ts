@@ -38,8 +38,5 @@ export const generationIpLimiter = createLimiter('rl:gen:ip', 20, '1 h')
 // 5 anonymous attempts / day / fingerprint — extra guard beyond DB unique
 export const anonymousFingerprintLimiter = createLimiter('rl:anon:fp', 5, '1 d')
 
-// 10 signup attempts / hour / IP — block credential stuffing
-export const signupIpLimiter = createLimiter('rl:signup:ip', 10, '1 h')
-
 // 5 GDPR exports / hour / user — bounds Storage signed-URL bursts + analytics
 export const exportUserLimiter = createLimiter('rl:export:user', 5, '1 h')

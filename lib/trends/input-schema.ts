@@ -52,9 +52,6 @@ export const TrendFieldSchema = z.discriminatedUnion('type', [
   SelectFieldSchema,
 ])
 export type TrendField = z.infer<typeof TrendFieldSchema>
-export type ImageField = z.infer<typeof ImageFieldSchema>
-export type TextField = z.infer<typeof TextFieldSchema>
-export type SelectField = z.infer<typeof SelectFieldSchema>
 
 export const TrendInputSchema = z
   .object({

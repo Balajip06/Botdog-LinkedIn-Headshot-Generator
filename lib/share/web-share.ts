@@ -79,10 +79,6 @@ export function buildWhatsappShareUrl(text: string, url: string): string {
   return `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`
 }
 
-/** IG + TikTok don't have shareable web intents — best UX is web-share-files. */
-export const INSTAGRAM_DEEP_LINK = 'instagram://camera'
-export const TIKTOK_DEEP_LINK = 'snssdk1233://'
-
 export async function copyToClipboard(text: string): Promise<ShareResult> {
   try {
     if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
