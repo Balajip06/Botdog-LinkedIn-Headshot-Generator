@@ -2,6 +2,51 @@
 
 Append at end of each session. Newest on top.
 
+## 2026-05-28 — UI/UX redesign: TikTok-native overhaul of consumer flow
+
+**Done (4 phases, 4 commits on master):**
+
+- **Phase A (`ac6711b`)** — MOCK_TRENDS=true dev flag short-circuits repository + authed-area gates with in-memory fixtures (5 trends, 4 generations, mock user/profile). Playwright config gains 4 opt-in visual projects (desktop/mobile × light/dark) gated on `RUN_VISUAL_BASELINE=true`. `e2e/visual-baseline.spec.ts` shoots 10 routes per project = 40 PNGs to `e2e/screenshots/baseline/`. CI default skips visual projects.
+
+- **Phase B (`ac0549f`)** — Token system in `app/globals.css`: oklch surfaces (warm off-white / deep violet ink), hot-pink primary, electric-cyan secondary, brand gradient (pink → orange → gold), radius scale, motion vars + 5 keyframe utilities + reduced-motion guard. shadcn init (`components.json`, alias utils → `@/lib/utils/cn`) + 14 primitives via `shadcn add` (button, card, input, label, select, skeleton, badge, dialog, sonner, separator, accordion, tabs, switch, progress). Brand layer: `Logo` (gradient glyph + Trendly wordmark), `GradientButton` (full-bleed CTA), `ThemeProvider` + `ThemeToggle` (next-themes, mount-safe). Root layout wraps children in ThemeProvider, mounts `<Toaster richColors />`.
+
+- **Phase C (`a489c9e`)** — All 6 consumer surfaces + 3 shells rewritten composing the new primitives:
+  - **Public shell**: sticky blurred header, brand logo, footer
+  - **App shell**: sticky header + theme toggle + nav
+  - **Auth shell**: gradient-spotlight backdrop + glassmorph card
+  - **Home**: gradient headline w/ word-clip, featured trend hero card, 3-up masonry, "3 taps" how-it-works strip, staggered fade-up animation
+  - **Trend page**: image-forward hero w/ Trending/aspect/model badges, 2-col layout, accordion FAQ via shadcn
+  - **Upload form**: native HTML5 drag-drop, preview chips w/ X-remove + createObjectURL cleanup, "Add more" tile, shadcn Input/Label/Select, sonner toast for validation errors
+  - **Result page**: status-aware headline, ResultCanvas component w/ pop-in scale + halo glow for completed / shimmer overlay for processing / branded "quota refunded" panel for failed, ShareBurst card w/ 5-tile gradient + outline mix
+  - **Login**: gradient "Welcome in" headline, glassmorph card, real Google glyph, magic-link via shadcn Input + GradientButton, sonner errors
+  - **Creations**: gradient-clipped headline, status badge overlay per card, empty state w/ gradient icon
+  - **Settings**: 3 circular SVG quota meters (CSS conic-gradient via stroke-dasharray), "Most popular" gradient badge on medium pack, ReferralCopyButton client component w/ sonner toast, destructive button on danger zone
+
+- **Phase D (`7819e2f`)** — Re-shoot redesign baseline (40/40 passing) into `e2e/screenshots/redesign/` via `VISUAL_OUTPUT_DIR=redesign`. Two bug fixes caught during verification:
+  1. **GradientButton bg invisible**: Lightning CSS / tailwind-merge collapsed `.bg-gradient-hero` in some contexts. Fix: split into a dedicated `.brand-grad` utility class + companion `.brand-glow` (no `bg-*` / `shadow-*` prefix → no twMerge group conflict).
+  2. **ShareBurst SSR hydration mismatch**: `window.location.origin` is undefined on server → different href attributes between SSR + CSR. Fix: use `process.env.NEXT_PUBLIC_SITE_URL` which is identical on both.
+- `e2e/a11y.spec.ts` w/ `@axe-core/playwright`: scans 6 consumer routes, fails on critical violations. **Zero critical** across all 6.
+- `e2e/happy-path.spec.ts`: navigation smoke walking home → trend → login → creations → settings → result-completed → result-processing.
+- `e2e/home.spec.ts` updated for new copy.
+
+**Verification (all green):**
+- `pnpm typecheck` clean
+- `pnpm test` 78/78 across 12 suites
+- `pnpm build` clean — 25 routes
+- `pnpm exec playwright test e2e/home.spec.ts e2e/a11y.spec.ts e2e/happy-path.spec.ts --project=chromium` 9/9
+- `RUN_VISUAL_BASELINE=true VISUAL_OUTPUT_DIR=redesign pnpm exec playwright test e2e/visual-baseline.spec.ts` 40/40
+
+**Stale items / known issues / next-session entry points:**
+- Pre-existing lint errors in `ResultView` (set-state-in-effect for `pushHint`) + admin/trends/new (unescaped apostrophes) + 2 unused `_options` in trend source stubs. Not introduced by this redesign — flagged for a separate cleanup pass.
+- Hydration warning in dev console from `next-themes` initial class flip — expected (suppressHydrationWarning on `<html>` is in place).
+- `MOCK_TRENDS=true` is still set in `.env.local`. Flip to `false` (or remove) when wiring real Supabase + auth flows. Never set in production — proxy.ts + repository.ts both bypass critical auth/data paths when true.
+- Phase 4 PostHog events still wired to old class-named surfaces; check that `EVENTS.UPLOAD_STARTED` etc. still fire after the schema-form rewrite (sample manually once real Supabase + Gemini are live).
+- shadcn primitives are ejected into `components/ui/` — regenerable via `shadcn add` but customizing means hand-editing those files.
+
+**New deps (devDeps):** `cross-env@^10`, `@axe-core/playwright@^4.11`. Runtime adds: 345 transitive packages via shadcn (radix-ui-*, sonner, etc.).
+
+---
+
 ## 2026-05-28 — Phase 3 impl: push notifications + email fallback wired end-to-end
 
 **Done:**

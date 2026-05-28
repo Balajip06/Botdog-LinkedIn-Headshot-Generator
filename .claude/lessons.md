@@ -68,6 +68,22 @@ Format:
 
 ---
 
+## 2026-05-28 — `bg-gradient-*` custom utility names collide with tailwind-merge group
+
+**Trigger:** `GradientButton` had `bg-gradient-hero shadow-glow-pink` applied via `cn()` (twMerge). Class string contained both correctly on the DOM, but `getComputedStyle().backgroundImage === 'none'` — Lightning CSS / Tailwind v4 had emitted the `.bg-gradient-hero` rule but the runtime selector match dropped it in some contexts (likely a comma-list selector splitting bug + the `bg-gradient-*` prefix matching tailwind-merge's gradient-direction group key).
+**Lesson:** When defining brand-color/brand-bg/brand-shadow custom utilities in `@layer utilities`, do NOT name them with a `bg-*`/`shadow-*`/`text-*` prefix that aliases a known Tailwind utility family. Use a brand prefix (`.brand-grad`, `.brand-glow`, `.brand-ring`) so twMerge passes them through as unknown classes and Lightning CSS can't accidentally dedupe them.
+**Apply when:** Adding any custom @layer utility class that overlaps a Tailwind family name. Verify with `getComputedStyle(el).backgroundImage` in Playwright if a brand bg appears missing.
+
+---
+
+## 2026-05-28 — `window.location.origin` in client components causes SSR hydration mismatch
+
+**Trigger:** `ResultView.ShareBurst` computed `siteUrl = window.location.origin + ...` at render time. Server-side `window` is undefined so the SSR'd `<a href>` differed from the hydrated client `<a href>`, producing a React hydration error in dev (`Text content does not match server-rendered HTML`).
+**Lesson:** For URLs needed during render in a client component that is also SSR'd, derive from `process.env.NEXT_PUBLIC_SITE_URL` (resolved identically on both sides) rather than `window.location`. Only reach for `window` inside `useEffect` (after mount) or behind a mounted-flag.
+**Apply when:** Any client component reads `window.location.*` or `document.*` at render time. Replace with NEXT_PUBLIC_* env or move into useEffect.
+
+---
+
 ## 2026-05-28 — Edge Function code lives outside tsc include
 
 **Trigger:** Adding `supabase/functions/generate-image/index.ts` (Deno runtime, URL imports, `Deno` globals) broke `pnpm typecheck` because `tsconfig.json`'s `**/*.ts` include grabbed it.
