@@ -265,9 +265,10 @@ External prerequisites (run in parallel where possible):
 - [ ] Real TikTok fetcher (TikTok Creative Center API + business account)
 - [ ] Real Instagram fetcher (Playwright + rotating proxies — grey area)
 - [ ] Real Gemini-Flash proposer (structured JSON output mirroring `TrendInputSchema`)
-- [ ] Approve / Reject server actions in `app/admin/suggestions/page.tsx`
-  - [ ] Approve → drafts a `trends` row from the proposal, marks suggestion `approved`, links by id, redirects to `/admin/trends/<new_id>/edit`
-  - [ ] Reject → marks `rejected` + archives
+- [x] Approve / Reject server actions in `app/admin/suggestions/page.tsx`
+  - [x] Approve → drafts `trends` row from `payload.proposal` (slug+title+desc+prompt+model+input_schema, is_active=false, created_by=admin), markReviewed approved, redirect to `/admin/trends/<new_id>/edit?created=1`. Duplicate-slug → friendly error flash.
+  - [x] Reject → markReviewed rejected + revalidate inbox + ?rejected=1 banner
+  - [x] User suggestions can be rejected; Approve disabled with hover-title (admin creates trend manually)
 - [ ] Supabase pg_cron daily job calling `runTrendDetector` via a Postgres function or webhook
 - [ ] Manual "Scan for trends" admin button → POST endpoint → orchestrator
 
