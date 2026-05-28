@@ -14,6 +14,34 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 3 prep: Gemini client + idempotency + image util + push/email + /api/generate skeleton
+
+**Done:**
+- `lib/gemini/cost.ts` + test (5 cases) — per-output USD cost map (nano-banana 0.0039, nano-banana-pro 0.024); `isAnonymousBudgetExceeded(spent, cap)` (used by anonymous-trial path)
+- `lib/gemini/client.ts` — `generateImage(args)` single entry point; **mock mode** when `GEMINI_API_KEY` missing returns deterministic PNG-header stub so the rest of the pipeline can be exercised in unit + dev environments without burning a real Gemini call; production mode uses `fetch` (Node + Edge compatible) with 90s `AbortController` timeout, all 4 safetySettings (sexual/harassment/hate/dangerous) at `BLOCK_MEDIUM_AND_ABOVE`; failure taxonomy `safety` | `timeout` | `transient` | `invalid`; Node+Edge base64 codec via `Buffer` with `atob/btoa` fallback
+- `lib/idempotency.ts` + test (9 cases) — `generateIdempotencyKey` returns 32-char hex (UUID dashes stripped); `parseIdempotencyKey` enforces 16-128 char `[A-Za-z0-9_-]`, trims whitespace; rejects missing / too-short / too-long / bad-chars
+- `lib/utils/image.ts` + test (5 cases) — `prepareImageForUpload(File)` client-side pipeline: HEIC/HEIF detected by MIME or filename extension → `heic2any` dynamic-import (keeps the HEIC bundle out of initial JS) → `createImageBitmap` → `OffscreenCanvas` `convertToBlob('image/jpeg', 0.9)`; `scaleToFit(w, h, max)` exported for testing
+- `lib/push/send.ts` — `sendPush(subscription, payload)`; lazy VAPID config on first call (throws clear error if `VAPID_PRIVATE_KEY` / `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing); 404/410 returned by browser push services classified as `expired` so caller can null out `profiles.push_subscription`
+- `lib/email/send.ts` — `sendEmail` Resend wrapper + `buildResultReadyEmail` template; HTML-escapes trend title to prevent injection from admin-controlled trend names
+- `app/api/generate/route.ts` — `export const runtime = 'nodejs'`; flow: `parseIdempotencyKey` → `generationIpLimiter.limit` (no-op when Upstash creds absent — see `lib/rate-limit.ts`) → `supabase.auth.getUser` (401 if not signed in) → Zod body validation → `getActiveTrendBySlug` (RLS-filtered, only active + not expired) → `TrendInputSchema.safeParse(trend.input_schema)` defence-in-depth → `interpolatePrompt` + `collectImageInputs` on values → `supabase.from('generations').insert` (DB trigger consumes quota; `quota exhausted` exception maps to HTTP 402; duplicate-key error path fetches existing row by `(user_id, idempotency_key)` and returns `{ generation_id, replayed: true }`)
+- `public/sw.js` — service worker `push` event handler builds notification from `{ title, body, url, icon, tag }`; `notificationclick` focuses existing matching client or opens new window via `clients.openWindow`
+
+**Test totals:** 6 suites / 36 cases / 0 failures. `pnpm typecheck` clean.
+
+**Commits:** `974d15b` feat: phase 3 prep - gemini client, idempotency, image util, push/email, /api/generate skeleton
+
+**Phase 3 implementation (blocked):**
+- Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` (client split + Supabase Storage upload + POST + Realtime + result-page nav)
+- `supabase/functions/generate-image/index.ts` Deno Edge Function (DB webhook trigger → `generateImage` → Storage upload → row update → push/email)
+- `app/(app)/result/[id]/page.tsx` Realtime + retry button + loading/completed/failed states
+- Push permission UX (after first completion, not on signup)
+- Wire push send from Edge Function on completion via `lib/push/send.ts`
+- Email fallback via `buildResultReadyEmail`
+
+**Blocking external resources:** Supabase project (Docker local or remote), Gemini API key, Resend domain verified, Upstash Redis (optional — rate-limit otherwise no-ops), full VAPID env wired
+
+---
+
 ## 2026-05-27 — Phase 2 prep: input schema, interpolation, SEO, SSR trend page
 
 **Done:**

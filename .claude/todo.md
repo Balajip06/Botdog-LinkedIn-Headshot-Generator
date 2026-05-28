@@ -149,35 +149,39 @@ External prerequisites (run in parallel where possible):
 
 ## Phase 3 — Core Generation (4–5 days)
 
-- [ ] `SchemaForm` component renders dynamically from `trends.input_schema`
-- [ ] Client-side: heic2any → JPEG, resize ≤ 2048px, Zod validate
-- [ ] Multi-image upload to Supabase Storage (signed URLs)
-- [ ] `/api/generate`:
-  - [ ] Accepts `Idempotency-Key` header
-  - [ ] RLS quota check (DB-enforced)
-  - [ ] Inserts `generations` row (status=`pending`)
-  - [ ] Per-IP rate limit (Upstash or in-memory LRU) — 20/hr
-  - [ ] Returns `generation_id` for Realtime subscribe
-- [ ] Edge Function `generate-image`:
-  - [ ] Triggered by DB webhook on `generations` insert
-  - [ ] 110s soft wall-time cap; 90s Gemini timeout
-  - [ ] Gemini call w/ template interpolation + safetySettings
-  - [ ] Record `cost_usd`
-  - [ ] On success: upload result to Storage, update row to `completed`
-  - [ ] On Gemini moderation reject: status=`failed`, refund quota, friendly message
+**Phase 3 prep complete (no creds needed):**
+- [x] `SchemaForm` renders any TrendInput (shipped Phase 2 prep)
+- [x] `lib/utils/image.ts` — HEIC/HEIF detect → heic2any dynamic-import → JPEG; createImageBitmap + OffscreenCanvas resize to longest-side ≤ 2048; quality 0.9
+- [x] `lib/idempotency.ts` — `generateIdempotencyKey` + `parseIdempotencyKey` w/ 16-128 char [A-Za-z0-9_-] grammar (9 test cases)
+- [x] `lib/gemini/cost.ts` — per-output USD map (nano-banana 0.0039, nano-banana-pro 0.024) + anonymous budget guard
+- [x] `lib/gemini/client.ts` — `generateImage` with mock-mode fallback (no key), 90s AbortController timeout, all 4 safetySettings at MEDIUM, taxonomy: safety / timeout / transient / invalid; base64 codec works in Node + Edge runtimes
+- [x] `lib/push/send.ts` — `sendPush` with lazy VAPID configure, classifies 404/410 as expired
+- [x] `lib/email/send.ts` — Resend wrapper + `buildResultReadyEmail` template (html-escapes user content)
+- [x] `app/api/generate/route.ts` — Node runtime: idempotency parse → rate-limit per IP → auth gate → Zod body → trend lookup → input_schema re-validate → `interpolatePrompt` + `collectImageInputs` → insert generations row (quota trigger) → duplicate-key replay returns `{ generation_id, replayed: true }` → quota-exhausted maps HTTP 402
+- [x] `public/sw.js` — push event → showNotification; notificationclick → focus existing client or open window
+
+**Phase 3 implementation (blocked on Supabase running + Gemini key + Resend domain):**
+- [ ] Wire `SchemaForm` into `app/(public)/trend/[slug]/page.tsx` (client component split + `/api/generate` POST + Realtime subscribe + result-page navigation)
+- [ ] Multi-image upload to Supabase Storage with signed URLs (uses `prepareImageForUpload` then `supabase.storage.from('uploads').upload(...)`)
+- [ ] Edge Function `supabase/functions/generate-image/index.ts`:
+  - [ ] Deno handler triggered by DB webhook on `generations` insert
+  - [ ] 110s soft wall-time cap; 90s Gemini timeout (lib/gemini/client.ts portable to Deno via fetch)
+  - [ ] Record `cost_usd` from `costForOutput`
+  - [ ] On success: upload result PNG to Storage, update row to `completed`
+  - [ ] On Gemini moderation reject: status=`failed`, refund-trigger fires automatically
   - [ ] On transient error: status=`failed_retryable`, `attempts++`
-  - [ ] After 3 attempts: terminal `failed`, refund quota
+  - [ ] After 3 attempts: terminal `failed`, refund-trigger fires
 - [ ] Result page `/result/[id]`:
-  - [ ] Realtime subscription
-  - [ ] Retry button (re-uses idempotency key, no quota rededuct)
+  - [ ] Realtime subscription to `generations` row
+  - [ ] Retry button reuses idempotency key (no quota rededuct via duplicate-key replay path)
   - [ ] Loading + completed + failed states
-- [ ] Web Push:
-  - [ ] VAPID env-stored
-  - [ ] Service worker registered silent on first visit
+- [ ] Web Push wiring:
+  - [ ] VAPID env-stored ✅ template exists in `.env.local.example`
+  - [ ] Service worker registration in `app/(app)/layout.tsx` client effect ✅ `/sw.js` exists
   - [ ] Permission asked AFTER first successful generation completes
   - [ ] iOS Safari detect → "Add to Home Screen" hint
-  - [ ] Push send from Edge Function on completion
-- [ ] Email fallback via Resend if no push subscription
+  - [ ] Push send from Edge Function on completion via `lib/push/send.ts`
+- [ ] Email fallback via `buildResultReadyEmail` when push subscription null or expired
 - [ ] Verification: idempotency replay (1 row, 1 call), retry path, refund on fail, push fires <1s, email fallback <30s
 
 ---
