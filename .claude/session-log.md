@@ -14,6 +14,49 @@ Format:
 
 ---
 
+## 2026-05-28 — Phase 1 working model closed; remote push deferred
+
+**Done:**
+- `app/api/generate-anonymous/route.ts` — anonymous-trial endpoint. Idempotency-Key parse → Zod body (trend_slug + values + turnstile_token + 64-hex fingerprint_hash) → Cloudflare Turnstile siteverify (passthrough when `TURNSTILE_SECRET_KEY` absent) → `anonymousFingerprintLimiter` sliding window (5/day per fingerprint) → daily abuse-budget guard (sum 24h `cost_usd` vs `ANONYMOUS_DAILY_BUDGET_USD`, 503 on breach) → trend lookup → schema re-validation + interpolate/collectImageInputs → SHA-256 IP hash → insert via service-role into `anonymous_attempts` → 409 on lifetime-replay (UNIQUE fingerprint_hash+ip_hash)
+- `supabase/seed.sql` — local-dev seed: promotes `admin@example.com` to admin_users (no-op if absent) + 1 sample trend (`ghibli-portrait`, `eval_status='passed'`, `is_active=true`, full FAQ, schema-compatible input_schema). Lets `pnpm supabase db reset` produce a clickable home page.
+- `README.md` — appended Phase 1 verification runbook (10 manual checks matching DB triggers + constraints): RLS quota block + decrement, idempotency replay, admin gate, Stripe webhook dedup, anonymous-trial 2nd-attempt 409, abuse-budget 503, eval gate constraint, soft-delete RLS filter, pg_cron job list. Plus plan/state docs table.
+
+**Verification gates green (no creds needed):**
+- `pnpm typecheck` clean
+- `pnpm lint` clean
+- `pnpm test` 36/36 across 6 suites (cn, interpolate, json-ld, idempotency, image, gemini cost)
+- `pnpm build` clean — 10 routes: `/`, `/_not-found`, `/api/generate`, `/api/generate-anonymous`, `/api/stripe/webhook`, `/auth/callback`, `/login`, `/robots.txt`, `/sitemap.xml`, `/trend/[slug]` (+ opengraph-image), with Proxy middleware
+
+**Commits this session:**
+- `3bbe1c1` feat: phase 1 working model - anonymous trial route, seed sql, README verification runbook
+
+**Total project commits:** 11 (including scaffold's `3a800b1` initial commit). Branch `master`, no remote — local only.
+
+**Pre-push safety scan (passed):**
+- gh CLI 2.92 available
+- No tracked `.env*` files (only `.env.local.example` w/ empty placeholders)
+- No tracked sentry build artifacts
+- No secret patterns in tree
+
+**Remote push:** user opted to defer. When ready: GitHub private via `gh repo create trend-image-generator --private --source=. --remote=origin --push` after `git branch -M main`.
+
+**Blocked external resources (require user-side action to advance beyond working-model):**
+- Supabase project (Docker local OR remote project link) → apply migrations + generate strict types
+- Gemini API key → replace `lib/gemini/client.ts` mock-mode with real calls
+- Sentry DSN + auth token → run `pnpm dlx @sentry/wizard@latest -i nextjs`
+- PostHog project key → bootstrap provider
+- Stripe test-mode products → create credit packs, populate webhook events
+- Resend domain (SPF + DKIM + DMARC) verified
+- Cloudflare Turnstile site keys (localhost + production domain)
+- Upstash Redis URL + token (optional — rate-limit no-ops without)
+
+**Next session entry points:**
+- Once any of the above creds arrive: progress the matching Phase 1 sub-task to verification
+- Or: continue Phase 4 prep (watermark composer, Web Share helper, referral util, history page skeleton, PostHog event-name constants) — all unblocked
+- Or: write Edge Function `supabase/functions/generate-image/index.ts` Deno handler (compiles standalone, ships when Supabase is up)
+
+---
+
 ## 2026-05-28 — Phase 3 prep: Gemini client + idempotency + image util + push/email + /api/generate skeleton
 
 **Done:**
