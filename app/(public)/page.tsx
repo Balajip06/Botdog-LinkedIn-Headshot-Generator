@@ -55,10 +55,10 @@ export default async function HomePage() {
                 </GradientButton>
               )}
               <Link
-                href="#trends"
+                href="/anonymous/demo"
                 className="rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-muted"
               >
-                Browse all trends
+                Try one free, no signup →
               </Link>
             </div>
             <div className="flex items-center gap-6 pt-2 text-sm text-muted-foreground">

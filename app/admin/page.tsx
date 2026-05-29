@@ -1,6 +1,7 @@
-import { Archive, ArrowRight, Eye, Gift, Inbox, MousePointerClick, Sparkles, TrendingUp } from 'lucide-react'
+import { Archive, ArrowRight, Coins, DollarSign, Eye, Flame, Gift, Inbox, MousePointerClick, Sparkles, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { getOverall } from '@/lib/analytics/event-store'
+import { getMarginSummary } from '@/lib/analytics/margin'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -48,9 +49,15 @@ function ctrPct(impressions: number, clicks: number): string {
   return `${((clicks / impressions) * 100).toFixed(1)}%`
 }
 
+function formatUsd(n: number): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n)
+}
+
 export default async function AdminHome() {
   const counts = await loadCounts()
   const metrics = getOverall(counts.trendSlugs)
+  const supabase = await createClient()
+  const margin = await getMarginSummary(supabase)
 
   return (
     <section className="flex flex-col gap-8">
@@ -103,6 +110,48 @@ export default async function AdminHome() {
             label="Click-through"
             value={ctrPct(metrics.impressions, metrics.clicks)}
             hint="Clicks ÷ impressions"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            Margin · last 7d
+          </h2>
+          {margin.isMock && (
+            <Badge
+              variant="outline"
+              className="rounded-full border-amber-400/40 bg-amber-400/10 text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-300"
+            >
+              demo data
+            </Badge>
+          )}
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <MetricCard
+            icon={<DollarSign className="size-4" />}
+            label="Revenue"
+            value={formatUsd(margin.weekRevenueUsd)}
+            hint="Stripe completed"
+          />
+          <MetricCard
+            icon={<Flame className="size-4" />}
+            label="Spend"
+            value={formatUsd(margin.weekSpendUsd)}
+            hint={`${formatNumber(margin.weekGenerations)} gens · avg ${formatUsd(margin.avgCostUsd)}`}
+          />
+          <MetricCard
+            icon={<Coins className="size-4" />}
+            label="Margin"
+            value={`${margin.marginPct.toFixed(1)}%`}
+            hint={`Net ${formatUsd(margin.weekRevenueUsd - margin.weekSpendUsd)}`}
+          />
+          <MetricCard
+            icon={<Sparkles className="size-4" />}
+            label="Top spend"
+            value={margin.topTrendTitle ?? '—'}
+            hint={`${formatUsd(margin.topTrendSpendUsd)} this week`}
           />
         </div>
       </div>
