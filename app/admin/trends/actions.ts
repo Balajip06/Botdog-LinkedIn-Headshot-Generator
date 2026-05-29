@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import { TrendInputSchema } from '@/lib/trends/input-schema'
+import { DEFAULT_TREND_INPUT, TrendInputSchema } from '@/lib/trends/input-schema'
 import { createClient } from '@/lib/supabase/server'
 import type { Json } from '@/lib/supabase/database.types'
 
@@ -34,10 +34,17 @@ const TrendUpsertSchema = z.object({
   faq: z.unknown(),
 })
 
-function parseJsonField<T>(raw: string | null, schema: z.ZodSchema<T>, fieldName: string): T {
-  if (!raw || raw.trim() === '') {
-    return schema.parse(undefined)
-  }
+function parseJsonField<T>(
+  raw: string | null,
+  schema: z.ZodSchema<T>,
+  fieldName: string,
+  fallback: T,
+): T {
+  // Empty/whitespace form fields fall back to the supplied default — the
+  // schema itself isn't required to have a `.default()`, so this keeps the
+  // upstream Zod schemas (used elsewhere) unchanged while letting admin forms
+  // submit a blank FAQ etc.
+  if (!raw || raw.trim() === '') return fallback
   let parsed: unknown
   try {
     parsed = JSON.parse(raw)
@@ -61,8 +68,8 @@ function readTrendForm(formData: FormData): z.infer<typeof TrendUpsertSchema> {
   const inputSchemaRaw = (formData.get('input_schema') as string | null) ?? null
   const faqRaw = (formData.get('faq') as string | null) ?? null
 
-  const input_schema = parseJsonField(inputSchemaRaw, TrendInputSchema, 'input_schema')
-  const faq = parseJsonField(faqRaw, FAQSchema, 'faq')
+  const input_schema = parseJsonField(inputSchemaRaw, TrendInputSchema, 'input_schema', DEFAULT_TREND_INPUT)
+  const faq = parseJsonField(faqRaw, FAQSchema, 'faq', [])
 
   const parsed = TrendUpsertSchema.safeParse({
     slug: formData.get('slug'),

@@ -153,6 +153,29 @@ describe('createTrend', () => {
     expect(insertArgs?.created_by).toBe('admin-1')
     expect(insertArgs?.slug).toBe('cool-trend')
   })
+
+  // Regression: parseJsonField used to call schema.parse(undefined) when the
+  // form field was empty, which throws for schemas without a default. Empty
+  // FAQ now falls back to []; empty input_schema falls back to DEFAULT_TREND_INPUT.
+  it('falls back to [] when faq field is empty', async () => {
+    const fd = buildFormData({ faq: '' })
+    await expect(createTrend(fd)).rejects.toThrow(/NEXT_REDIRECT:/)
+    expect(lastRedirectUrl()).toBe('/admin/trends/new-trend-id/edit?created=1')
+    const calls = mockSupabase._queryBuilder.insert.mock.calls as unknown as Array<[{ faq: unknown }]>
+    expect(calls[0]?.[0]?.faq).toEqual([])
+  })
+
+  it('falls back to DEFAULT_TREND_INPUT when input_schema field is empty', async () => {
+    const fd = buildFormData({ input_schema: '' })
+    await expect(createTrend(fd)).rejects.toThrow(/NEXT_REDIRECT:/)
+    expect(lastRedirectUrl()).toBe('/admin/trends/new-trend-id/edit?created=1')
+    const calls = mockSupabase._queryBuilder.insert.mock.calls as unknown as Array<
+      [{ input_schema: { fields: Array<{ name: string; type: string }> } }]
+    >
+    const inserted = calls[0]?.[0]?.input_schema
+    expect(inserted?.fields?.[0]?.name).toBe('user_photo')
+    expect(inserted?.fields?.[0]?.type).toBe('image')
+  })
 })
 
 describe('updateTrend', () => {
