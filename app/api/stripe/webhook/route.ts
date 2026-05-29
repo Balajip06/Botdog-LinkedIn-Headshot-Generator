@@ -15,6 +15,18 @@ function getStripe(): Stripe {
   return new Stripe(key)
 }
 
+/**
+ * Narrow a Stripe.Event to the generated `Json` type for storage in the
+ * `webhook_events.payload` JSONB column. Stripe events are wire-format JSON
+ * coming off the SDK's `constructEvent` parser — every field is already a
+ * primitive, plain object, or array. The cast is required only because the
+ * SDK's recursive TypeScript type doesn't structurally match our `Json`
+ * helper; the runtime payload is provably Json-compatible.
+ */
+function stripeEventToJson(event: Stripe.Event): Json {
+  return event as unknown as Json
+}
+
 export async function POST(request: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   if (!webhookSecret) {
@@ -40,12 +52,10 @@ export async function POST(request: NextRequest) {
   const supabase = createServiceClient()
 
   // Idempotency gate: insert into webhook_events; UNIQUE (source, event_id) blocks duplicates.
-  // Stripe.Event is a complex SDK type whose recursive payload doesn't satisfy
-  // the generated `Json` type — JSONB column accepts it at runtime, so cast.
   const webhookRow = {
     source: 'stripe',
     event_id: event.id,
-    payload: event as unknown as Json,
+    payload: stripeEventToJson(event),
   }
 
   const { error: insertError } = await supabase.from('webhook_events').insert(webhookRow)

@@ -11,13 +11,13 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database, Json } from '@/lib/supabase/database.types'
+import type { Database } from '@/lib/supabase/database.types'
 import { instagramSource } from './sources/instagram'
 import { redditSource } from './sources/reddit'
 import { tiktokSource } from './sources/tiktok'
 import type { SourceFetcher, TrendCandidate } from './sources/types'
 import { getProposer, type Proposer } from './proposer'
-import type { AutoSuggestionPayload } from './suggestions/payload'
+import { suggestionPayloadToJson, type AutoSuggestionPayload } from './suggestions/payload'
 
 const DEFAULT_SOURCES: ReadonlyArray<SourceFetcher> = [redditSource, tiktokSource, instagramSource]
 
@@ -98,12 +98,9 @@ export async function runTrendDetector(
         candidate,
         proposal,
       }
-      // AutoSuggestionPayload is a Zod-typed discriminated union whose
-      // discriminator (`type: 'auto'`) doesn't satisfy the recursive `Json`
-      // helper without a cast. Runtime shape is JSON-compatible.
       const row = {
         source: 'auto' as const,
-        payload: payload as unknown as Json,
+        payload: suggestionPayloadToJson(payload),
         status: 'pending' as const,
       }
       const { error } = await supabase.from('trend_suggestions').insert(row)

@@ -7,6 +7,7 @@
  */
 
 import { z } from 'zod'
+import type { Json } from '@/lib/supabase/database.types'
 
 /** Field-name slug used as the `{{...}}` placeholder key in prompt_template. */
 const FieldNameSchema = z
@@ -79,6 +80,40 @@ export const TrendInputSchema = z
   })
 
 export type TrendInput = z.infer<typeof TrendInputSchema>
+
+/**
+ * FAQ entries on a trend (rendered into JSON-LD on the public trend page).
+ * Co-located with TrendInputSchema so the matching Json helper lives in one
+ * module per amended-plan §4 folder layout.
+ */
+export const FAQEntrySchema = z.object({
+  question: z.string().min(1).max(300),
+  answer: z.string().min(1).max(2000),
+})
+export const FAQSchema = z.array(FAQEntrySchema).max(20)
+export type FAQ = z.infer<typeof FAQSchema>
+
+/**
+ * Narrow a Zod-validated TrendInput to the generated `Json` type used by the
+ * Supabase Database types. The double cast is safe because TrendInputSchema
+ * only emits plain primitives, plain objects, and arrays — no functions,
+ * symbols, Dates, or circular references. If the schema ever picks up a
+ * non-Json member (e.g. a `Date` field on TrendField), this helper fails at
+ * compile time and forces the schema to be revisited before bad data reaches
+ * the JSONB column.
+ */
+export function trendInputToJson(input: TrendInput): Json {
+  return input as unknown as Json
+}
+
+/**
+ * Narrow a Zod-validated FAQ array to the generated `Json` type. Same runtime
+ * guarantee as `trendInputToJson` — `FAQSchema` only emits `{question, answer}`
+ * string pairs, so the structural shape is provably Json-compatible.
+ */
+export function faqToJson(faq: FAQ): Json {
+  return faq as unknown as Json
+}
 
 /**
  * Single-photo default — matches migration 0002's column default.

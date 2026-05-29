@@ -1,5 +1,12 @@
-import { describe, it, expectTypeOf } from 'vitest'
-import type { TablesInsert, TablesUpdate } from './database.types'
+import { describe, expect, it, expectTypeOf } from 'vitest'
+import type { Json, TablesInsert, TablesUpdate } from './database.types'
+import {
+  DEFAULT_TREND_INPUT,
+  faqToJson,
+  trendInputToJson,
+  type FAQ,
+} from '../trends/input-schema'
+import { suggestionPayloadToJson, type TrendSuggestionPayload } from '../trends/suggestions/payload'
 
 /**
  * Type-level smoke tests for generated Supabase Database types.
@@ -55,5 +62,26 @@ describe('Database types smoke', () => {
       .toEqualTypeOf<string>()
     expectTypeOf<TablesInsert<'admin_audit_log'>>().toHaveProperty('before')
     expectTypeOf<TablesInsert<'admin_audit_log'>>().toHaveProperty('after')
+  })
+
+  it('trendInputToJson / faqToJson / suggestionPayloadToJson return Json', () => {
+    // Compile-time: each helper's return type must satisfy Json.
+    expectTypeOf(trendInputToJson).returns.toEqualTypeOf<Json>()
+    expectTypeOf(faqToJson).returns.toEqualTypeOf<Json>()
+    expectTypeOf(suggestionPayloadToJson).returns.toEqualTypeOf<Json>()
+
+    // Runtime: helpers are no-op passthroughs — identity preserves the value.
+    const faq: FAQ = [{ question: 'q?', answer: 'a' }]
+    expect(trendInputToJson(DEFAULT_TREND_INPUT)).toBe(DEFAULT_TREND_INPUT)
+    expect(faqToJson(faq)).toBe(faq)
+
+    const payload: TrendSuggestionPayload = {
+      type: 'user',
+      submitted_by: '00000000-0000-4000-8000-000000000001',
+      title: 'sample',
+      description: 'desc',
+      example_urls: ['https://example.com/a.jpg'],
+    }
+    expect(suggestionPayloadToJson(payload)).toBe(payload)
   })
 })

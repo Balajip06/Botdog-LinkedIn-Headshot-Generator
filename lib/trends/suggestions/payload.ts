@@ -9,6 +9,7 @@
  */
 
 import { z } from 'zod'
+import type { Json } from '@/lib/supabase/database.types'
 import { TrendInputSchema } from '../input-schema'
 
 const SourceIdSchema = z.enum(['tiktok', 'instagram', 'reddit'])
@@ -60,3 +61,15 @@ export type TrendCandidatePayload = z.infer<typeof TrendCandidateSchema>
 export type AutoSuggestionPayload = z.infer<typeof AutoSuggestionPayloadSchema>
 export type UserSuggestionPayload = z.infer<typeof UserSuggestionPayloadSchema>
 export type TrendSuggestionPayload = z.infer<typeof TrendSuggestionPayloadSchema>
+
+/**
+ * Narrow a Zod-validated suggestion payload (auto or user variant) to the
+ * generated `Json` type. The discriminated union (`type: 'auto' | 'user'`)
+ * confuses the recursive `Json` helper, but every leaf field on both
+ * branches is a primitive, string array, URL string, or plain object — all
+ * Json-compatible at runtime. If the union ever grows a non-Json member,
+ * this helper fails at compile time.
+ */
+export function suggestionPayloadToJson(payload: TrendSuggestionPayload): Json {
+  return payload as unknown as Json
+}

@@ -3,15 +3,16 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import { DEFAULT_TREND_INPUT, TrendInputSchema } from '@/lib/trends/input-schema'
+import {
+  DEFAULT_TREND_INPUT,
+  FAQSchema,
+  TrendInputSchema,
+  faqToJson,
+  trendInputToJson,
+  type FAQ,
+  type TrendInput,
+} from '@/lib/trends/input-schema'
 import { createClient } from '@/lib/supabase/server'
-import type { Json } from '@/lib/supabase/database.types'
-
-const FAQEntrySchema = z.object({
-  question: z.string().min(1).max(300),
-  answer: z.string().min(1).max(2000),
-})
-const FAQSchema = z.array(FAQEntrySchema).max(20)
 
 const TrendUpsertSchema = z.object({
   slug: z
@@ -107,12 +108,12 @@ export async function createTrend(formData: FormData): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser()
   // input_schema and faq are validated via parseJsonField against Zod schemas
-  // (TrendInputSchema, FAQSchema). They're typed as `unknown` here but the
-  // generated `Json` type can't accept `unknown` without a cast.
+  // (TrendInputSchema, FAQSchema). They flow through TrendUpsertSchema as
+  // `unknown`, so narrow back through the typed helpers before insert.
   const insertRow = {
     ...data,
-    input_schema: data.input_schema as Json,
-    faq: data.faq as Json,
+    input_schema: trendInputToJson(data.input_schema as TrendInput),
+    faq: faqToJson(data.faq as FAQ),
     created_by: user?.id ?? null,
     is_active: false, // drafts start inactive; activation requires eval_status='passed'
   }
@@ -140,11 +141,12 @@ export async function updateTrend(id: string, formData: FormData): Promise<void>
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(msg)}`)
   }
 
-  // input_schema and faq are Zod-validated `unknown`; narrow to Json for the DB type.
+  // input_schema and faq are Zod-validated `unknown`; narrow back through the
+  // typed helpers (see input-schema.ts) before update.
   const update = {
     ...data,
-    input_schema: data.input_schema as Json,
-    faq: data.faq as Json,
+    input_schema: trendInputToJson(data.input_schema as TrendInput),
+    faq: faqToJson(data.faq as FAQ),
   }
   const { error } = await supabase.from('trends').update(update).eq('id', id)
   if (error) {
