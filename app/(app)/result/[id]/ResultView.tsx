@@ -1,12 +1,10 @@
 'use client'
 
-import { ArrowLeft, Copy, Download, ImageIcon, RefreshCw, Share2 } from 'lucide-react'
-import Image from 'next/image'
+import { ArrowLeft, Download, ImageIcon, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { GradientButton } from '@/components/brand/GradientButton'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { analytics, EVENTS } from '@/lib/analytics/client'
 import {
@@ -14,17 +12,10 @@ import {
   getPermissionState,
   isIosSafariNeedsInstall,
 } from '@/lib/push/client'
-import {
-  buildTwitterShareUrl,
-  buildWhatsappShareUrl,
-  copyToClipboard,
-  isWebShareSupported,
-  shareNative,
-  type ShareChannel,
-} from '@/lib/share/web-share'
 import { createClient } from '@/lib/supabase/client'
-
-type Status = 'pending' | 'processing' | 'completed' | 'failed' | 'failed_retryable'
+import { ResultCanvas } from './ResultCanvas'
+import { ShareBurst } from './ShareBurst'
+import { StatusBadge, type Status } from './StatusBadge'
 
 interface Initial {
   id: string
@@ -190,7 +181,13 @@ export function ResultView({ initial, trend }: ResultViewProps) {
         )}
       </h1>
 
-      <ResultCanvas row={row} title={trend.title} />
+      <ResultCanvas
+        status={row.status}
+        outputImageUrl={row.output_image_url}
+        errorMessage={row.error_message}
+        attempts={row.attempts}
+        title={trend.title}
+      />
 
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-3">
@@ -238,242 +235,5 @@ export function ResultView({ initial, trend }: ResultViewProps) {
         </p>
       )}
     </section>
-  )
-}
-
-interface ResultCanvasProps {
-  row: Initial
-  title: string
-}
-
-function ResultCanvas({ row, title }: ResultCanvasProps) {
-  if (row.status === 'completed' && row.output_image_url) {
-    return (
-      <figure className="relative aspect-square overflow-hidden rounded-3xl border border-border/60 bg-card shadow-pop animate-pop-in">
-        <Image
-          src={row.output_image_url}
-          alt={title}
-          fill
-          priority
-          quality={95}
-          sizes="(max-width: 1024px) 100vw, 720px"
-          className="object-cover"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -inset-6 -z-10 bg-gradient-hero opacity-50 blur-3xl"
-        />
-      </figure>
-    )
-  }
-  if (row.status === 'failed') {
-    return (
-      <div className="relative overflow-hidden rounded-3xl border border-destructive/30 bg-destructive/5 p-12 text-center">
-        <p className="text-2xl font-bold text-destructive">Generation failed</p>
-        {row.error_message && (
-          <p className="mt-2 text-sm text-muted-foreground">{row.error_message}</p>
-        )}
-        <p className="mt-4 text-sm text-muted-foreground">
-          Don&apos;t worry — your quota was refunded. Try again or pick a different trend.
-        </p>
-      </div>
-    )
-  }
-  // pending, processing, failed_retryable
-  const subline =
-    row.status === 'processing'
-      ? 'Rendering pixels — usually 8 seconds…'
-      : row.status === 'failed_retryable'
-        ? `Auto-retrying… attempt ${row.attempts}`
-        : 'Queued — starting in a moment…'
-  return (
-    <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card">
-      <div className="aspect-square w-full bg-gradient-hero opacity-25" />
-      <div className="absolute inset-0 animate-shimmer" />
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
-        <div className="size-12 animate-spin rounded-full border-4 border-white/60 border-t-white" />
-        <p className="text-sm font-medium text-white drop-shadow-md">{subline}</p>
-      </div>
-    </div>
-  )
-}
-
-function StatusBadge({ status, attempts }: { status: Status; attempts: number }) {
-  const map: Record<Status, { label: string; cls: string }> = {
-    pending: {
-      label: 'Queued',
-      cls: 'bg-muted text-foreground/70',
-    },
-    processing: {
-      label: 'Generating',
-      cls: 'bg-[var(--brand-cyan)]/15 text-[color:oklch(0.45_0.16_215)] dark:text-[var(--brand-cyan)] animate-pulse',
-    },
-    completed: {
-      label: 'Done',
-      cls: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300',
-    },
-    failed_retryable: {
-      label: `Retrying ${attempts}/3`,
-      cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-    },
-    failed: {
-      label: 'Failed',
-      cls: 'bg-destructive/15 text-destructive',
-    },
-  }
-  const { label, cls } = map[status]
-  return <Badge className={`rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>{label}</Badge>
-}
-
-interface ShareBurstProps {
-  trendSlug: string
-  trendTitle: string
-  outputImageUrl: string
-}
-
-function ShareBurst({ trendSlug, trendTitle, outputImageUrl }: ShareBurstProps) {
-  const [copied, setCopied] = useState(false)
-  const [sharing, setSharing] = useState(false)
-
-  // Use the env-pinned site URL so SSR and CSR agree (window.location.origin
-  // is undefined on the server, which causes a hydration mismatch).
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-  const siteUrl = `${origin}/trend/${trendSlug}`
-  const text = `I tried the ${trendTitle} trend — check it out`
-
-  const fireTrack = (channel: ShareChannel) => {
-    analytics.track(EVENTS.SHARE_CLICKED, { trend_slug: trendSlug, channel })
-  }
-
-  const onNativeShare = async () => {
-    setSharing(true)
-    try {
-      let imageBlob: Blob | undefined
-      try {
-        const res = await fetch(outputImageUrl)
-        if (res.ok) imageBlob = await res.blob()
-      } catch {
-        // Network blip — proceed without file attachment.
-      }
-      const result = await shareNative({
-        title: trendTitle,
-        text,
-        url: siteUrl,
-        imageBlob,
-        imageFilename: `trend-${trendSlug}.jpg`,
-      })
-      if (result.ok) fireTrack('web_share')
-    } finally {
-      setSharing(false)
-    }
-  }
-
-  const onCopyLink = async () => {
-    const result = await copyToClipboard(siteUrl)
-    if (result.ok) {
-      fireTrack('copy_link')
-      setCopied(true)
-      toast.success('Link copied — ready to paste anywhere.')
-      setTimeout(() => setCopied(false), 1800)
-    }
-  }
-
-  const showNative = typeof window !== 'undefined' && isWebShareSupported()
-
-  return (
-    <div className="rounded-3xl border border-border/60 bg-card/80 p-6 backdrop-blur">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Share
-          </p>
-          <p className="mt-0.5 text-base font-bold">Drop it on the feed</p>
-        </div>
-        <Share2 className="size-5 text-muted-foreground" />
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
-        {showNative && (
-          <ShareTile
-            onClick={onNativeShare}
-            disabled={sharing}
-            label="Share"
-            sub={sharing ? 'Opening…' : 'Native'}
-            tone="gradient"
-          />
-        )}
-        <ShareTile
-          href={buildTwitterShareUrl(text, siteUrl)}
-          onClick={() => fireTrack('twitter')}
-          label="X / Twitter"
-          sub="Tweet"
-          tone="outline"
-        />
-        <ShareTile
-          href={buildWhatsappShareUrl(text, siteUrl)}
-          onClick={() => fireTrack('whatsapp')}
-          label="WhatsApp"
-          sub="DM friends"
-          tone="outline"
-        />
-        <ShareTile
-          href={`https://www.instagram.com/`}
-          onClick={() => fireTrack('instagram')}
-          label="Instagram"
-          sub="Save first"
-          tone="outline"
-        />
-        <ShareTile
-          onClick={onCopyLink}
-          label={copied ? 'Copied!' : 'Copy link'}
-          sub="Anywhere"
-          tone="outline"
-          icon={<Copy className="size-4" />}
-        />
-      </div>
-    </div>
-  )
-}
-
-interface ShareTileProps {
-  href?: string
-  onClick?: () => void
-  disabled?: boolean
-  label: string
-  sub: string
-  tone: 'gradient' | 'outline'
-  icon?: React.ReactNode
-}
-
-function ShareTile({ href, onClick, disabled, label, sub, tone, icon }: ShareTileProps) {
-  const cls =
-    tone === 'gradient'
-      ? 'bg-gradient-hero text-white shadow-glow-pink hover:scale-[1.02]'
-      : 'border border-border bg-background hover:bg-muted'
-  const inner = (
-    <span className="flex flex-col items-start">
-      <span className="flex items-center gap-1.5 text-sm font-semibold">
-        {icon}
-        {label}
-      </span>
-      <span className="text-[10px] uppercase tracking-wider opacity-70">{sub}</span>
-    </span>
-  )
-  const baseCls = `flex flex-col items-start rounded-2xl px-4 py-3 text-left transition-all ${cls}`
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noreferrer" onClick={onClick} className={baseCls}>
-        {inner}
-      </a>
-    )
-  }
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`${baseCls} disabled:opacity-60`}
-    >
-      {inner}
-    </button>
   )
 }
