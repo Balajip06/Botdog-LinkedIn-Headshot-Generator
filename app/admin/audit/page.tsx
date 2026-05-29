@@ -53,6 +53,12 @@ export default async function AuditPage() {
 
   // Resolve admin emails via service-role (auth.users isn't queryable from
   // an authed client). One round-trip, in-memory join.
+  //
+  // Intentional design (code-review MEDIUM-4, 2026-05-29 sign-off): admins
+  // see each other's emails in the audit log. This is the price of having
+  // an attributable compliance trail — anonymizing the actor would defeat
+  // the purpose of the log. If a future admin role is added (e.g. support
+  // agents), restrict by role here.
   const adminIds = Array.from(new Set(audit.map((r) => r.admin_id).filter(Boolean) as string[]))
   const emailById = new Map<string, string>()
   if (adminIds.length > 0) {

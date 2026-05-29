@@ -131,14 +131,11 @@ Used by both heavy routes (`/trend/[slug]`, `/result/[id]`). The full client pul
 **Impact:** potentially 50-100 KB gzipped off the two heaviest routes.
 Out of scope for this commit.
 
-### F3 — `@fingerprintjs/fingerprintjs` not dynamic-imported
+### F3 — `@fingerprintjs/fingerprintjs` is installed but unused
 
-Loaded eagerly anywhere the anonymous-trial flow runs. The library is ~30 KB minified and is only needed once at submission time.
+**Correction (2026-05-29):** Re-grep showed zero `import` statements for this package anywhere in the source tree. It is in `package.json` but contributes nothing to the current client bundle. The Phase 1.8 anonymous-trial integration in `.claude/todo.md` plans to add it. When that wiring lands, dynamic-import via `await import('@fingerprintjs/fingerprintjs')` inside the submission handler — same pattern as `heic2any` in `lib/utils/image.ts`.
 
-**Recommended fix:** wrap `FingerprintJS.load()` in a dynamic import like `heic2any`.
-**Effort:** trivial (single file).
-**Impact:** ~10 KB gzipped off `/trend/[slug]` first load.
-Skipped this commit: the anonymous-trial code path is hot enough that bundling it eagerly is defensible — defer until a measurable user-facing perf budget exists.
+**Action this commit:** none (no live perf cost).
 
 ### F4 — Two Radix chunks (86 KB each) overlap
 

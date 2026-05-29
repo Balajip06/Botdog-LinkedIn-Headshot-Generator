@@ -84,6 +84,22 @@ Format:
 
 ---
 
+## 2026-05-29 — Audit log shows actor emails by design
+
+**Trigger:** Code-review (MEDIUM-4) flagged that `app/admin/audit/page.tsx` resolves admin emails via the service-role client and renders them in the table, meaning any admin sees every other admin's email in the recent-activity window.
+**Lesson:** Intentional. The whole purpose of the compliance trail is attribution — anonymizing the actor would defeat the log. If a future role tier is added (support agents, contractors), restrict the join here to admin role + maybe redact lower roles. Inline comment now documents the decision so the next reviewer doesn't re-raise.
+**Apply when:** Any change to `app/admin/audit/page.tsx` or to who can query `admin_audit_log`. Don't anonymize the actor; tier instead.
+
+---
+
+## 2026-05-29 — `/styleguide` ships its body to prod even with runtime `notFound()`
+
+**Trigger:** Bundle analyzer showed `/styleguide` at 940 KB First Load JS in prod despite the page short-circuiting via `if (process.env.NODE_ENV === 'production') notFound()`. The `notFound()` only runs at request time — the module imports still bundle.
+**Lesson:** For dev-only routes, move the heavy module behind `next/dynamic`. The page becomes a thin shell; the actual body lives in a sibling file that's only loaded when the dynamic import resolves — which in prod never happens because `notFound()` fires first. Don't rely on runtime gating alone for bundle exclusion.
+**Apply when:** Any future dev-only / staging-only / feature-flag-gated route. Pattern: thin page returns `notFound()` in prod → dynamic-imported body lives elsewhere.
+
+---
+
 ## 2026-05-29 — Prompt edits trip the eval gate trigger; route through eval workflow
 
 **Trigger:** User asked to upgrade all 15 seed prompts. My first SQL attempt bundled prompt UPDATEs + manual `eval_status='passed' + is_active=true` re-set in one transaction. Auto-mode classifier correctly blocked it — CLAUDE.md rule 5 ("Eval gate") is non-negotiable: changing `prompt_template` fires the migration 0002 trigger which flips `eval_status='untested' + is_active=false` and forces re-eval before re-activation.
