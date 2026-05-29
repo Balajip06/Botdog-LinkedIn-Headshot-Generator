@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { logAdminAction } from '@/lib/admin/audit'
 import { runTrendDetector } from '@/lib/trends/orchestrator'
 import {
   TrendSuggestionPayloadSchema,
@@ -95,16 +96,36 @@ export async function approveAutoSuggestion(suggestionId: string): Promise<void>
 
   await markReviewed(suggestionId, 'approved')
 
+  const newTrendId = (created as { id?: string } | null)?.id
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: 'approve_suggestion',
+    targetTable: 'trend_suggestions',
+    targetId: suggestionId,
+    after: { created_trend_id: newTrendId, slug: auto.proposal.suggested_slug },
+  })
+
   revalidatePath('/admin/suggestions')
   revalidatePath('/admin/trends')
 
-  const newTrendId = (created as { id?: string } | null)?.id
   redirect(newTrendId ? `/admin/trends/${newTrendId}/edit?created=1` : '/admin/trends')
 }
 
 export async function rejectSuggestion(suggestionId: string): Promise<void> {
   await loadAndValidate(suggestionId)
   await markReviewed(suggestionId, 'rejected')
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: 'reject_suggestion',
+    targetTable: 'trend_suggestions',
+    targetId: suggestionId,
+  })
+
   revalidatePath('/admin/suggestions')
   redirect('/admin/suggestions?rejected=1')
 }

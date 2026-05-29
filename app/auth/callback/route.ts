@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 import { EVENTS, flushServer, identifyServer, trackServer } from '@/lib/analytics/server'
+import { safeNextPath } from '@/lib/auth/safe-next-path'
 import {
   parseReferralFromCookie,
   REFERRAL_COOKIE_NAME,
@@ -16,21 +17,6 @@ interface ProfileBrief {
 
 interface ReferrerLookup {
   id: string
-}
-
-/**
- * Restricts `next` to a same-origin path. Attacker-controlled `next` values
- * like `//evil.com/path` or `https://evil.com/path` would otherwise resolve
- * to an off-site URL via `new URL(next, request.url)` and turn the callback
- * into an open redirect — a phishing pivot (steal a freshly-issued session).
- */
-function safeNextPath(raw: string | null): string {
-  if (!raw) return '/'
-  // Must start with a single slash and not contain a protocol-relative prefix.
-  if (!raw.startsWith('/') || raw.startsWith('//')) return '/'
-  // Reject backslashes (some browsers treat as `/`) and `@` (userinfo escape).
-  if (raw.includes('\\') || raw.includes('@')) return '/'
-  return raw
 }
 
 export async function GET(request: NextRequest) {

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { logAdminAction } from '@/lib/admin/audit'
 import {
   DEFAULT_TREND_INPUT,
   FAQSchema,
@@ -127,6 +128,13 @@ export async function createTrend(formData: FormData): Promise<void> {
     redirect(`/admin/trends/new?error=${encodeURIComponent(error.message)}`)
   }
   const id = (inserted as { id?: string } | null)?.id
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: 'create',
+    targetTable: 'trends',
+    targetId: id ?? null,
+    after: { slug: data.slug, title: data.title, model: data.model },
+  })
   revalidatePath('/admin/trends')
   redirect(id ? `/admin/trends/${id}/edit?created=1` : '/admin/trends')
 }
@@ -152,6 +160,16 @@ export async function updateTrend(id: string, formData: FormData): Promise<void>
   if (error) {
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(error.message)}`)
   }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: 'update',
+    targetTable: 'trends',
+    targetId: id,
+    after: { slug: data.slug, title: data.title, model: data.model },
+  })
   revalidatePath('/admin/trends')
   revalidatePath(`/admin/trends/${id}/edit`)
   revalidatePath(`/trend/${data.slug}`)
@@ -165,6 +183,16 @@ export async function toggleActive(id: string, nextValue: boolean): Promise<void
   if (error) {
     redirect(`/admin/trends/${id}/edit?error=${encodeURIComponent(error.message)}`)
   }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: nextValue ? 'activate' : 'deactivate',
+    targetTable: 'trends',
+    targetId: id,
+    after: { is_active: nextValue },
+  })
   revalidatePath('/admin/trends')
   revalidatePath(`/admin/trends/${id}/edit`)
   redirect(`/admin/trends/${id}/edit?${nextValue ? 'activated' : 'deactivated'}=1`)

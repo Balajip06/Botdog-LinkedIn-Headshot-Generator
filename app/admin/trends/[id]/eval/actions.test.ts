@@ -126,6 +126,11 @@ function makeMockSupabase(overrides: ChainOverrides = {}) {
     storage: {
       from: vi.fn(() => storageBucket),
     },
+    auth: {
+      getUser: vi.fn(() =>
+        Promise.resolve({ data: { user: { id: 'admin-user-1' } }, error: null })
+      ),
+    },
     _lastTable: () => lastTable,
     _storageBucket: storageBucket,
   }

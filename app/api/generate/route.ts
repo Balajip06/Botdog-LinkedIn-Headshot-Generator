@@ -9,10 +9,27 @@ import { getActiveTrendBySlug } from '@/lib/trends/repository'
 
 export const runtime = 'nodejs'
 
+// Per-value caps are tight on purpose. Signed Supabase URLs run ~500 chars
+// today; 5000 leaves headroom for query params and future signature schemes.
+// max(8) on arrays mirrors the image-field cap in TrendInputSchema.
+const ValueSchema = z.union([
+  z.string().max(5000),
+  z.array(z.string().max(5000)).max(8),
+])
+
+const MAX_FIELDS = 20
 const BodySchema = z.object({
   trend_slug: z.string().min(1).max(120),
-  values: z.record(z.string(), z.union([z.string(), z.array(z.string())])),
+  values: z
+    .record(z.string().max(50), ValueSchema)
+    .refine((v) => Object.keys(v).length <= MAX_FIELDS, {
+      message: `too many fields (max ${MAX_FIELDS})`,
+    }),
 })
+
+// Reject obviously oversize bodies before parsing. 64 KB easily fits 20 fields
+// × 8 signed URLs × ~500 chars; anything larger is malformed or hostile.
+const MAX_BODY_BYTES = 64 * 1024
 
 export async function POST(request: NextRequest) {
   // 1. Idempotency
@@ -38,6 +55,10 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Body validation
+  const contentLength = Number(request.headers.get('content-length') ?? 0)
+  if (contentLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: 'Body too large' }, { status: 413 })
+  }
   let parsedBody: z.infer<typeof BodySchema>
   try {
     const json = await request.json()

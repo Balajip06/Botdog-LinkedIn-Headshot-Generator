@@ -3,8 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import { logAdminAction } from '@/lib/admin/audit'
 import { generateImage } from '@/lib/gemini/client'
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { buildEvalValues } from '@/lib/trends/eval-values'
 import {
   TrendInputSchema,
@@ -187,6 +188,19 @@ export async function markTrendEval(
   if (error) {
     redirect(`/admin/trends/${trendId}/eval?error=${encodeURIComponent(error.message)}`)
   }
+
+  const authed = await createClient()
+  const {
+    data: { user },
+  } = await authed.auth.getUser()
+  await logAdminAction({
+    adminId: user?.id ?? null,
+    action: `mark_eval_${status}`,
+    targetTable: 'trends',
+    targetId: trendId,
+    after: { eval_status: status },
+  })
+
   revalidatePath(`/admin/trends/${trendId}/eval`)
   revalidatePath('/admin/trends')
   revalidatePath(`/admin/trends/${trendId}/edit`)
