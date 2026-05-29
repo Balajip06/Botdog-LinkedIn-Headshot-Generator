@@ -4,7 +4,33 @@ import type { NextConfig } from 'next'
 
 const bundleAnalyzer = withBundleAnalyzer({ enabled: process.env.ANALYZE === 'true' })
 
+// Defense-in-depth response headers. CSP is intentionally omitted until the
+// Stripe + Turnstile + Google OAuth iframe origins are live and verified —
+// shipping a too-strict policy now would break working features. The headers
+// below are safe to ship without third-party coordination.
+const SECURITY_HEADERS = [
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()',
+  },
+  { key: 'X-DNS-Prefetch-Control', value: 'on' },
+]
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        // Apply to every route. Static assets opt out via _next/static caching
+        // headers Next emits separately; these don't conflict.
+        source: '/:path*',
+        headers: SECURITY_HEADERS,
+      },
+    ]
+  },
   images: {
     // Allowlist only the hosts we actually serve images from. Avoids turning
     // /_next/image into an open proxy (SSRF risk against internal metadata

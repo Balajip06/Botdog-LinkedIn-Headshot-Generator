@@ -48,6 +48,12 @@ export function AdminShell({ children }: AdminShellProps) {
               Referrals
             </Link>
             <Link
+              href="/admin/refunds"
+              className="rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              Refunds
+            </Link>
+            <Link
               href="/admin/audit"
               className="rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >

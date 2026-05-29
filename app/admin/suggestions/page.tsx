@@ -1,4 +1,4 @@
-import { Check, ExternalLink, Inbox, X } from 'lucide-react'
+import { Check, ExternalLink, Inbox, Search, X } from 'lucide-react'
 import { FlashToasts } from '@/components/admin/FlashToasts'
 import { SourceBadge } from '@/components/admin/StatusBadges'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
 import { TrendSuggestionPayloadSchema, type TrendSuggestionPayload } from '@/lib/trends/suggestions/payload'
-import { approveAutoSuggestion, rejectSuggestion } from './actions'
+import { approveAutoSuggestion, rejectSuggestion, runScan } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +33,12 @@ interface ParsedSuggestion {
 }
 
 interface AdminSuggestionsPageProps {
-  searchParams: Promise<{ error?: string; rejected?: string }>
+  searchParams: Promise<{
+    error?: string
+    rejected?: string
+    scanned?: string
+    scan_error?: string
+  }>
 }
 
 export default async function AdminSuggestionsPage({ searchParams }: AdminSuggestionsPageProps) {
@@ -65,6 +70,8 @@ export default async function AdminSuggestionsPage({ searchParams }: AdminSugges
         flashes={[
           { key: 'error', level: 'error' },
           { key: 'rejected', level: 'info', message: 'Suggestion rejected.' },
+          { key: 'scanned', level: 'info' },
+          { key: 'scan_error', level: 'error' },
         ]}
       />
 
@@ -78,6 +85,16 @@ export default async function AdminSuggestionsPage({ searchParams }: AdminSugges
             {suggestions.length} pending · auto-detected + community submissions.
           </p>
         </div>
+        <form action={runScan}>
+          <Button
+            type="submit"
+            variant="outline"
+            size="sm"
+            className="rounded-full"
+          >
+            <Search className="size-4" /> Scan for trends
+          </Button>
+        </form>
       </header>
 
       {suggestions.length === 0 ? (

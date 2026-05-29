@@ -2,11 +2,12 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { runTrendDetector } from '@/lib/trends/orchestrator'
 import {
   TrendSuggestionPayloadSchema,
   type AutoSuggestionPayload,
 } from '@/lib/trends/suggestions/payload'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 interface SuggestionRow {
   id: string
@@ -106,4 +107,30 @@ export async function rejectSuggestion(suggestionId: string): Promise<void> {
   await markReviewed(suggestionId, 'rejected')
   revalidatePath('/admin/suggestions')
   redirect('/admin/suggestions?rejected=1')
+}
+
+/**
+ * Manual "Scan for trends" action. Runs the orchestrator against the live
+ * source fetchers (Reddit works without keys; TikTok + IG no-op until creds
+ * are set). Uses the service-role client because RLS on `trend_suggestions`
+ * permits inserts only via service role.
+ */
+export async function runScan(): Promise<void> {
+  const service = createServiceClient()
+  const result = await runTrendDetector(service)
+  revalidatePath('/admin/suggestions')
+
+  const summary = [
+    `fetched=${result.fetched}`,
+    `deduped=${result.deduped}`,
+    `proposed=${result.proposed}`,
+    `inserted=${result.inserted}`,
+  ].join(' · ')
+
+  const search =
+    result.errors.length > 0
+      ? `?scan_error=${encodeURIComponent(result.errors.join(' | '))}`
+      : `?scanned=${encodeURIComponent(summary)}`
+
+  redirect(`/admin/suggestions${search}`)
 }
