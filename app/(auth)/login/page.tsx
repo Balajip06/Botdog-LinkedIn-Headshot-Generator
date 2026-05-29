@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { LoginForms } from './LoginForms'
 
 type SearchParams = Promise<{ next?: string; sent?: string; error?: string }>
@@ -41,7 +42,15 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
       <LoginForms next={next} />
 
       <p className="text-center text-xs text-muted-foreground">
-        By continuing you agree to our terms + privacy policy.
+        By continuing you agree to our{' '}
+        <Link href="/terms" className="font-medium underline-offset-2 hover:underline">
+          terms
+        </Link>{' '}
+        +{' '}
+        <Link href="/privacy" className="font-medium underline-offset-2 hover:underline">
+          privacy policy
+        </Link>
+        .
       </p>
     </div>
   )

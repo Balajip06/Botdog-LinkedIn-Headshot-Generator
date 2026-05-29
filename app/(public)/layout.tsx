@@ -35,12 +35,18 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-6 text-sm text-muted-foreground sm:flex-row">
           <Logo size="sm" />
           <p>Made for the feed. © {new Date().getFullYear()} Trendly.</p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <Link href="/" className="hover:text-foreground">
               Trends
             </Link>
             <Link href="/login" className="hover:text-foreground">
               Sign in
+            </Link>
+            <Link href="/terms" className="hover:text-foreground">
+              Terms
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground">
+              Privacy
             </Link>
           </div>
         </div>
