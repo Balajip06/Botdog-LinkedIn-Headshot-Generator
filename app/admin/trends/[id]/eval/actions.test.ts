@@ -39,7 +39,27 @@ function makeMockSupabase(overrides: ChainOverrides = {}) {
   const insertResult = overrides.insertResult ?? { data: { id: 'new-id' }, error: null }
   const trendFetchResult =
     overrides.trendFetchResult === undefined
-      ? { data: { id: 'trend-1', prompt_template: 'do thing', model: 'nano-banana', version: 3 }, error: null }
+      ? {
+          data: {
+            id: 'trend-1',
+            prompt_template: 'do thing',
+            model: 'nano-banana',
+            version: 3,
+            input_schema: {
+              fields: [
+                {
+                  type: 'image',
+                  name: 'user_photo',
+                  label: 'Your photo',
+                  required: true,
+                  min_count: 1,
+                  max_count: 1,
+                },
+              ],
+            },
+          },
+          error: null,
+        }
       : overrides.trendFetchResult
   const uploadResult = overrides.uploadResult ?? { error: null }
   const publicUrl = overrides.publicUrl ?? 'https://cdn.example.com/eval/abc.png'

@@ -2,6 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { GradientButton } from '@/components/brand/GradientButton'
 import { Badge } from '@/components/ui/badge'
+import { getSocialProof } from '@/lib/analytics/social-proof'
+import { createServiceClient } from '@/lib/supabase/server'
 import { listActiveTrends } from '@/lib/trends/repository'
 
 export const revalidate = 600 // home grid refreshes every 10 minutes (ISR)
@@ -13,13 +15,43 @@ const ASPECT_LABEL: Record<string, string> = {
   '16:9': 'Wide',
 }
 
+function fmt(n: number): string {
+  return new Intl.NumberFormat('en-US').format(n)
+}
+
 export default async function HomePage() {
   const trends = await listActiveTrends()
   const heroTrend = trends[0]
   const restTrends = trends.slice(1)
+  // Service-role client is safe here — getSocialProof only reads aggregate
+  // counts and never returns row-level data. Avoids reading auth cookies,
+  // which would otherwise force `/` from ISR to fully-dynamic.
+  const proof = await getSocialProof(createServiceClient())
 
   return (
     <div className="relative">
+      {/* JS-disabled fallback — the home grid below is RSC so it renders without
+          JS, but anchor-only nav matters for screen-readers + Lynx + curl. */}
+      <noscript>
+        <div className="mx-auto max-w-6xl px-6 py-8 text-sm">
+          <p className="font-semibold">Trends</p>
+          <ul className="mt-2 grid gap-1">
+            {trends.map((t) => (
+              <li key={t.id}>
+                <a href={`/trend/${t.slug}`} className="underline">
+                  {t.title}
+                </a>
+              </li>
+            ))}
+            <li>
+              <a href="/login" className="underline">
+                Sign in
+              </a>
+            </li>
+          </ul>
+        </div>
+      </noscript>
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-gradient-spotlight opacity-30 blur-3xl"
@@ -61,10 +93,16 @@ export default async function HomePage() {
                 Try one free, no signup →
               </Link>
             </div>
-            <div className="flex items-center gap-6 pt-2 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
                 <span className="size-2 rounded-full bg-emerald-500" />
-                Free try, no signup
+                <strong className="font-semibold text-foreground">{fmt(proof.shippedToday)}</strong>
+                shipped today
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="size-2 rounded-full bg-[var(--brand-grad-1)]" />
+                <strong className="font-semibold text-foreground">{fmt(proof.shippedTotal)}</strong>
+                total
               </span>
               <span className="flex items-center gap-2">
                 <span className="size-2 rounded-full bg-[var(--brand-cyan)]" />

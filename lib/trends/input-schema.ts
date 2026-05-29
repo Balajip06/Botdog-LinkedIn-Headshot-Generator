@@ -35,6 +35,8 @@ const TextFieldSchema = z.object({
   required: z.boolean().default(false),
   max_length: z.number().int().min(1).max(500).default(50),
   hint: z.string().max(200).optional(),
+  /** Used at eval time to substitute {{name}} when no user value is supplied. */
+  default: z.string().max(200).optional(),
 })
 
 const SelectFieldSchema = z.object({
