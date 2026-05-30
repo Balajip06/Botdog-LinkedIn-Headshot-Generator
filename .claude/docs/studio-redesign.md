@@ -23,13 +23,13 @@ Cut friction on the authed home page: tap trend → upload appears inline (drawe
 
 ### URL contract (preserve)
 
-| Site | File:line | Behavior |
-|------|-----------|----------|
-| Studio page | `app/(app)/me/studio/page.tsx:34` | Reads `?trend=` → selects |
-| Grid card | `components/trends/TrendRail.tsx:48` | Links to `?trend=<slug>#upload` |
-| Login redirect | `components/trends/TrendRunner.tsx:61` | `/login?next=/me/studio?trend=<slug>` |
-| Public trend page | `app/(public)/trend/[slug]/page.tsx:80` | `redirect('/me/studio?trend=<slug>')` |
-| E2E baselines | `e2e/visual-baseline.spec.ts:23`, `e2e/a11y.spec.ts:18` | `?trend=ghibli-portrait` |
+| Site              | File:line                                               | Behavior                              |
+| ----------------- | ------------------------------------------------------- | ------------------------------------- |
+| Studio page       | `app/(app)/me/studio/page.tsx:34`                       | Reads `?trend=` → selects             |
+| Grid card         | `components/trends/TrendRail.tsx:48`                    | Links to `?trend=<slug>#upload`       |
+| Login redirect    | `components/trends/TrendRunner.tsx:61`                  | `/login?next=/me/studio?trend=<slug>` |
+| Public trend page | `app/(public)/trend/[slug]/page.tsx:80`                 | `redirect('/me/studio?trend=<slug>')` |
+| E2E baselines     | `e2e/visual-baseline.spec.ts:23`, `e2e/a11y.spec.ts:18` | `?trend=ghibli-portrait`              |
 
 → Keep `?trend=` as the contract. Drop the `#upload` hash (drawer replaces scroll).
 
@@ -53,17 +53,18 @@ Cut friction on the authed home page: tap trend → upload appears inline (drawe
 
 ## Component Diff
 
-| Action | File | Notes |
-|--------|------|-------|
-| **Delete** | `components/trends/TrendStudioEmpty.tsx` | Empty CTA collapses into header |
-| **Rename + rewrite** | `TrendRail.tsx` → `TrendGrid.tsx` | Client component, button (not Link), real sample image, opens drawer |
-| **New** | `components/trends/TrendDrawer.tsx` | Radix Dialog wrapper; mobile bottom-sheet via Tailwind responsive variants; embeds `<TrendRunner>` |
-| **New** | `components/trends/QuotaChip.tsx` | "3 of 5 free this week" or "42 credits". Color + icon + sr-only label |
-| **Edit** | `app/(app)/me/studio/page.tsx` | Fetch quota profile, drop empty branch, render `<TrendGrid trends quota>`; drawer is owned by grid |
-| **Edit** | `app/(app)/me/studio/loading.tsx` | Skeleton matches new grid; no upload-shape ghost |
-| **Edit** | `e2e/happy-path.spec.ts` | Remove "Pick a trend above" assertion |
+| Action               | File                                     | Notes                                                                                              |
+| -------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Delete**           | `components/trends/TrendStudioEmpty.tsx` | Empty CTA collapses into header                                                                    |
+| **Rename + rewrite** | `TrendRail.tsx` → `TrendGrid.tsx`        | Client component, button (not Link), real sample image, opens drawer                               |
+| **New**              | `components/trends/TrendDrawer.tsx`      | Radix Dialog wrapper; mobile bottom-sheet via Tailwind responsive variants; embeds `<TrendRunner>` |
+| **New**              | `components/trends/QuotaChip.tsx`        | "3 of 5 free this week" or "42 credits". Color + icon + sr-only label                              |
+| **Edit**             | `app/(app)/me/studio/page.tsx`           | Fetch quota profile, drop empty branch, render `<TrendGrid trends quota>`; drawer is owned by grid |
+| **Edit**             | `app/(app)/me/studio/loading.tsx`        | Skeleton matches new grid; no upload-shape ghost                                                   |
+| **Edit**             | `e2e/happy-path.spec.ts`                 | Remove "Pick a trend above" assertion                                                              |
 
 URL behavior:
+
 - Initial load with `?trend=<slug>` → drawer **opens on mount** (no scroll, no flash).
 - Click thumb → client-side `router.replace('?trend=<slug>', { scroll: false })` + drawer opens. No RSC reload.
 - Close drawer → `router.replace('/me/studio', { scroll: false })` strip the param.
@@ -77,11 +78,12 @@ interface TrendGridProps {
   trends: PublicTrend[]
   freeUsedThisWeek: number
   creditsBalance: number
-  initialSlug: string | null   // from server, drives initial drawer state
+  initialSlug: string | null // from server, drives initial drawer state
 }
 ```
 
 Behavior:
+
 - `'use client'`. Owns drawer open state derived from `useSearchParams().get('trend')`.
 - Renders thumbnails as `<button>` (not `<Link>`) — opens drawer, no navigation.
 - Image priority: `sample_after_url ?? thumbnail_url ?? gradient`.
@@ -99,6 +101,7 @@ interface TrendDrawerProps {
 ```
 
 Behavior:
+
 - Wraps Radix `<Dialog>`. On `md` and up: side-drawer right, 480px wide. On mobile: bottom-sheet, 92vh max, rounded top.
 - Renders `<TrendRunner trend freeUsedThisWeek>` inside.
 - Heading is `trend.title`, sub is `trend.description`.
@@ -108,12 +111,13 @@ Behavior:
 
 ```ts
 interface QuotaChipProps {
-  freeUsedThisWeek: number   // 0..5
+  freeUsedThisWeek: number // 0..5
   creditsBalance: number
 }
 ```
 
 Render rules:
+
 - `credits > 0` → "✨ {credits} credits" (primary tone).
 - else if `free < 5` → "{5-free} free left this week" (muted tone).
 - else → "Out of free • Upgrade" (warning: icon + text + warning bg). Click → open `QuotaUpsellModal`.
@@ -147,6 +151,7 @@ Keep existing `upload_started` / `generate_clicked` / `generate_failed` unchange
 Local: `pnpm typecheck && pnpm lint && pnpm test && pnpm build` must be green.
 
 E2E:
+
 - `e2e/happy-path.spec.ts` — open studio, click first card, drawer shows trend title, close drawer, URL clean.
 - `e2e/a11y.spec.ts` — axe sweep with drawer open AND closed.
 - `e2e/visual-baseline.spec.ts` — regenerate baseline PNGs (drawer open + closed × mobile/desktop).

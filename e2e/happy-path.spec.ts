@@ -32,10 +32,12 @@ test('happy path: home → trend → login → creations → settings → result
   await expect(page.getByRole('button', { name: /Continue with Google/i })).toBeVisible()
   await expect(page.getByRole('button', { name: /Send magic link/i })).toBeVisible()
 
-  // 4. Studio (new unified dashboard — trend rail + empty state)
+  // 4. Studio (drawer-based — grid of trend cards, no empty-state card)
   await page.goto('/me/studio')
   await expect(page.getByRole('heading', { name: /Pick a trend/i })).toBeVisible()
-  await expect(page.getByText(/Pick a trend above to get started/i)).toBeVisible()
+  // Drawer is closed by default; grid cards are visible
+  await expect(page.getByRole('dialog')).not.toBeVisible()
+  await expect(page.getByRole('button').first()).toBeVisible()
 
   // 5. Creations (history)
   await page.goto('/me/creations')

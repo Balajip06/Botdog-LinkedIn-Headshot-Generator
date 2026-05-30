@@ -1,6 +1,8 @@
-import { TrendRail } from '@/components/trends/TrendRail'
-import { TrendRunner } from '@/components/trends/TrendRunner'
-import { TrendStudioEmpty } from '@/components/trends/TrendStudioEmpty'
+import { redirect } from 'next/navigation'
+import { QuotaChip } from '@/components/trends/QuotaChip'
+import { TrendGrid } from '@/components/trends/TrendGrid'
+import { MOCK_PROFILE, MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
+import { createClient } from '@/lib/supabase/server'
 import { getActiveTrendBySlug, listActiveTrends } from '@/lib/trends/repository'
 
 export const dynamic = 'force-dynamic'
@@ -15,23 +17,32 @@ function pickSlug(raw: string | string[] | undefined): string | null {
   return slug?.trim().length ? slug : null
 }
 
-/**
- * /me/studio — the unified authed dashboard.
- *
- *   Top: trend thumbnail rail (15 active trends, "NEW" badge on recent ones)
- *   Bottom: upload form for ?trend=<slug>, or empty-state when no selection
- *
- * Selection state lives in the URL (`?trend=<slug>`) — bookmarkable + lets the
- * RSC re-render swap the upload section without client state. Each thumbnail
- * is a `<Link>` to `/me/studio?trend=<slug>#upload`, so the `#upload` anchor
- * scrolls the page down to the form on click.
- *
- * Middleware (`lib/supabase/middleware.ts`) gates `/me/*` to authed users;
- * unauth visitors are redirected to `/login?next=/me/studio` upstream.
- */
 export default async function StudioPage({ searchParams }: StudioPageProps) {
   const params = (await searchParams) ?? {}
   const selectedSlug = pickSlug(params.trend)
+
+  let freeUsedThisWeek = 0
+  let creditsBalance = 0
+
+  if (MOCK_TRENDS_ENABLED) {
+    freeUsedThisWeek = MOCK_PROFILE.free_used_this_week
+    creditsBalance = MOCK_PROFILE.credits_balance
+  } else {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) redirect('/login?next=/me/studio')
+
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('free_used_this_week, credits_balance')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    freeUsedThisWeek = profile?.free_used_this_week ?? 0
+    creditsBalance = profile?.credits_balance ?? 0
+  }
 
   const [trends, selectedTrend] = await Promise.all([
     listActiveTrends(),
@@ -41,9 +52,12 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
-          Studio
-        </p>
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
+            Studio
+          </p>
+          <QuotaChip freeUsedThisWeek={freeUsedThisWeek} creditsBalance={creditsBalance} />
+        </div>
         <h1 className="text-3xl font-extrabold tracking-tight">
           Pick a <span className="text-gradient-hero">trend</span> and go
         </h1>
@@ -52,27 +66,12 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         </p>
       </header>
 
-      <TrendRail trends={trends} selectedSlug={selectedTrend?.slug ?? null} />
-
-      {selectedTrend ? (
-        <section
-          id="upload"
-          aria-labelledby="upload-heading"
-          className="border-border/60 bg-card shadow-soft flex scroll-mt-20 flex-col gap-4 rounded-3xl border p-6 sm:p-8"
-        >
-          <header className="flex flex-col gap-1.5">
-            <h2 id="upload-heading" className="text-2xl font-extrabold tracking-tight">
-              {selectedTrend.title}
-            </h2>
-            {selectedTrend.description && (
-              <p className="text-muted-foreground text-sm">{selectedTrend.description}</p>
-            )}
-          </header>
-          <TrendRunner trend={selectedTrend} />
-        </section>
-      ) : (
-        <TrendStudioEmpty />
-      )}
+      <TrendGrid
+        trends={trends}
+        freeUsedThisWeek={freeUsedThisWeek}
+        creditsBalance={creditsBalance}
+        initialSlug={selectedTrend?.slug ?? null}
+      />
     </div>
   )
 }
