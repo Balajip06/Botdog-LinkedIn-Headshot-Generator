@@ -54,16 +54,16 @@ export async function closeSql(): Promise<void> {
 export async function asUser<T>(userId: string, fn: (sql: Sql) => Promise<T>): Promise<T> {
   const sql = getSql()
   const result = await sql.begin(async (tx) => {
-    // Set the JWT claims GUC via set_config (true = transaction-local),
-    // which handles dotted GUC names correctly. `set local <dotted-name>`
-    // is parsed as identifier and may silently no-op on some Postgres
-    // versions. Set both the JSON-blob form and the singular-sub form
-    // because different supabase versions wire auth.uid() to one or
-    // the other.
+    // Postgres custom GUCs use dotted names (`<namespace>.<name>`) and
+    // set_config(name, value, is_local=true) is the canonical
+    // transaction-scoped writer. We also `set local role` to the
+    // 'authenticated' role so RLS policies that gate on role + uid
+    // evaluate end-to-end (auth.uid() reads the claim GUC; role
+    // governs which RLS policies apply).
     const claims = JSON.stringify({ sub: userId, role: 'authenticated' }).replace(/'/g, "''")
-    await tx.unsafe(`select set_config('request.jwt.claims', '${claims}', true)`)
+    await tx.unsafe(`select set_config('role', 'authenticated', true)`)
     await tx.unsafe(`select set_config('request.jwt.claim.sub', '${userId}', true)`)
-    await tx.unsafe(`set local role = 'authenticated'`)
+    await tx.unsafe(`select set_config('request.jwt.claims', '${claims}', true)`)
     return await fn(tx as unknown as Sql)
   })
   return result as T

@@ -86,6 +86,13 @@ describe('profiles_self_update column lockdown', () => {
     const user = await createTestUser({})
 
     await asUser(user.id, async (tx) => {
+      // Debug: confirm auth.uid() resolves to the user before the
+      // protected UPDATE. If this rows-back as NULL, the GUC isn't
+      // wired through to auth.uid() and the test environment is the
+      // real problem, not the RLS policy.
+      const [{ uid }] = await tx<{ uid: string | null }[]>`select auth.uid() as uid`
+      // eslint-disable-next-line no-console
+      console.log('[debug] auth.uid() inside asUser =', uid, 'expected', user.id)
       await tx`update public.profiles set deleted_at = now() where id = ${user.id}`
     })
 
