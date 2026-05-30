@@ -18,6 +18,10 @@ import type { TrendInput } from '@/lib/trends/input-schema'
 export const MOCK_TRENDS_ENABLED = process.env.MOCK_TRENDS === 'true'
 
 const ISO_NOW = '2026-05-28T12:00:00.000Z'
+// `activated_at` mix: first 3 mock trends are NEW (within 14 days of ISO_NOW),
+// rest are older. Drives the NEW-badge logic on the studio rail.
+const ISO_RECENT = '2026-05-20T12:00:00.000Z' // ~8d before ISO_NOW
+const ISO_OLD = '2026-04-01T12:00:00.000Z' // ~57d before ISO_NOW
 
 export const MOCK_USER = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -251,6 +255,7 @@ export const MOCK_TRENDS: PublicTrend[] = SEEDS.map((seed, idx) => {
     faq: seed.faq,
     display_order: idx,
     updated_at: ISO_NOW,
+    activated_at: idx < 3 ? ISO_RECENT : ISO_OLD,
   }
 })
 

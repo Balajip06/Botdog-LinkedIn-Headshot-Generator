@@ -5,6 +5,7 @@ import posthog from 'posthog-js'
 import { PostHogProvider as PHProvider } from 'posthog-js/react'
 import { Suspense, useEffect, type ReactNode } from 'react'
 import { bindAnalytics, unbindAnalytics } from '@/lib/analytics/client'
+import { useConsentState } from '@/components/consent/CookieBanner'
 
 let initialised = false
 
@@ -31,9 +32,13 @@ function PostHogPageView() {
 }
 
 export function PostHogProvider({ children }: { children: ReactNode }) {
+  const consent = useConsentState()
+
+  // GDPR: only initialise PostHog after explicit Accept; runs again if the
+  // user grants consent post-mount via the cookie banner.
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
-    if (!key || initialised) return
+    if (!key || initialised || consent !== 'granted') return
     posthog.init(key, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog.com',
       capture_pageview: false,
@@ -46,7 +51,7 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
     return () => {
       unbindAnalytics()
     }
-  }, [])
+  }, [consent])
 
   if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
     return <>{children}</>

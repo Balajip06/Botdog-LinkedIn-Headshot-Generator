@@ -10,20 +10,21 @@ const ERROR_COPY: Record<string, string> = {
   oauth_failed: 'Google sign-in failed. Try again.',
   missing_code: 'Sign-in link expired. Try again.',
   exchange_failed: 'Could not finish sign-in. Try again.',
+  tos_required: 'Please check the box to accept our terms + privacy policy before continuing.',
 }
 
 export default async function LoginPage({ searchParams }: { searchParams: SearchParams }) {
-  const { next = '/', sent, error } = await searchParams
+  const { next = '/me/studio', sent, error } = await searchParams
   const errorMessage = error ? (ERROR_COPY[error] ?? 'Sign in failed. Try again.') : null
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Welcome <span className="text-gradient-hero">in</span>
+          Sign <span className="text-gradient-hero">in</span>
         </h1>
         <p className="text-sm text-muted-foreground">
-          Save your creations, unlock the gallery, and refer friends for free credits.
+          Sign in to save your creations, unlock the gallery, and refer friends for free credits.
         </p>
       </header>
 
@@ -40,6 +41,13 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
       )}
 
       <LoginForms next={next} />
+
+      <p className="text-center text-xs text-muted-foreground">
+        Admin?{' '}
+        <Link href="/admin/login" className="font-medium text-foreground underline-offset-2 hover:underline">
+          Sign in here
+        </Link>
+      </p>
 
       <p className="text-center text-xs text-muted-foreground">
         By continuing you agree to our{' '}

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Refund / billing
+    url: https://[domain]/contact
+    about: For refund + billing questions please email us directly.
+  - name: Takedown / IP claim
+    url: https://[domain]/contact
+    about: For DMCA + trademark + IP claims please email legal@<domain> directly (do not use GitHub issues — they are public).
+  - name: Security disclosure
+    url: https://[domain]/contact
+    about: For security vulnerabilities please email security@<domain> with details — do not file a public issue.

@@ -1,24 +1,16 @@
-import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
-import { EVENTS, flushServer, identifyServer, trackServer } from '@/lib/analytics/server'
 import { safeNextPath } from '@/lib/auth/safe-next-path'
-import {
-  parseReferralFromCookie,
-  REFERRAL_COOKIE_NAME,
-} from '@/lib/referrals/links'
+import { runPostAuthOnboarding } from '@/lib/auth/post-auth-onboarding'
+import { REFERRAL_COOKIE_NAME } from '@/lib/referrals/links'
 import { createClient } from '@/lib/supabase/server'
 
-const NEW_USER_WINDOW_MS = 60_000
-
-interface ProfileBrief {
-  created_at: string
-  referred_by: string | null
-}
-
-interface ReferrerLookup {
-  id: string
-}
-
+/**
+ * OAuth code-exchange callback. Used by Google OAuth + any PKCE-based magic
+ * link clicked in the same browser that submitted /login.
+ *
+ * For cross-device magic-link clicks (which arrive via the Supabase email
+ * template pointing at `/auth/confirm?token_hash=...`), see that route.
+ */
 export async function GET(request: NextRequest) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code')
@@ -38,69 +30,15 @@ export async function GET(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let referredBy: string | null = null
   let consumedReferralCookie = false
-
   if (user) {
-    identifyServer(user.id, { email: user.email ?? undefined })
-
-    const { data: profileRow } = await supabase
-      .from('profiles')
-      .select('created_at, referred_by')
-      .eq('id', user.id)
-      .maybeSingle()
-    const profile = (profileRow as unknown as ProfileBrief | null) ?? null
-    referredBy = profile?.referred_by ?? null
-
-    const isNewUser =
-      profile !== null &&
-      Date.now() - new Date(profile.created_at).getTime() < NEW_USER_WINDOW_MS
-
-    // Consume the tig_ref cookie set by middleware. Only attribute on first
-    // signup (isNewUser) and when no referrer is recorded yet — avoids the
-    // rare case where a user re-clicks a ref link mid-session and rewrites
-    // their own attribution.
-    if (isNewUser && !referredBy) {
-      const cookieStore = await cookies()
-      const refCode = parseReferralFromCookie(cookieStore.get(REFERRAL_COOKIE_NAME)?.value)
-      if (refCode) {
-        const { data: referrerRow } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('referral_code', refCode)
-          .maybeSingle()
-        const referrer = (referrerRow as unknown as ReferrerLookup | null) ?? null
-
-        if (referrer && referrer.id !== user.id) {
-          const update = { referred_by: referrer.id }
-          const { error: updateErr } = await supabase
-            .from('profiles')
-            .update(update)
-            .eq('id', user.id)
-          if (!updateErr) {
-            const insertRow = {
-              referrer_id: referrer.id,
-              referred_id: user.id,
-              status: 'pending' as const,
-            }
-            await supabase.from('referrals').insert(insertRow)
-            referredBy = referrer.id
-          }
-        }
-        consumedReferralCookie = true
-      }
-    }
-
-    if (isNewUser) {
-      const provider = (user.app_metadata?.provider as string | undefined) ?? 'magic_link'
-      const method: 'google' | 'magic_link' = provider === 'google' ? 'google' : 'magic_link'
-      trackServer(user.id, EVENTS.SIGNUP_COMPLETED, {
-        method,
-        referred: referredBy !== null,
-      })
-    }
-
-    await flushServer()
+    const onboardingResult = await runPostAuthOnboarding({
+      supabase,
+      request,
+      user,
+      sentryCategory: 'auth.callback',
+    })
+    consumedReferralCookie = onboardingResult.consumedReferralCookie
   }
 
   const response = NextResponse.redirect(new URL(next, request.url))

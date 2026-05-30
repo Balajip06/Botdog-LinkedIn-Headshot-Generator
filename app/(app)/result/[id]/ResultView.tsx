@@ -23,7 +23,6 @@ interface Initial {
   output_image_url: string | null
   error_message: string | null
   attempts: number
-  idempotency_key: string
   trend_id: string
   created_at: string
   cost_usd: number
@@ -33,6 +32,7 @@ interface Initial {
 interface Trend {
   slug: string
   title: string
+  share_caption_template: string | null
 }
 
 interface ResultViewProps {
@@ -134,13 +134,13 @@ export function ResultView({ initial, trend }: ResultViewProps) {
   const onRetry = async () => {
     setRetrying(true)
     try {
-      const res = await fetch('/api/generate', {
+      // Red-team L4: retry no longer echoes the row's idempotency_key
+      // through the client. The server resolves it from the
+      // generations row and re-enqueues.
+      const res = await fetch('/api/generate/retry', {
         method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'idempotency-key': row.idempotency_key,
-        },
-        body: JSON.stringify({ trend_slug: trend.slug, values: {} }),
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ generation_id: row.id }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Retry failed')
@@ -226,6 +226,7 @@ export function ResultView({ initial, trend }: ResultViewProps) {
           trendSlug={trend.slug}
           trendTitle={trend.title}
           outputImageUrl={row.output_image_url}
+          shareCaptionTemplate={trend.share_caption_template}
         />
       )}
 

@@ -143,8 +143,21 @@ describe('getServerEnv', () => {
   it('allows MOCK_TRENDS=false in production (the safe combination)', async () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('MOCK_TRENDS', 'false')
+    // Red-team H4 prod guard: abuse-defense creds must be set in real prod.
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://example-redis.upstash.io')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'tok')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'ts-secret')
+    vi.stubEnv('NEXT_PUBLIC_TURNSTILE_SITE_KEY', 'ts-site')
     const { getServerEnv } = await loadEnv()
     expect(getServerEnv().MOCK_TRENDS).toBe('false')
+  })
+
+  it('throws in production when abuse-defense env vars are missing (H4 guard)', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('MOCK_TRENDS', 'false')
+    vi.stubEnv('CI', '')
+    const { getServerEnv } = await loadEnv()
+    expect(() => getServerEnv()).toThrow(/abuse-defense env vars/)
   })
 
   it('defaults ANONYMOUS_DAILY_BUDGET_USD to 20 when unset', async () => {

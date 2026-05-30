@@ -25,26 +25,31 @@ test('happy path: home → trend → login → creations → settings → result
   await expect(page).toHaveURL('/')
 
   await page.goto('/login')
-  await expect(page.getByRole('heading', { name: /Welcome/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Sign in/i })).toBeVisible()
   await expect(page.getByRole('button', { name: /Continue with Google/i })).toBeVisible()
   await expect(page.getByRole('button', { name: /Send magic link/i })).toBeVisible()
 
-  // 4. Creations
+  // 4. Studio (new unified dashboard — trend rail + empty state)
+  await page.goto('/me/studio')
+  await expect(page.getByRole('heading', { name: /Pick a trend/i })).toBeVisible()
+  await expect(page.getByText(/Pick a trend above to get started/i)).toBeVisible()
+
+  // 5. Creations (history)
   await page.goto('/me/creations')
   await expect(page.getByRole('heading', { name: /creations/i })).toBeVisible()
 
-  // 5. Settings
+  // 6. Settings
   await page.goto('/me/settings')
   await expect(page.getByRole('heading', { name: /Settings/i })).toBeVisible()
   await expect(page.getByText(/Your quota/i)).toBeVisible()
   await expect(page.getByText(/Buy credits/i)).toBeVisible()
 
-  // 6. Result (mock-completed)
+  // 7. Result (mock-completed)
   await page.goto('/result/mock-completed')
   await expect(page.getByRole('heading', { name: /fresh off the model/i })).toBeVisible()
   await expect(page.getByRole('link', { name: /Download/i })).toBeVisible()
 
-  // 7. Result (mock-processing) — verifies the loading state renders
+  // 8. Result (mock-processing) — verifies the loading state renders
   await page.goto('/result/mock-processing')
   await expect(page.getByRole('heading', { name: /Cooking your/i })).toBeVisible()
 })

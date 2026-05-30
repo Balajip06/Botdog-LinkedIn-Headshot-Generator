@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
+import { verifyServiceRoleBearer } from '@/lib/auth/service-role-bearer'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
@@ -51,14 +52,8 @@ async function sha256Hex(input: string): Promise<string> {
     .join('')
 }
 
-interface ProfileBrief {
-  bonus_credits_earned: number
-}
-
 export async function POST(request: NextRequest) {
-  const auth = request.headers.get('authorization')
-  const expected = `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
-  if (!auth || auth !== expected) {
+  if (!verifyServiceRoleBearer(request.headers.get('authorization'))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
@@ -84,8 +79,7 @@ export async function POST(request: NextRequest) {
     .select('bonus_credits_earned')
     .eq('id', payload.record.referrer_id)
     .maybeSingle()
-  const totalBonus = ((profileRow as unknown as ProfileBrief | null) ?? { bonus_credits_earned: 0 })
-    .bonus_credits_earned
+  const totalBonus = (profileRow ?? { bonus_credits_earned: 0 }).bonus_credits_earned
 
   const referrerHash = await sha256Hex(payload.record.referrer_id)
   trackServer(payload.record.referrer_id, EVENTS.REFERRAL_REDEEMED, {

@@ -18,7 +18,6 @@ interface InitialRow {
   output_image_url: string | null
   error_message: string | null
   attempts: number
-  idempotency_key: string
   created_at: string
   cost_usd: number
   completed_at: string | null
@@ -27,6 +26,7 @@ interface InitialRow {
 interface TrendBrief {
   slug: string
   title: string
+  share_caption_template: string | null
 }
 
 interface ResultPageProps {
@@ -48,14 +48,13 @@ export default async function ResultPage({ params }: ResultPageProps) {
       output_image_url: mockGen.output_image_url,
       error_message: mockGen.error_message,
       attempts: mockGen.attempts,
-      idempotency_key: mockGen.idempotency_key,
       created_at: mockGen.created_at,
       cost_usd: mockGen.cost_usd,
       completed_at: mockGen.completed_at,
     }
     const trend: TrendBrief = mockTrend
-      ? { slug: mockTrend.slug, title: mockTrend.title }
-      : { slug: 'unknown', title: 'Trend' }
+      ? { slug: mockTrend.slug, title: mockTrend.title, share_caption_template: null }
+      : { slug: 'unknown', title: 'Trend', share_caption_template: null }
     return <ResultView initial={initial} trend={trend} />
   }
 
@@ -67,20 +66,24 @@ export default async function ResultPage({ params }: ResultPageProps) {
 
   const { data: row } = await supabase
     .from('generations')
-    .select('id, user_id, trend_id, status, output_image_url, error_message, attempts, idempotency_key, created_at, cost_usd, completed_at')
+    .select('id, user_id, trend_id, status, output_image_url, error_message, attempts, created_at, cost_usd, completed_at')
     .eq('id', id)
     .maybeSingle()
 
-  const gen = row as unknown as InitialRow | null
+  const gen = row
   if (!gen) notFound()
   if (gen.user_id !== user.id) notFound() // hide via 404 rather than 403 to avoid id-leaks
 
   const { data: trendRow } = await supabase
     .from('trends')
-    .select('slug, title')
+    .select('slug, title, share_caption_template')
     .eq('id', gen.trend_id)
     .maybeSingle()
-  const trend = (trendRow as unknown as TrendBrief | null) ?? { slug: 'unknown', title: 'Trend' }
+  const trend: TrendBrief = trendRow ?? {
+    slug: 'unknown',
+    title: 'Trend',
+    share_caption_template: null,
+  }
 
   return <ResultView initial={gen} trend={trend} />
 }

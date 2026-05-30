@@ -20,6 +20,7 @@ jobs:
   static:
     name: Lint + Typecheck + Format
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -37,6 +38,7 @@ jobs:
   unit:
     name: Vitest
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: static
     steps:
       - uses: actions/checkout@v4
@@ -55,9 +57,43 @@ jobs:
           name: coverage
           path: coverage/
 
+  integration:
+    name: Vitest (integration — real Postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: static
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: pnpm install --frozen-lockfile
+      # Boot only the services the SQL integration suite needs. Docker
+      # is preinstalled on ubuntu-latest. `db reset` applies every
+      # migration from supabase/migrations/ in order.
+      - run: supabase start -x studio,inbucket,imgproxy,edge-runtime,realtime
+      - run: supabase db reset
+      - run: pnpm test:integration
+        env:
+          INTEGRATION_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:54322/postgres
+      # On failure, dump db container logs so trigger raises + RLS
+      # rejections are visible in the workflow log.
+      - if: failure()
+        run: docker logs supabase_db_Trend_Image_generator 2>&1 | tail -200
+      - if: always()
+        run: supabase stop --no-backup
+
   e2e:
     name: Playwright
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: static
     # MOCK_TRENDS=true lets the dev server render authed routes against an
     # empty CI Supabase. lib/env.ts only allows this combination because the

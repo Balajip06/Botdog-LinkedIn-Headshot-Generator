@@ -1,0 +1,11 @@
+# CODEOWNERS — auto-assign PR review
+# Format: <pattern> <reviewer>
+# Solo project today — every file owned by the project owner
+# NOTE: Replace @[github-handle] with the actual GitHub handle before pushing to main.
+# Post-acquisition, swap to the new owner's GitHub handle.
+
+*                       @[github-handle]
+docs/                   @[github-handle]
+supabase/migrations/    @[github-handle]
+lib/admin/              @[github-handle]
+app/admin/              @[github-handle]

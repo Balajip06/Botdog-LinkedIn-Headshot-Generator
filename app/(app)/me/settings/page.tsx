@@ -65,7 +65,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
       .eq('id', user.id)
       .maybeSingle()
 
-    profile = (profileRow as unknown as ProfileRow | null) ?? null
+    profile = profileRow ?? null
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'

@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       admin_audit_log: {
@@ -71,6 +46,44 @@ export type Database = {
           target_table?: string
         }
         Relationships: []
+      }
+      admin_marketing_spend: {
+        Row: {
+          channel: string
+          created_at: string
+          id: string
+          notes: string | null
+          recorded_by: string | null
+          usd_spent: number
+          week_start: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          usd_spent: number
+          week_start: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          recorded_by?: string | null
+          usd_spent?: number
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_marketing_spend_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       admin_users: {
         Row: {
@@ -144,15 +157,18 @@ export type Database = {
           cost_usd: number
           created_at: string
           error_message: string | null
+          favorited_at: string | null
           id: string
           idempotency_key: string
           input_payload: Json
+          is_favorite: boolean
           is_public: boolean
           model_used: string | null
           output_image_url: string | null
           purge_at: string | null
           share_count: number
           status: Database["public"]["Enums"]["generation_status"]
+          tier_at_generation: Database["public"]["Enums"]["generation_tier"]
           trend_id: string
           trend_version: number
           user_id: string
@@ -163,15 +179,18 @@ export type Database = {
           cost_usd?: number
           created_at?: string
           error_message?: string | null
+          favorited_at?: string | null
           id?: string
           idempotency_key: string
           input_payload: Json
+          is_favorite?: boolean
           is_public?: boolean
           model_used?: string | null
           output_image_url?: string | null
           purge_at?: string | null
           share_count?: number
           status?: Database["public"]["Enums"]["generation_status"]
+          tier_at_generation?: Database["public"]["Enums"]["generation_tier"]
           trend_id: string
           trend_version: number
           user_id: string
@@ -182,15 +201,18 @@ export type Database = {
           cost_usd?: number
           created_at?: string
           error_message?: string | null
+          favorited_at?: string | null
           id?: string
           idempotency_key?: string
           input_payload?: Json
+          is_favorite?: boolean
           is_public?: boolean
           model_used?: string | null
           output_image_url?: string | null
           purge_at?: string | null
           share_count?: number
           status?: Database["public"]["Enums"]["generation_status"]
+          tier_at_generation?: Database["public"]["Enums"]["generation_tier"]
           trend_id?: string
           trend_version?: number
           user_id?: string
@@ -214,54 +236,82 @@ export type Database = {
       }
       profiles: {
         Row: {
+          acquisition_source: Json | null
           avatar_url: string | null
           bonus_credits_earned: number
           created_at: string
           credits_balance: number
           deleted_at: string | null
           email: string
+          first_purchase_discount_used_at: string | null
           free_used_this_week: number
           free_week_starts_at: string
           id: string
+          is_vip: boolean
           name: string | null
           push_subscription: Json | null
           referral_code: string
           referred_by: string | null
+          tos_accepted_at: string | null
+          vip_granted_at: string | null
+          vip_granted_by: string | null
+          vip_reason: string | null
         }
         Insert: {
+          acquisition_source?: Json | null
           avatar_url?: string | null
           bonus_credits_earned?: number
           created_at?: string
           credits_balance?: number
           deleted_at?: string | null
           email: string
+          first_purchase_discount_used_at?: string | null
           free_used_this_week?: number
           free_week_starts_at?: string
           id: string
+          is_vip?: boolean
           name?: string | null
           push_subscription?: Json | null
           referral_code?: string
           referred_by?: string | null
+          tos_accepted_at?: string | null
+          vip_granted_at?: string | null
+          vip_granted_by?: string | null
+          vip_reason?: string | null
         }
         Update: {
+          acquisition_source?: Json | null
           avatar_url?: string | null
           bonus_credits_earned?: number
           created_at?: string
           credits_balance?: number
           deleted_at?: string | null
           email?: string
+          first_purchase_discount_used_at?: string | null
           free_used_this_week?: number
           free_week_starts_at?: string
           id?: string
+          is_vip?: boolean
           name?: string | null
           push_subscription?: Json | null
           referral_code?: string
           referred_by?: string | null
+          tos_accepted_at?: string | null
+          vip_granted_at?: string | null
+          vip_granted_by?: string | null
+          vip_reason?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "profiles_referred_by_fkey"
             columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_vip_granted_by_fkey"
+            columns: ["vip_granted_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -393,6 +443,27 @@ export type Database = {
           },
         ]
       }
+      trend_events: {
+        Row: {
+          id: number
+          occurred_at: string
+          trend_slug: string
+          type: string
+        }
+        Insert: {
+          id?: number
+          occurred_at?: string
+          trend_slug: string
+          type: string
+        }
+        Update: {
+          id?: number
+          occurred_at?: string
+          trend_slug?: string
+          type?: string
+        }
+        Relationships: []
+      }
       trend_suggestions: {
         Row: {
           created_at: string
@@ -425,7 +496,11 @@ export type Database = {
       }
       trends: {
         Row: {
+          activated_at: string | null
           aspect_ratio: Database["public"]["Enums"]["trend_aspect_ratio"]
+          auto_deactivate_disabled: boolean
+          auto_deactivate_threshold: number
+          cloned_from: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -433,9 +508,11 @@ export type Database = {
           eval_status: Database["public"]["Enums"]["eval_status"]
           expires_at: string | null
           faq: Json
+          goes_live_at: string | null
           id: string
           input_schema: Json
           is_active: boolean
+          is_featured: boolean
           model: Database["public"]["Enums"]["trend_model"]
           prompt_template: string
           prompt_template_history: Json
@@ -444,6 +521,7 @@ export type Database = {
           sample_before_url: string | null
           seo_description: string | null
           seo_title: string | null
+          share_caption_template: string | null
           slug: string
           thumbnail_url: string | null
           title: string
@@ -451,7 +529,11 @@ export type Database = {
           version: number
         }
         Insert: {
+          activated_at?: string | null
           aspect_ratio?: Database["public"]["Enums"]["trend_aspect_ratio"]
+          auto_deactivate_disabled?: boolean
+          auto_deactivate_threshold?: number
+          cloned_from?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -459,9 +541,11 @@ export type Database = {
           eval_status?: Database["public"]["Enums"]["eval_status"]
           expires_at?: string | null
           faq?: Json
+          goes_live_at?: string | null
           id?: string
           input_schema?: Json
           is_active?: boolean
+          is_featured?: boolean
           model?: Database["public"]["Enums"]["trend_model"]
           prompt_template: string
           prompt_template_history?: Json
@@ -470,6 +554,7 @@ export type Database = {
           sample_before_url?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          share_caption_template?: string | null
           slug: string
           thumbnail_url?: string | null
           title: string
@@ -477,7 +562,11 @@ export type Database = {
           version?: number
         }
         Update: {
+          activated_at?: string | null
           aspect_ratio?: Database["public"]["Enums"]["trend_aspect_ratio"]
+          auto_deactivate_disabled?: boolean
+          auto_deactivate_threshold?: number
+          cloned_from?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -485,9 +574,11 @@ export type Database = {
           eval_status?: Database["public"]["Enums"]["eval_status"]
           expires_at?: string | null
           faq?: Json
+          goes_live_at?: string | null
           id?: string
           input_schema?: Json
           is_active?: boolean
+          is_featured?: boolean
           model?: Database["public"]["Enums"]["trend_model"]
           prompt_template?: string
           prompt_template_history?: Json
@@ -496,13 +587,22 @@ export type Database = {
           sample_before_url?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          share_caption_template?: string | null
           slug?: string
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
           version?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trends_cloned_from_fkey"
+            columns: ["cloned_from"]
+            isOneToOne: false
+            referencedRelation: "trends"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       webhook_events: {
         Row: {
@@ -536,6 +636,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_deactivate_cold_trends: { Args: never; Returns: undefined }
       grant_credits: {
         Args: {
           p_amount: number
@@ -545,6 +646,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      trend_discovery_heartbeat: { Args: never; Returns: undefined }
     }
     Enums: {
       admin_role: "admin" | "editor"
@@ -555,6 +657,7 @@ export type Database = {
         | "completed"
         | "failed"
         | "failed_retryable"
+      generation_tier: "free" | "credit" | "vip"
       referral_status: "pending" | "rewarded"
       suggestion_source: "auto" | "user"
       suggestion_status: "pending" | "approved" | "rejected"
@@ -685,9 +788,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       admin_role: ["admin", "editor"],
@@ -699,6 +799,7 @@ export const Constants = {
         "failed",
         "failed_retryable",
       ],
+      generation_tier: ["free", "credit", "vip"],
       referral_status: ["pending", "rewarded"],
       suggestion_source: ["auto", "user"],
       suggestion_status: ["pending", "approved", "rejected"],

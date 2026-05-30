@@ -2,6 +2,37 @@
 
 Append at end of each session. Newest on top.
 
+## 2026-05-29 — sellable plan execution (W0 through W5 code-complete)
+
+**Started:** existing 343/343 test asset with admin dashboard but no listing strategy. CLAUDE.md and todo.md current as of the docs-refresh session earlier in the day. Three plan documents existed (amended plan, original plan, wiggly-cloud expansion plan with 22 proposed features) but no sellable-asset triage and no acquisition timeline.
+
+**Did:** three rounds of multi-agent execution.
+- Round 1 (4 agents in parallel): test growth (343 to 354), admin surface coverage, payment-flow hardening, observability instrumentation.
+- Round 2 (5 agents in parallel): legal templates (DPA + sub-processors + privacy policy refresh), transferability documentation (per-account transfer plan + post-acquisition timeline), data-room scaffold, ADR backfill, runbook refresh. The only file conflict was on `database.types.ts` (deliberately single-agent owned).
+- Round 3 (4 agents — one timed out mid-flight on the SOPs + ADRs workstream): SOPs (5 runbooks landed), press kit (sell sheet + launch threads + founder bio), final coverage push, sellable-plan ultrareview. The 7 ADRs were finished manually by the parent after the agent dropped — retry was rejected as a doubled-cost fragmentation risk.
+
+**Now:** 354 of 354 tests across 37 files (parent + post-agent), 49 build routes, W0 through W5 code-complete against the sellable plan. Listing range locked at $50K to $75K (down from a $150K to $300K fantasy — ultrareview corrected the multiple to comps-derived 1.0x to 1.5x). Data room scaffolded. Legal templates drafted (DPA, sub-processor list, transferability per-account and timeline). 7 ADRs covering load-bearing decisions. 5 SOPs covering daily ops, incident response, refund handling, weekly new-trend workflow, and takedown handling. Press kit at `docs/press-kit/` (sell sheet, launch threads for 7 platforms, founder-bio templates).
+
+**Cred-blocked items pending (user-side, gating W6 onward):**
+- Domain registration + DNS configuration (everything past W6 keys off the real domain).
+- Stripe live-mode KYC + product migration from test mode to live.
+- LLC formation paperwork submitted (W0 action item — lesson captured: do not push to W4).
+- Resend DNS records (SPF + DKIM + DMARC) verified on the registered domain.
+- USPTO trademark filing on the Trendly mark.
+- Vercel production deploy on the registered domain with the production env-var set committed.
+- 14-test RUNBOOK verification run end-to-end against the live stack.
+- Acquisition channel funded (Ads vs Creator vs Referral — must be picked and funded on day one of W2 per lesson captured this session).
+
+**Next session:**
+- Cred-acquisition coordination — sequence the order of (LLC, domain, Stripe live, Resend DNS, USPTO) so that the dependency chain closes without blocking W7 revenue accrual.
+- W7+ revenue accrual planning — once creds land, the 90-day clean-history window starts. Plan the first 30 days of acquisition spend, the trend ship cadence (Friday weekly), and the data-room update cadence.
+- Triage the 5 ShareBurst tests from the earlier session if they are still red.
+
+**Phase:** Pre-listing — W0 through W5 code-complete, W6+ gated on creds.
+**Blockers:** All cred-blocked items above. No code-side blockers.
+
+---
+
 ## 2026-05-29 — Docs refresh: CLAUDE.md + todo.md + runbook synced to current state
 
 **Done (no source changes; docs-only):**

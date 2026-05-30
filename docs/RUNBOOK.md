@@ -74,15 +74,37 @@ pnpm dev
 # Click "Continue with Google" → should hit accounts.google.com consent, return to /auth/callback, land on /
 ```
 
-Then seed your `auth.uid()` into `admin_users` so `/admin/*` routes load:
+Then seed yourself into `admin_users` so `/admin/*` routes load. Preferred — one-shot helper:
 
-```sql
--- Run via Supabase Dashboard → SQL Editor
-insert into public.admin_users (user_id, role)
-values ('<your-auth-uid-from-profiles-after-first-login>', 'admin');
+```bash
+pnpm bootstrap:admin your@email.com YourStr0ngP4ssw0rd
+# Then sign in at http://localhost:3000/admin/login with email + password.
+# Forgot password? `pnpm recovery:admin your@email.com` prints a one-time URL.
 ```
 
-### 2.2 GEMINI_API_KEY
+Looks up the user by email via the service-role client, upserts `(user_id, role='admin')`. Fallback if you cannot run the script — `scripts/seed-admin.sql` does the same thing via the Supabase Dashboard → SQL Editor.
+
+### 2.2 Configure Supabase Auth email templates
+
+User-facing magic-link sign-in (`/login`) only works cross-device if the Supabase email template points at our `/auth/confirm` route (which uses `verifyOtp(token_hash)` — no `code_verifier` cookie needed). The default template embeds `{{ .ConfirmationURL }}` which routes through `/auth/v1/verify` → PKCE flow → fails when the user clicks the email on a different browser/device than where they submitted the form (`/login?error=exchange_failed`).
+
+One-time setup in Supabase Dashboard → Authentication → Email Templates:
+
+**Magic Link** template — replace the body with:
+
+```html
+<h2>Sign in to Trendly</h2>
+<p>Tap the button below to sign in. The link is one-time and expires in 1 hour.</p>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/me/studio">Sign in</a></p>
+```
+
+Optional: update **Confirm signup** template to the same URL shape for consistency.
+
+`{{ .SiteURL }}` resolves to the value in Authentication → URL Configuration → Site URL (currently `http://localhost:3000` for dev; flip to production URL post-domain).
+
+After saving, magic-link sign-in works cross-device. The dev script `pnpm dlx tsx scripts/generate-magic-link.ts <email>` already points at `/auth/confirm` and works without any template edit (uses the service-role admin API instead of email).
+
+### 2.3 GEMINI_API_KEY
 
 Unblocks: real image generation. Without it, `lib/gemini/client.ts:52` returns a deterministic 1px PNG stub.
 

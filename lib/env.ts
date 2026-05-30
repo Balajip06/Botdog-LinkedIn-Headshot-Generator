@@ -36,6 +36,15 @@ const ServerEnvSchema = z.object({
   TIKTOK_CREATIVE_CENTER_KEY: z.string().min(1).optional(),
   INSTAGRAM_SESSION_COOKIE: z.string().min(1).optional(),
   REDDIT_USER_AGENT: z.string().min(1).optional(),
+  // Optional /about page personalization — inlined at build time. Set in
+  // Vercel before deploying for the founder photo / bio / social links to
+  // render. Without these, the page falls back to a generic indie-maker
+  // blurb and hides the socials block.
+  NEXT_PUBLIC_FOUNDER_PHOTO_URL: z.string().url().optional(),
+  NEXT_PUBLIC_FOUNDER_BIO: z.string().min(1).optional(),
+  NEXT_PUBLIC_FOUNDER_TWITTER_URL: z.string().url().optional(),
+  NEXT_PUBLIC_FOUNDER_LINKEDIN_URL: z.string().url().optional(),
+  NEXT_PUBLIC_FOUNDER_THREADS_URL: z.string().url().optional(),
   // Dev-only: enable in-memory fixtures (string enum, not boolean — call sites do `=== 'true'`)
   MOCK_TRENDS: z.enum(['true', 'false']).optional(),
 })
@@ -68,6 +77,30 @@ export function getServerEnv(): ServerEnv {
     throw new Error(
       'MOCK_TRENDS=true is set in a production build outside CI. This flag bypasses auth + RLS and must never run in real production. Unset it before deploy.',
     )
+  }
+  // Fail-loud production guard: rate-limit + bot-check creds (red-team H4).
+  // `lib/rate-limit.ts` falls back to `passThroughLimiter` and
+  // `lib/turnstile/verify.ts` falls back to no-op when these env vars are
+  // unset. That fallback is intentional for local dev / CI, but in real
+  // production it silently disables non-negotiable #10 (20/hr/IP) and the
+  // signup bot wall, leaving /api/generate-anonymous + /api/generate wide
+  // open to unbounded abuse. Boot must crash before serving requests if
+  // these are missing in a production deploy.
+  if (process.env.NODE_ENV === 'production' && process.env.CI !== 'true') {
+    const required: Array<keyof ServerEnv> = [
+      'UPSTASH_REDIS_REST_URL',
+      'UPSTASH_REDIS_REST_TOKEN',
+      'TURNSTILE_SECRET_KEY',
+      'NEXT_PUBLIC_TURNSTILE_SITE_KEY',
+    ]
+    const missing = required.filter((k) => !parsed.data[k])
+    if (missing.length > 0) {
+      throw new Error(
+        `Production deploy missing required abuse-defense env vars: ${missing.join(', ')}. ` +
+          'Rate limiting and bot-check fall back to no-op when these are unset, which bypasses non-negotiable #10. ' +
+          'Set them in Vercel before deploy.',
+      )
+    }
   }
   cached = parsed.data
   return cached

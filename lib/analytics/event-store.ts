@@ -1,23 +1,51 @@
 /**
- * Dev/mock event store for trend impressions + clicks.
+ * Trend impression + click event store — router.
  *
- * In-memory Map keyed on trend slug (stable across mock + real Supabase rows
- * since the same slug points at the same trend in either environment).
- * Seeded with a deterministic per-slug baseline so the admin panel never
- * displays empty stats. Real user interactions during a session add on top of
- * the baseline. State resets when the dev server restarts.
+ * Two backends:
+ *   - **memory** (default, used in tests + offline dev): deterministic
+ *     per-slug baseline so the admin dashboards render meaningful shapes
+ *     even with no real traffic. State resets when the dev server restarts.
+ *   - **supabase**: persistent `trend_events` table. Selected when
+ *     `TREND_EVENTS_BACKEND=supabase`. Used in production once the live DB
+ *     is wired.
  *
- * Swap the internals for a Supabase query when a `trend_events` table is
- * provisioned — `getCounts` + `recordEvent` are the only call sites, so the
- * external contract stays stable.
+ * All read functions are async — callers must `await`. This is the
+ * one-time migration cost: previously the memory backend was sync; the
+ * Supabase path can't be. Tests + RSC server components handle this
+ * transparently.
  */
 
-export type TrendEventType = 'impression' | 'click_generate'
+import {
+  getCountsBatchDb,
+  getCountsDb,
+  getDailySeriesDb,
+  getOverallDb,
+  getPeriodTotalsDb,
+  getQuotaBlockedSummaryDb,
+  recordEventDb,
+} from './event-store-db'
+import type {
+  Counts,
+  DailyPoint,
+  QuotaBlockedSummary,
+  TrendEventType,
+} from './event-store-types'
 
-interface Counts {
-  impressions: number
-  clicks: number
+export type {
+  Counts,
+  DailyPoint,
+  QuotaBlockedSummary,
+  TrendEventType,
+} from './event-store-types'
+
+const DAY_MS = 24 * 60 * 60 * 1000
+const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+
+function supabaseBackendActive(): boolean {
+  return process.env.TREND_EVENTS_BACKEND === 'supabase'
 }
+
+// ---------- in-memory baseline ----------
 
 // Next.js dev runs route handlers and RSC pages in separate module contexts,
 // so a plain module-level Map gets re-instantiated per worker. Stash the
@@ -46,7 +74,7 @@ function baselineFor(slug: string): Counts {
   return { impressions, clicks }
 }
 
-function read(slug: string): Counts {
+function readMemory(slug: string): Counts {
   const existing = store.get(slug)
   if (existing) return existing
   const seeded = baselineFor(slug)
@@ -54,8 +82,8 @@ function read(slug: string): Counts {
   return seeded
 }
 
-export function recordEvent(slug: string, type: TrendEventType): void {
-  const cur = read(slug)
+function recordEventMemory(slug: string, type: TrendEventType): void {
+  const cur = readMemory(slug)
   if (type === 'impression') {
     store.set(slug, { ...cur, impressions: cur.impressions + 1 })
   } else {
@@ -63,25 +91,188 @@ export function recordEvent(slug: string, type: TrendEventType): void {
   }
 }
 
-export function getCounts(slug: string): Counts {
-  return read(slug)
+function getCountsMemory(slug: string): Counts {
+  return readMemory(slug)
 }
 
-export function getCountsBatch(slugs: readonly string[]): Map<string, Counts> {
+function getCountsBatchMemory(slugs: readonly string[]): Map<string, Counts> {
   const out = new Map<string, Counts>()
-  for (const s of slugs) {
-    out.set(s, read(s))
-  }
+  for (const s of slugs) out.set(s, readMemory(s))
   return out
 }
 
-export function getOverall(slugs: readonly string[]): Counts {
+function getOverallMemory(slugs: readonly string[]): Counts {
   let impressions = 0
   let clicks = 0
   for (const s of slugs) {
-    const c = read(s)
+    const c = readMemory(s)
     impressions += c.impressions
     clicks += c.clicks
   }
   return { impressions, clicks }
+}
+
+function startOfUtcDay(d: Date): Date {
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
+}
+
+/**
+ * Deterministic per-day split of cumulative slug totals across the window.
+ * Used only by the memory backend — the Supabase backend aggregates by
+ * `occurred_at` for real numbers.
+ */
+function splitDailyForSlug(slug: string, days: number): { impressions: number[]; clicks: number[] } {
+  const counts = readMemory(slug)
+  const baseSeed = djb2(slug)
+  const impressionsOut = new Array<number>(days).fill(0)
+  const clicksOut = new Array<number>(days).fill(0)
+
+  const weights = new Array<number>(days)
+  let weightTotal = 0
+  for (let i = 0; i < days; i++) {
+    const trend = 0.7 + (i / Math.max(1, days - 1)) * 0.6
+    const jitter = ((djb2(`${slug}:${i}`) % 100) / 100) * 0.5 + 0.75
+    const w = trend * jitter
+    weights[i] = w
+    weightTotal += w
+  }
+
+  for (let i = 0; i < days; i++) {
+    const share = weights[i] / weightTotal
+    impressionsOut[i] = Math.max(0, Math.round(counts.impressions * share))
+    clicksOut[i] = Math.max(0, Math.round(counts.clicks * share))
+  }
+
+  const balance = (target: number, arr: number[]) => {
+    const sum = arr.reduce((a, b) => a + b, 0)
+    let drift = target - sum
+    if (drift === 0) return
+    const step = drift > 0 ? 1 : -1
+    let idx = baseSeed % arr.length
+    while (drift !== 0) {
+      arr[idx] = Math.max(0, arr[idx] + step)
+      drift -= step
+      idx = (idx + 1) % arr.length
+    }
+  }
+  balance(counts.impressions, impressionsOut)
+  balance(counts.clicks, clicksOut)
+
+  return { impressions: impressionsOut, clicks: clicksOut }
+}
+
+function buildDateLabels(days: number): { date: string; label: string }[] {
+  const today = startOfUtcDay(new Date())
+  const out: { date: string; label: string }[] = []
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * DAY_MS)
+    out.push({
+      date: d.toISOString().slice(0, 10),
+      label: WEEKDAY_LABELS[d.getUTCDay()],
+    })
+  }
+  return out
+}
+
+function getDailySeriesMemory(slugs: readonly string[], days: number): DailyPoint[] {
+  const labels = buildDateLabels(days)
+  const series = labels.map((l) => ({ ...l, impressions: 0, clicks: 0 }))
+  for (const slug of slugs) {
+    const split = splitDailyForSlug(slug, days)
+    for (let i = 0; i < days; i++) {
+      series[i].impressions += split.impressions[i]
+      series[i].clicks += split.clicks[i]
+    }
+  }
+  return series
+}
+
+function getPeriodTotalsMemory(
+  slugs: readonly string[],
+  days: number,
+): { current: Counts; previous: Counts } {
+  const total = getDailySeriesMemory(slugs, days * 2)
+  const half = total.slice(days)
+  const prior = total.slice(0, days)
+  const sum = (rows: DailyPoint[]): Counts =>
+    rows.reduce(
+      (acc, p) => ({
+        impressions: acc.impressions + p.impressions,
+        clicks: acc.clicks + p.clicks,
+      }),
+      { impressions: 0, clicks: 0 },
+    )
+  return { current: sum(half), previous: sum(prior) }
+}
+
+// ---------- exported router ----------
+
+export async function recordEvent(slug: string, type: TrendEventType): Promise<void> {
+  if (supabaseBackendActive()) {
+    await recordEventDb(slug, type)
+    return
+  }
+  recordEventMemory(slug, type)
+}
+
+export async function getCounts(slug: string): Promise<Counts> {
+  if (supabaseBackendActive()) return getCountsDb(slug)
+  return getCountsMemory(slug)
+}
+
+export async function getCountsBatch(slugs: readonly string[]): Promise<Map<string, Counts>> {
+  if (supabaseBackendActive()) return getCountsBatchDb(slugs)
+  return getCountsBatchMemory(slugs)
+}
+
+export async function getOverall(slugs: readonly string[]): Promise<Counts> {
+  if (supabaseBackendActive()) return getOverallDb(slugs)
+  return getOverallMemory(slugs)
+}
+
+export async function getDailySeries(
+  slugs: readonly string[],
+  days = 7,
+): Promise<DailyPoint[]> {
+  if (supabaseBackendActive()) return getDailySeriesDb(slugs, days)
+  return getDailySeriesMemory(slugs, days)
+}
+
+export async function getPeriodTotals(
+  slugs: readonly string[],
+  days: number,
+): Promise<{ current: Counts; previous: Counts }> {
+  if (supabaseBackendActive()) return getPeriodTotalsDb(slugs, days)
+  return getPeriodTotalsMemory(slugs, days)
+}
+
+function zeroedQuotaSeries(): { date: string; label: string; count: number }[] {
+  const today = startOfUtcDay(new Date())
+  const out: { date: string; label: string; count: number }[] = []
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * DAY_MS)
+    out.push({
+      date: d.toISOString().slice(0, 10),
+      label: WEEKDAY_LABELS[d.getUTCDay()],
+      count: 0,
+    })
+  }
+  return out
+}
+
+/**
+ * Quota-block summary. Persistent backend only — the in-memory store
+ * doesn't track `quota_blocked` events (they originate from a DB trigger,
+ * not the /api/track route), so the memory branch returns a zeroed shape.
+ */
+export async function getQuotaBlockedSummary(
+  windowHours: number = 24,
+): Promise<QuotaBlockedSummary> {
+  if (supabaseBackendActive()) return getQuotaBlockedSummaryDb(windowHours)
+  return {
+    totalBlocks: 0,
+    distinctSlugs: 0,
+    distinctUsersEstimated: 0,
+    dailySeries: zeroedQuotaSeries(),
+  }
 }

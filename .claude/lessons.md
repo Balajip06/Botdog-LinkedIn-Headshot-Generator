@@ -116,3 +116,75 @@ Format:
 **Trigger:** Adding `supabase/functions/generate-image/index.ts` (Deno runtime, URL imports, `Deno` globals) broke `pnpm typecheck` because `tsconfig.json`'s `**/*.ts` include grabbed it.
 **Lesson:** Exclude `supabase/functions/**` from `tsconfig.json` exclude list. The Deno Edge Function has its own runtime + type system and must not be checked by the Node tsc. If you want type-safety inside the function, add a per-function `deno.json` with a TS config; do not try to make the project-wide tsc compile it.
 **Apply when:** Adding any new `supabase/functions/<name>/` file. Verify `tsconfig.json` still excludes the folder.
+
+---
+
+## 2026-05-29 — Parallel agent batches benefit from clean file separation
+
+**Trigger:** Three rounds of multi-agent execution (4 + 5 + 4 agents). The only conflict surfaced on `database.types.ts`, which had been deliberately given to a single agent. Every other parallel writer touching different files in the same directory finished with zero conflicts.
+**Lesson:** Pre-think file boundaries before dispatching agents. Any file that multiple workstreams plausibly need (generated types, central enum modules, root layout) must be owned by exactly one agent in the batch, and dependent agents must be sequenced after it — or fed a stub interface to compile against in parallel.
+**Apply when:** Dispatching more than two parallel agents in the same session. Draw the file ownership map first; reject the batch if any file lands in two agents' write sets.
+
+---
+
+## 2026-05-29 — Ultrareview saved the listing from a $150K fantasy
+
+**Trigger:** Original sellable-plan draft targeted $150K to $300K listing range based on 2.5x to 5x ARR multiples that apply to B2B SaaS, not consumer credit-pack microSaaS. Ultrareview pass cross-checked recent Acquire.com comparables and forced the multiple back to 1.0x to 1.5x of trailing-12 revenue.
+**Lesson:** Listing-price targets must be derived from comp data in the same asset category (consumer transactional, not B2B subscription) and the same revenue range. The "what would 5x ARR give us" thought experiment is a fantasy generator. Land the range at $50K to $75K — defensible, achievable at the W14 metrics, and avoids the "delisted after six months at $200K" failure mode.
+**Apply when:** Any time a listing price, valuation, or acquisition target is being floated. Run the ultrareview pass against actual comps before committing the number to outbound copy.
+
+---
+
+## 2026-05-29 — Memory-backend default with Supabase opt-in via env var
+
+**Trigger:** Analytics layer needed to run in three modes — deterministic in tests, offline in dev, real in production. Picking either sync (memory only) or async (Supabase only) as the default broke one of the three.
+**Lesson:** Default to the in-memory backend; flip to Supabase via `TREND_EVENTS_BACKEND=supabase`. The router pattern lets both implementations coexist behind a single interface. Tests stay deterministic, dev stays offline-capable, and production routes through the env-driven switch with no code change.
+**Apply when:** Any subsystem that crosses the test / dev / prod boundary and has a "real" backend that is too slow or unreliable for tests. Build a memory backend, default to it, opt into the real one via env. Do not invert the polarity.
+
+---
+
+## 2026-05-29 — Carve out a "phase 11+ deferred" bucket EARLY
+
+**Trigger:** The wiggly-cloud expansion plan had 22 features. Without an explicit Absorbed / Deferred / Shipped triage, scope creep would have either delayed the listing or shipped a half-built feature surface. The triage absorbed 11 pre-listing and deferred 10 to the buyer roadmap.
+**Lesson:** Every expansion plan needs an explicit triage bucket on day one. Deferred items become the buyer-roadmap pitch — they increase perceived value at sale without obligating the operator to build them. Items left in limbo become technical-debt anchors that the buyer either negotiates down or walks away from.
+**Apply when:** Any time a roadmap doc proposes more than ~5 features without an explicit triage column. Add Absorbed / Deferred / Shipped per row before any of the items get scheduled.
+
+---
+
+## 2026-05-29 — Form the LLC in W0, not W4
+
+**Trigger:** Plan originally pushed LLC formation to W4 because "we can ship code first". Reality — Stripe entity transfer at acquisition cleanliness depends on the LLC existing. W4 start plus 1 to 2 weeks for paperwork puts entity readiness at W5 to W6, which pushes the Stripe migration plan back by the same amount, which pushes the whole 14-day transfer-runbook plan back.
+**Lesson:** LLC formation is W0 paperwork, not W4. The waiting period is on the registrar, not on the operator; starting in W0 means the entity is registered, EIN issued, and Stripe migrated to the LLC by W2. Code can be built in parallel.
+**Apply when:** Any sellable-asset plan with an acquisition timeline. LLC formation is the first action item; nothing else gates on it.
+
+---
+
+## 2026-05-29 — Acquisition channel must be planned in W2, not "TBD"
+
+**Trigger:** Code-complete plan with no acquisition channel listed for the listing-ready milestone. A code-complete asset without traffic is unsellable at any multiple.
+**Lesson:** Pick one acquisition channel (paid ads / creator partnership / referral loop) by W2 and fund it on day one of W2. Two channels are a distraction at this size; zero channels is a guaranteed unsellable listing. The channel is a planning artifact, not a "we'll figure it out post-launch" item.
+**Apply when:** Any plan that ships an asset toward a listing or a launch. The acquisition channel + the day-one budget are mandatory line items by the time code-burst starts.
+
+---
+
+## 2026-05-29 — Agent timeouts: a 4th agent dropping mid-flight is normal
+
+**Trigger:** During the third multi-agent batch, agent D dropped after writing 3 of 4 SOPs. The 7 ADRs that were also in its write-set were left undone. First instinct was to retry the agent; correct move was to have the parent finish what was missing.
+**Lesson:** Agent timeouts are part of the dispatch cost. Have a "self-execute the missing bits" fallback wired into the orchestration. Retrying the agent doubles the cost and the context fragmentation; the parent can read the partial output, see what is missing, and complete it deterministically.
+**Apply when:** Any multi-agent batch where total write-set is large enough that a single agent dropping is plausible. Build the parent-recovers fallback into the dispatch plan, not into a panic afterwards.
+
+---
+
+## 2026-05-29 — Lint catches what typecheck misses on import refactors
+
+**Trigger:** Import refactor moved icon usages between files; typecheck stayed green, but lint flagged that `Twitter` and `Linkedin` did not exist on the v1 export surface of `lucide-react`. TypeScript could not catch it because the names were transitively re-exported in a way that satisfied the type system but produced runtime undefined.
+**Lesson:** Run lint after every import-heavy refactor, not just typecheck. The lint pass catches "this name does not exist in this package version" failures that the TypeScript type system happily accepts via wildcard re-exports.
+**Apply when:** Any refactor that moves imports between files or upgrades a dependency that touches re-exports. `pnpm lint` is mandatory in the verification loop, alongside `pnpm typecheck`.
+
+---
+
+## 2026-05-29 — Old "Phase 7-10 expansion" plan files are buyer-roadmap gold
+
+**Trigger:** Default reaction to deferred features was "delete the plan files so they don't clutter the repo." Correct move was to keep them, mark each item as Absorbed / Deferred / Shipped, and reference them in the press kit roadmap section.
+**Lesson:** Don't delete old expansion plans. Annotate them in place with triage status, and they become "documented post-sale direction" — a value-add for the acquirer that costs nothing to produce. The buyer gets a roadmap they can negotiate against; the seller gets evidence the asset had a future, not just a present.
+**Apply when:** Any time a plan document is about to be deleted because "the features won't ship pre-listing". Triage the items instead and surface the file in the data room.

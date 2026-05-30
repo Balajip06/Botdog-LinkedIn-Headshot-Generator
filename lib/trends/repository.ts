@@ -4,6 +4,7 @@
  * "active" definition lives in one place.
  */
 
+import * as Sentry from '@sentry/nextjs'
 import { MOCK_TRENDS, MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
 import { createClient } from '@/lib/supabase/server'
 import { DEFAULT_TREND_INPUT, TrendInputSchema, type TrendInput } from './input-schema'
@@ -29,10 +30,11 @@ export interface PublicTrend {
   faq: FAQItem[]
   display_order: number
   updated_at: string
+  activated_at: string | null
 }
 
 const COLUMNS =
-  'id, slug, title, description, thumbnail_url, sample_before_url, sample_after_url, aspect_ratio, model, input_schema, seo_title, seo_description, faq, display_order, updated_at'
+  'id, slug, title, description, thumbnail_url, sample_before_url, sample_after_url, aspect_ratio, model, input_schema, seo_title, seo_description, faq, display_order, updated_at, activated_at'
 
 function coerce(row: Record<string, unknown>): PublicTrend {
   const inputSchemaParse = TrendInputSchema.safeParse(row.input_schema)
@@ -56,6 +58,7 @@ function coerce(row: Record<string, unknown>): PublicTrend {
     faq,
     display_order: (row.display_order as number) ?? 0,
     updated_at: row.updated_at as string,
+    activated_at: (row.activated_at as string | null) ?? null,
   }
 }
 
@@ -68,7 +71,19 @@ export async function listActiveTrends(): Promise<PublicTrend[]> {
     .select(COLUMNS)
     .order('display_order', { ascending: true })
 
-  if (error || !data) return []
+  // Distinguish "DB error" (must surface) from "no rows" (legit empty state).
+  // Returning [] in both cases is the right UX, but the error path needs to
+  // breadcrumb so Sentry catches infra regressions instead of users seeing a
+  // silently empty home grid.
+  if (error) {
+    Sentry.captureMessage('trends.list failed', {
+      level: 'error',
+      tags: { component: 'trends-repository', op: 'listActiveTrends' },
+      extra: { code: error.code, message: error.message },
+    })
+    return []
+  }
+  if (!data) return []
   return (data as Record<string, unknown>[]).map(coerce)
 }
 
@@ -82,6 +97,17 @@ export async function getActiveTrendBySlug(slug: string): Promise<PublicTrend | 
     .eq('slug', slug)
     .maybeSingle()
 
-  if (error || !data) return null
+  // Same logic as listActiveTrends — only the DB-error branch breadcrumbs.
+  // A missing slug (data === null with no error) is the SSR 404 path and is
+  // expected (e.g. retired trends, typo'd URLs).
+  if (error) {
+    Sentry.captureMessage('trends.bySlug failed', {
+      level: 'error',
+      tags: { component: 'trends-repository', op: 'getActiveTrendBySlug' },
+      extra: { slug, code: error.code, message: error.message },
+    })
+    return null
+  }
+  if (!data) return null
   return coerce(data as Record<string, unknown>)
 }

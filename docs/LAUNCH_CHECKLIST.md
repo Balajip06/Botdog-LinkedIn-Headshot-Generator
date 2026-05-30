@@ -8,6 +8,7 @@ breaks if missed.
 Cross-references:
 - [docs/RUNBOOK.md](./RUNBOOK.md) — env-var origin + 14-test verification matrix
 - [docs/CREDENTIALS.md](./CREDENTIALS.md) — per-var origin + degradation behavior
+- [docs/acquisition/README.md](./acquisition/README.md) — W2 acquisition-channel decision matrix (Google Ads / creator DMs / referral)
 
 This doc is a list, not a patch. Code changes happen in a separate pass.
 
@@ -50,14 +51,16 @@ implies that's the intended TLD but it's not registered yet.
 
 ## Contact emails
 
-### Support email
-**Currently:** `support@trendly.example` (explicit placeholder).
+### Support / legal email
+**Currently:** `support@trendly.example` + `legal@trendly.example` (explicit placeholders, `.example` is RFC 2606 reserved — safe to grep).
 **Where:**
 - `docs/TERMS_OF_SERVICE.md:98`
 - `docs/PRIVACY_POLICY.md:11,120`
+- `LICENSE:21`
 
-**Change to:** real `support@<real-domain>` once a real inbox exists.
-**Breaks if missed:** user takedown requests, billing disputes, and privacy emails bounce. Legal contact unreachable — GDPR Article 12 violation risk.
+**Change to:** real `support@<real-domain>` + `legal@<real-domain>` once domain registered + inbox provisioned.
+**Sweep command:** `git grep -l 'trendly\.example'` returns the full list — one search-and-replace handles all hits.
+**Breaks if missed:** user takedown requests, billing disputes, and privacy emails bounce. Legal contact unreachable — GDPR Article 12 violation risk + DMCA notice goes unread = buyer-side IP exposure.
 
 ### GDPR privacy contact (data export)
 **Currently:** `privacy@trendly.app` is hardcoded in the GDPR Article 15 export payload.

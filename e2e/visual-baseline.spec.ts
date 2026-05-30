@@ -19,6 +19,8 @@ const STATIC_ROUTES: Array<{ name: string; path: string }> = [
   { name: 'trend-ghibli', path: '/trend/ghibli-portrait' },
   { name: 'trend-pixar', path: '/trend/pixar-3d-character' },
   { name: 'login', path: '/login' },
+  { name: 'studio-empty', path: '/me/studio' },
+  { name: 'studio-trend', path: '/me/studio?trend=ghibli-portrait' },
   { name: 'creations', path: '/me/creations' },
   { name: 'settings', path: '/me/settings' },
   { name: 'result-completed', path: '/result/mock-completed' },

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +11,7 @@ import {
 import { TrendImpressionBeacon } from '@/components/analytics/TrendImpressionBeacon'
 import { Badge } from '@/components/ui/badge'
 import { buildFAQJsonLd, buildHowToJsonLd } from '@/lib/seo/json-ld'
+import { createClient } from '@/lib/supabase/server'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 import { TrendUpload } from './TrendUpload'
 
@@ -66,6 +67,18 @@ export async function generateMetadata({ params }: TrendPageProps): Promise<Meta
 
 export default async function TrendPage({ params }: TrendPageProps) {
   const { slug } = await params
+
+  // Authed users go through the unified /me/studio dashboard with the trend
+  // pre-selected. Anonymous users fall through to the SSR + SEO + anonymous-
+  // trial flow below, which is what organic + social traffic lands on.
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (user) {
+    redirect(`/me/studio?trend=${slug}`)
+  }
+
   const trend = await getActiveTrendBySlug(slug)
   if (!trend) notFound()
 

@@ -4,17 +4,6 @@ import { applyWatermark } from '@/lib/watermark/compose'
 
 export const runtime = 'nodejs'
 
-interface GenerationRow {
-  id: string
-  user_id: string
-  output_image_url: string | null
-  status: string
-}
-
-interface ProfileRow {
-  credits_balance: number
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,10 +18,10 @@ export async function GET(
 
   const { data: genRow } = await supabase
     .from('generations')
-    .select('id, user_id, output_image_url, status')
+    .select('id, user_id, output_image_url, status, tier_at_generation')
     .eq('id', id)
     .maybeSingle()
-  const gen = genRow as unknown as GenerationRow | null
+  const gen = genRow
 
   if (!gen) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (gen.user_id !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -40,15 +29,32 @@ export async function GET(
     return NextResponse.json({ error: 'Generation not ready' }, { status: 409 })
   }
 
-  const { data: profileRow } = await supabase
-    .from('profiles')
-    .select('credits_balance')
-    .eq('id', user.id)
-    .maybeSingle()
-  const profile = (profileRow as unknown as ProfileRow | null) ?? { credits_balance: 0 }
-  const isPro = profile.credits_balance > 0
+  // Tier is snapshotted on the generation row at INSERT time by the quota
+  // trigger. We never re-derive Pro-ness from live `profile.credits_balance`
+  // — that read is non-transactional and would re-watermark paid downloads
+  // once the user spent the credit (red-team C2).
+  const isPro = gen.tier_at_generation === 'credit' || gen.tier_at_generation === 'vip'
 
-  const upstream = await fetch(gen.output_image_url)
+  // SSRF guard (red-team H3): `output_image_url` is read from the DB and
+  // proxied via fetch(). Restrict the upstream host to the project's
+  // Supabase storage origin so a future write-amplification bug in the
+  // Edge Function cannot turn this route into an attacker-controlled
+  // server-side fetcher.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  if (!supabaseUrl) {
+    return NextResponse.json({ error: 'misconfigured' }, { status: 500 })
+  }
+  let upstreamUrl: URL
+  try {
+    upstreamUrl = new URL(gen.output_image_url)
+  } catch {
+    return NextResponse.json({ error: 'invalid upstream' }, { status: 502 })
+  }
+  if (upstreamUrl.host !== new URL(supabaseUrl).host) {
+    return NextResponse.json({ error: 'forbidden upstream' }, { status: 403 })
+  }
+
+  const upstream = await fetch(upstreamUrl)
   if (!upstream.ok) {
     return NextResponse.json({ error: 'Image fetch failed' }, { status: 502 })
   }

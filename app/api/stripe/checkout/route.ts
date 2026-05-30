@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import Stripe from 'stripe'
 import { z } from 'zod'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { findPack, isPackId, requirePackPriceId } from '@/lib/payments/packs'
 
 export const runtime = 'nodejs'
@@ -39,6 +39,34 @@ export async function POST(request: NextRequest) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
+  // First-purchase 20%-off coupon. Claim atomically via a service-role
+  // UPDATE that sets `first_purchase_discount_used_at = now()` only if it
+  // is currently NULL. Postgres serializes the row update, so two
+  // concurrent checkout requests (browser double-click, retry) cannot
+  // both claim the slot — only the first UPDATE returns a row; the second
+  // sees zero rows and falls through to a full-price session.
+  //
+  // Rollback: if Stripe `sessions.create` later throws, we clear the
+  // stamp so the user keeps eligibility. If the process crashes between
+  // the claim and Stripe success, the coupon is forfeit — accepted
+  // trade-off vs. the alternative of stamping in the webhook (which
+  // allowed unbounded discounted sessions in flight before any webhook
+  // arrived, per red-team M4).
+  const firstPurchaseCouponId = process.env.STRIPE_FIRST_PURCHASE_COUPON_ID
+  let applyFirstPurchaseCoupon = false
+  if (firstPurchaseCouponId) {
+    const service = createServiceClient()
+    const claimedAt = new Date().toISOString()
+    const { data: claimed } = await service
+      .from('profiles')
+      .update({ first_purchase_discount_used_at: claimedAt })
+      .eq('id', user.id)
+      .is('first_purchase_discount_used_at', null)
+      .select('id')
+      .maybeSingle()
+    if (claimed) applyFirstPurchaseCoupon = true
+  }
+
   let session: Stripe.Checkout.Session
   try {
     const stripe = getStripe()
@@ -50,6 +78,9 @@ export async function POST(request: NextRequest) {
       cancel_url: `${siteUrl}/me/settings?purchase=cancelled`,
       client_reference_id: user.id,
       customer_email: user.email ?? undefined,
+      ...(applyFirstPurchaseCoupon && firstPurchaseCouponId
+        ? { discounts: [{ coupon: firstPurchaseCouponId }] }
+        : {}),
       // Webhook handler uses metadata to grant credits idempotently
       // by joining to webhook_events.event_id; pack_id stays portable
       // across test/staging/prod (price_id changes per env).
@@ -60,11 +91,25 @@ export async function POST(request: NextRequest) {
       },
     })
   } catch (err: unknown) {
+    if (applyFirstPurchaseCoupon) {
+      const service = createServiceClient()
+      await service
+        .from('profiles')
+        .update({ first_purchase_discount_used_at: null })
+        .eq('id', user.id)
+    }
     const message = err instanceof Error ? err.message : 'stripe error'
     return NextResponse.json({ error: message }, { status: 500 })
   }
 
   if (!session.url) {
+    if (applyFirstPurchaseCoupon) {
+      const service = createServiceClient()
+      await service
+        .from('profiles')
+        .update({ first_purchase_discount_used_at: null })
+        .eq('id', user.id)
+    }
     return NextResponse.json({ error: 'Stripe returned no checkout url' }, { status: 502 })
   }
 

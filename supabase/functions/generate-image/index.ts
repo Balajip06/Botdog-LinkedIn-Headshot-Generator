@@ -74,8 +74,12 @@ Deno.serve(async (req: Request) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const expectedAuth = `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
-  if (req.headers.get('authorization') !== expectedAuth) {
+  // Shared secret check — decoupled from SUPABASE_SERVICE_ROLE_KEY rotation.
+  // Set on platform via `supabase secrets set WEBHOOK_SECRET=...`; same value
+  // lives in .env.local + DB webhook header.
+  const webhookSecret = Deno.env.get('WEBHOOK_SECRET')
+  const expectedAuth = `Bearer ${webhookSecret}`
+  if (!webhookSecret || req.headers.get('authorization') !== expectedAuth) {
     return new Response('Unauthorized', { status: 401 })
   }
 

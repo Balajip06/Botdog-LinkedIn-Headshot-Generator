@@ -17,9 +17,33 @@ interface ShareBurstProps {
   trendSlug: string
   trendTitle: string
   outputImageUrl: string
+  shareCaptionTemplate?: string | null
 }
 
-export function ShareBurst({ trendSlug, trendTitle, outputImageUrl }: ShareBurstProps) {
+// Substitute the two supported tokens. NULL or empty template → generic
+// fallback. Substitution is plain string-replace (no regex injection
+// risk because the values are our own, server-controlled strings).
+function buildCaption(
+  template: string | null | undefined,
+  trendTitle: string,
+  siteUrl: string,
+): string {
+  if (!template) {
+    return `Made my ${trendTitle} on Trendly — try yours`
+  }
+  return template
+    .split('{trend_title}')
+    .join(trendTitle)
+    .split('{site_url}')
+    .join(siteUrl)
+}
+
+export function ShareBurst({
+  trendSlug,
+  trendTitle,
+  outputImageUrl,
+  shareCaptionTemplate,
+}: ShareBurstProps) {
   const [copied, setCopied] = useState(false)
   const [sharing, setSharing] = useState(false)
   // Defer feature-detected tiles until after hydration. isWebShareSupported()
@@ -35,7 +59,7 @@ export function ShareBurst({ trendSlug, trendTitle, outputImageUrl }: ShareBurst
   // is undefined on the server, which causes a hydration mismatch).
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
   const siteUrl = `${origin}/trend/${trendSlug}`
-  const text = `I tried the ${trendTitle} trend — check it out`
+  const text = buildCaption(shareCaptionTemplate, trendTitle, siteUrl)
 
   const fireTrack = (channel: ShareChannel) => {
     analytics.track(EVENTS.SHARE_CLICKED, { trend_slug: trendSlug, channel })
@@ -85,7 +109,7 @@ export function ShareBurst({ trendSlug, trendTitle, outputImageUrl }: ShareBurst
           </p>
           <p className="mt-0.5 text-base font-bold">Drop it on the feed</p>
         </div>
-        <Share2 className="size-5 text-muted-foreground" />
+        <Share2 className="size-5 text-muted-foreground" aria-hidden="true" />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
         {showNative && (
@@ -143,18 +167,18 @@ interface ShareTileProps {
 function ShareTile({ href, onClick, disabled, label, sub, tone, icon }: ShareTileProps) {
   const cls =
     tone === 'gradient'
-      ? 'bg-gradient-hero text-white shadow-glow-pink hover:scale-[1.02]'
+      ? 'brand-grad text-white brand-glow hover:scale-[1.02]'
       : 'border border-border bg-background hover:bg-muted'
   const inner = (
     <span className="flex flex-col items-start">
       <span className="flex items-center gap-1.5 text-sm font-semibold">
-        {icon}
+        {icon ? <span aria-hidden="true">{icon}</span> : null}
         {label}
       </span>
       <span className="text-[10px] uppercase tracking-wider opacity-70">{sub}</span>
     </span>
   )
-  const baseCls = `flex flex-col items-start rounded-2xl px-4 py-3 text-left transition-all ${cls}`
+  const baseCls = `flex flex-col items-start rounded-2xl px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 ${cls}`
   if (href) {
     return (
       <a href={href} target="_blank" rel="noreferrer" onClick={onClick} className={baseCls}>
