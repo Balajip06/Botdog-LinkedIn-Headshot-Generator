@@ -51,7 +51,7 @@ alter table public.referral_rewards enable row level security;
 -- (already enabled in migration 0001).
 create or replace function public.email_to_hash(p_email text)
 returns text language sql immutable security definer set search_path = public as $$
-  select encode(digest(lower(trim(p_email)), 'sha256'), 'hex');
+  select encode(extensions.digest(lower(trim(p_email)), 'sha256'), 'hex');
 $$;
 
 -- Replace maybe_reward_referral with the ledger-guarded version. Same
