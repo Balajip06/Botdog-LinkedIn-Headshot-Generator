@@ -2,7 +2,9 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
 type Limiter = {
-  limit: (identifier: string) => Promise<{ success: boolean; limit: number; remaining: number; reset: number }>
+  limit: (
+    identifier: string
+  ) => Promise<{ success: boolean; limit: number; remaining: number; reset: number }>
 }
 
 const passThroughLimiter: Limiter = {
@@ -21,7 +23,11 @@ function getRedis(): Redis | null {
   return cachedRedis
 }
 
-function createLimiter(prefix: string, requests: number, window: `${number} ${'s' | 'm' | 'h' | 'd'}`): Limiter {
+function createLimiter(
+  prefix: string,
+  requests: number,
+  window: `${number} ${'s' | 'm' | 'h' | 'd'}`
+): Limiter {
   const redis = getRedis()
   if (!redis) return passThroughLimiter
   return new Ratelimit({
@@ -40,3 +46,10 @@ export const anonymousFingerprintLimiter = createLimiter('rl:anon:fp', 5, '1 d')
 
 // 5 GDPR exports / hour / user — bounds Storage signed-URL bursts + analytics
 export const exportUserLimiter = createLimiter('rl:export:user', 5, '1 h')
+
+// 60 trend-event POSTs / minute / IP — covers genuine browse traffic (one
+// impression per card view + maybe one click) while killing the analytics
+// inflation surface flagged in red-team M1. /api/track stays unauthenticated
+// by design (we want pre-signup impressions) but unbounded writes let any
+// attacker rewrite the "viral" leaderboard.
+export const trackIpLimiter = createLimiter('rl:track:ip', 60, '1 m')

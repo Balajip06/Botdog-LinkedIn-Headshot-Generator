@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { z } from 'zod'
 import { createServiceClient } from '@/lib/supabase/server'
+import { verifyServiceRoleBearer } from '@/lib/auth/service-role-bearer'
 import { sendPush } from '@/lib/push/send'
 import { buildResultReadyEmail, sendEmail } from '@/lib/email/send'
 
@@ -10,31 +11,25 @@ const BodySchema = z.object({
   generation_id: z.string().uuid(),
 })
 
-interface GenerationRow {
-  id: string
-  user_id: string
-  status: string
-  output_image_url: string | null
-  trend_id: string
-}
+// Runtime validation of the push_subscription JSONB column. The DB type
+// is `Json | null`, not the nested object shape we need at use-site
+// (`subscription.keys.p256dh`). Red-team H9: a JSONB row that drifted
+// from the expected shape (renamed key, partial write) would have
+// dereferenced `undefined` and crashed mid-request without surfacing
+// the shape mismatch. Zod parse turns the drift into an explicit
+// "skip push, fall through to email" path.
+const PushSubscriptionSchema = z.object({
+  endpoint: z.string().url(),
+  keys: z.object({
+    p256dh: z.string().min(1),
+    auth: z.string().min(1),
+  }),
+})
 
-interface ProfileRow {
-  email: string | null
-  push_subscription: {
-    endpoint: string
-    keys: { p256dh: string; auth: string }
-  } | null
-}
-
-interface TrendRow {
-  slug: string
-  title: string
-}
+type PushSubscriptionShape = z.infer<typeof PushSubscriptionSchema>
 
 export async function POST(request: NextRequest) {
-  const auth = request.headers.get('authorization')
-  const expected = `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`
-  if (!auth || auth !== expected) {
+  if (!verifyServiceRoleBearer(request.headers.get('authorization'))) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
@@ -55,7 +50,7 @@ export async function POST(request: NextRequest) {
     .select('id, user_id, status, output_image_url, trend_id')
     .eq('id', body.generation_id)
     .maybeSingle()
-  const gen = genData as unknown as GenerationRow | null
+  const gen = genData
   if (!gen) return NextResponse.json({ error: 'generation not found' }, { status: 404 })
   if (gen.status !== 'completed') {
     return NextResponse.json({ skipped: true, reason: 'not completed' })
@@ -66,20 +61,32 @@ export async function POST(request: NextRequest) {
     .select('email, push_subscription')
     .eq('id', gen.user_id)
     .maybeSingle()
-  const profile = profileData as unknown as ProfileRow | null
+  const profileEmail: string | null = profileData?.email ?? null
+  let pushSubscription: PushSubscriptionShape | null = null
+  if (profileData?.push_subscription) {
+    const parsed = PushSubscriptionSchema.safeParse(profileData.push_subscription)
+    if (parsed.success) {
+      pushSubscription = parsed.data
+    } else {
+      // Stored shape is wrong (schema drift or partial write). Clear so
+      // future runs go straight to email and surface the drift to
+      // monitoring via the cleared-row count.
+      await supabase.from('profiles').update({ push_subscription: null }).eq('id', gen.user_id)
+    }
+  }
 
   const { data: trendData } = await supabase
     .from('trends')
     .select('slug, title')
     .eq('id', gen.trend_id)
     .maybeSingle()
-  const trend = (trendData as unknown as TrendRow | null) ?? { slug: 'unknown', title: 'Trend' }
+  const trend = trendData ?? { slug: 'unknown', title: 'Trend' }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
   const resultUrl = `${siteUrl}/result/${gen.id}`
 
-  if (profile?.push_subscription) {
-    const result = await sendPush(profile.push_subscription, {
+  if (pushSubscription) {
+    const result = await sendPush(pushSubscription, {
       title: `Your ${trend.title} is ready`,
       body: 'Tap to view + download.',
       url: resultUrl,
@@ -96,10 +103,10 @@ export async function POST(request: NextRequest) {
   }
 
   // Email fallback (push absent OR push send failed terminally).
-  if (profile?.email) {
+  if (profileEmail) {
     const tpl = buildResultReadyEmail({ trendTitle: trend.title, resultUrl })
     const sent = await sendEmail({
-      to: profile.email,
+      to: profileEmail,
       subject: tpl.subject,
       html: tpl.html,
       text: tpl.text,

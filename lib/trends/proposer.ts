@@ -2,11 +2,12 @@
  * LLM proposer — turns a TrendCandidate into a draft proposal
  * (slug + title + description + prompt_template + input_schema).
  *
- * Production wiring uses Gemini Flash (cheap) via `lib/gemini/client.ts`;
+ * Production wiring uses Gemini Flash (cheap) via `lib/image-provider/`;
  * for Phase 6 prep we expose the interface + a deterministic mock that
  * lets the orchestrator + admin inbox be exercised without API calls.
  */
 
+import * as Sentry from '@sentry/nextjs'
 import { DEFAULT_TREND_INPUT, type TrendInput } from './input-schema'
 import type { TrendCandidate } from './sources/types'
 
@@ -68,5 +69,21 @@ export function getProposer(): Proposer {
   // TODO Phase 6 impl: call gemini-2.5-flash with a structured JSON
   // schema mirroring TrendInputSchema and parse the response. For now
   // keep behaviour identical to mock so the call path stays exercised.
+  //
+  // Red-team M5: prior code silently returned mockProposer even with
+  // GEMINI_API_KEY set, meaning Phase 6 launch would emit deterministic
+  // mock data into the trend-suggestion inbox with no signal that the
+  // real proposer never ran. Surface a Sentry breadcrumb the first time
+  // this path is taken in a given runtime so the gap is visible in
+  // monitoring before it shows up as bad trend proposals.
+  if (!warnedAboutMockFallback) {
+    warnedAboutMockFallback = true
+    Sentry.captureMessage(
+      'trend-proposer: GEMINI_API_KEY present but real proposer not yet implemented — returning mockProposer',
+      'warning'
+    )
+  }
   return mockProposer
 }
+
+let warnedAboutMockFallback = false

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import * as Sentry from '@sentry/nextjs'
 import Stripe from 'stripe'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -78,13 +79,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 })
   }
 
-  // Mark processed
+  // Mark processed. Red-team H6: a silent failure here leaves the row
+  // looking unprocessed even though credits were granted, which corrupts
+  // the `webhook_events_unprocessed_idx` monitoring partial index and
+  // makes oncall reconciliation queries wrong. Surface to Sentry instead
+  // of swallowing — but still return 200 so Stripe does not retry (the
+  // grant already happened; a retry would no-op via the duplicate-key
+  // path on insert anyway).
   const processedUpdate = { processed_at: new Date().toISOString() }
-  await supabase
+  const { error: processedError } = await supabase
     .from('webhook_events')
     .update(processedUpdate)
     .eq('source', 'stripe')
     .eq('event_id', event.id)
+
+  if (processedError) {
+    Sentry.captureException(
+      new Error(`webhook_events processed_at stamp failed: ${processedError.message}`),
+      { extra: { event_id: event.id, event_type: event.type } }
+    )
+  }
 
   return NextResponse.json({ received: true })
 }
@@ -95,7 +109,11 @@ async function handleEvent(
 ): Promise<void> {
   switch (event.type) {
     case 'checkout.session.completed':
-      await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session, event.id, supabase)
+      await handleCheckoutCompleted(
+        event.data.object as Stripe.Checkout.Session,
+        event.id,
+        supabase
+      )
       return
     // Other event types (charge.refunded, etc.) wired post-MVP.
     default:

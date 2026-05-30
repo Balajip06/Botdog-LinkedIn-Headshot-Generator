@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import type { NextRequest } from 'next/server'
 
 interface Counts {
   impressions: number
@@ -22,12 +23,15 @@ afterEach(() => {
   globalThis.__trendEventStore = undefined
 })
 
-function makePost(body: unknown): Request {
+function makePost(body: unknown): NextRequest {
+  // Tests construct a plain `Request` (no nextUrl/cookies/page/ua) — the
+  // route handler only reads `headers` and `json()` so the structural
+  // cast is safe.
   return new Request('http://localhost/api/track', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
-  })
+  }) as unknown as NextRequest
 }
 
 describe('POST /api/track', () => {
@@ -71,7 +75,7 @@ describe('POST /api/track', () => {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: 'not-json',
-    })
+    }) as unknown as NextRequest
     const res = await POST(req)
     expect(res.status).toBe(400)
   })
@@ -79,8 +83,8 @@ describe('POST /api/track', () => {
   it('actually increments the event store on success', async () => {
     const handler = await loadHandler()
     const store = await import('@/lib/analytics/event-store')
-    const before = store.getCounts('test-slug').impressions
+    const before = (await store.getCounts('test-slug')).impressions
     await handler.POST(makePost({ trend_slug: 'test-slug', type: 'impression' }))
-    expect(store.getCounts('test-slug').impressions).toBe(before + 1)
+    expect((await store.getCounts('test-slug')).impressions).toBe(before + 1)
   })
 })

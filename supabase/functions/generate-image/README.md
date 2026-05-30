@@ -14,10 +14,10 @@ pnpm supabase functions deploy generate-image --no-verify-jwt
 
 Set in Supabase Dashboard → Edge Functions → generate-image → Secrets:
 
-| Key | Value |
-|---|---|
-| `GEMINI_API_KEY` | from Google AI Studio |
-| `SITE_URL` | public origin of the Next.js app (e.g. `https://trendimage.com`) — used to POST `/api/push/dispatch` after marking a generation `completed` |
+| Key              | Value                                                                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GEMINI_API_KEY` | from Google AI Studio                                                                                                                       |
+| `SITE_URL`       | public origin of the Next.js app (e.g. `https://trendimage.com`) — used to POST `/api/push/dispatch` after marking a generation `completed` |
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are auto-injected.
 
@@ -36,13 +36,13 @@ Dashboard → Database → Webhooks → Create:
 
 ## Failure model
 
-| Reason | DB status | Quota |
-|---|---|---|
-| Gemini safety reject | `failed` | refunded (trigger) |
-| Timeout (90s) | `failed_retryable` until 3 attempts, then `failed` | refunded on terminal |
-| Transient (5xx, 429, network) | same | same |
-| Storage upload error | same | same |
-| `attempts ≥ 3` | `failed` | refunded |
+| Reason                        | DB status                                          | Quota                |
+| ----------------------------- | -------------------------------------------------- | -------------------- |
+| Gemini safety reject          | `failed`                                           | refunded (trigger)   |
+| Timeout (90s)                 | `failed_retryable` until 3 attempts, then `failed` | refunded on terminal |
+| Transient (5xx, 429, network) | same                                               | same                 |
+| Storage upload error          | same                                               | same                 |
+| `attempts ≥ 3`                | `failed`                                           | refunded             |
 
 ## Local testing
 

@@ -40,7 +40,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={1}
         title="Glow Up"
-      />,
+      />
     )
 
     // Assert
@@ -56,7 +56,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={1}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.queryByRole('img')).toBeNull()
@@ -72,7 +72,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={1}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.getByText(/Rendering pixels/)).toBeInTheDocument()
@@ -86,7 +86,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={0}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.getByText(/Queued — starting in a moment/)).toBeInTheDocument()
@@ -100,7 +100,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={2}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.getByText('Auto-retrying… attempt 2')).toBeInTheDocument()
@@ -114,7 +114,7 @@ describe('ResultCanvas', () => {
         errorMessage="Gemini timed out"
         attempts={3}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.getByText('Generation failed')).toBeInTheDocument()
@@ -130,7 +130,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={3}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.getByText('Generation failed')).toBeInTheDocument()
@@ -147,7 +147,7 @@ describe('ResultCanvas', () => {
         errorMessage={null}
         attempts={1}
         title="Glow Up"
-      />,
+      />
     )
 
     expect(screen.queryByRole('img')).toBeNull()

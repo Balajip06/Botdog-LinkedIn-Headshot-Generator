@@ -24,7 +24,7 @@ data
     console.log(
       r.route.padEnd(40),
       (r.firstLoadUncompressedJsBytes / 1024).toFixed(1) + ' KB',
-      '(' + r.firstLoadChunkPaths.length + ' chunks)',
+      '(' + r.firstLoadChunkPaths.length + ' chunks)'
     )
   })
 
@@ -34,7 +34,7 @@ data.forEach((r) =>
     try {
       chunkSize[p] = fs.statSync(p).size
     } catch {}
-  }),
+  })
 )
 const notFound = data.find((r) => r.route === '/_not-found')
 const baseline = new Set(notFound?.firstLoadChunkPaths ?? [])

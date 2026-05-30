@@ -10,20 +10,21 @@ const ERROR_COPY: Record<string, string> = {
   oauth_failed: 'Google sign-in failed. Try again.',
   missing_code: 'Sign-in link expired. Try again.',
   exchange_failed: 'Could not finish sign-in. Try again.',
+  tos_required: 'Please check the box to accept our terms + privacy policy before continuing.',
 }
 
 export default async function LoginPage({ searchParams }: { searchParams: SearchParams }) {
-  const { next = '/', sent, error } = await searchParams
+  const { next = '/me/studio', sent, error } = await searchParams
   const errorMessage = error ? (ERROR_COPY[error] ?? 'Sign in failed. Try again.') : null
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-extrabold tracking-tight">
-          Welcome <span className="text-gradient-hero">in</span>
+          Sign <span className="text-gradient-hero">in</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Save your creations, unlock the gallery, and refer friends for free credits.
+        <p className="text-muted-foreground text-sm">
+          Sign in to save your creations, unlock the gallery, and refer friends for free credits.
         </p>
       </header>
 
@@ -34,14 +35,24 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
         </div>
       )}
       {errorMessage && (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-2xl border px-4 py-3 text-sm">
           {errorMessage}
         </div>
       )}
 
       <LoginForms next={next} />
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
+        Admin?{' '}
+        <Link
+          href="/admin/login"
+          className="text-foreground font-medium underline-offset-2 hover:underline"
+        >
+          Sign in here
+        </Link>
+      </p>
+
+      <p className="text-muted-foreground text-center text-xs">
         By continuing you agree to our{' '}
         <Link href="/terms" className="font-medium underline-offset-2 hover:underline">
           terms

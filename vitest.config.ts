@@ -14,7 +14,14 @@ export default defineConfig({
       exclude: ['**/*.config.*', '**/node_modules/**', '**/.next/**', 'e2e/**', 'supabase/**'],
       thresholds: { lines: 80, branches: 80, functions: 80, statements: 80 },
     },
-    exclude: ['node_modules', '.next', 'e2e', 'playwright-report', 'test-results'],
+    exclude: [
+      'node_modules',
+      '.next',
+      'e2e',
+      'playwright-report',
+      'test-results',
+      'tests/integration',
+    ],
   },
   resolve: {
     alias: {

@@ -37,11 +37,17 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
+  // Public admin surfaces (login, forgot/reset password) are reachable
+  // without an admin session — the whole point is letting admins establish
+  // one. The gate below skips them so the redirect loop can't form.
+  const ADMIN_PUBLIC = ['/admin/login', '/admin/forgot-password', '/admin/reset-password']
+  const isAdminPublic = ADMIN_PUBLIC.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+
   // Admin gate
-  if (pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin') && !isAdminPublic) {
     if (!user) {
       const url = request.nextUrl.clone()
-      url.pathname = '/login'
+      url.pathname = '/admin/login'
       url.searchParams.set('next', pathname)
       return NextResponse.redirect(url)
     }
@@ -51,7 +57,10 @@ export async function updateSession(request: NextRequest) {
       .eq('user_id', user.id)
       .maybeSingle()
     if (!adminRow) {
-      return NextResponse.redirect(new URL('/', request.url))
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/login'
+      url.searchParams.set('error', 'not_admin')
+      return NextResponse.redirect(url)
     }
   }
 

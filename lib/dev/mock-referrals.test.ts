@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  MOCK_REFERRAL_EVENTS,
-  MOCK_REFERRERS,
-  mockReferralTotals,
-} from './mock-referrals'
+import { MOCK_REFERRAL_EVENTS, MOCK_REFERRERS, mockReferralTotals } from './mock-referrals'
 
 describe('MOCK_REFERRERS', () => {
   it('has at least 8 deterministic rows', () => {

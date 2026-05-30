@@ -3,7 +3,11 @@ import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { parseIdempotencyKey } from '@/lib/idempotency'
 import { generationIpLimiter } from '@/lib/rate-limit'
-import { interpolatePrompt, collectImageInputs, type TrendInputValues } from '@/lib/trends/interpolate'
+import {
+  interpolatePrompt,
+  collectImageInputs,
+  type TrendInputValues,
+} from '@/lib/trends/interpolate'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 
@@ -12,10 +16,7 @@ export const runtime = 'nodejs'
 // Per-value caps are tight on purpose. Signed Supabase URLs run ~500 chars
 // today; 5000 leaves headroom for query params and future signature schemes.
 // max(8) on arrays mirrors the image-field cap in TrendInputSchema.
-const ValueSchema = z.union([
-  z.string().max(5000),
-  z.array(z.string().max(5000)).max(8),
-])
+const ValueSchema = z.union([z.string().max(5000), z.array(z.string().max(5000)).max(8)])
 
 const MAX_FIELDS = 20
 const BodySchema = z.object({
@@ -55,14 +56,50 @@ export async function POST(request: NextRequest) {
   }
 
   // 4. Body validation
-  const contentLength = Number(request.headers.get('content-length') ?? 0)
-  if (contentLength > MAX_BODY_BYTES) {
+  // Red-team H2: prior code trusted `content-length`. Chunked transfer
+  // omits that header, `Number(null) === 0` passed the guard, and
+  // `request.json()` then buffered without bound. Fix: stream the body
+  // and abort as soon as we cross MAX_BODY_BYTES, regardless of whether
+  // a `Content-Length` was advertised. The Content-Length pre-check is
+  // kept as a cheap reject-early for clients that advertised honestly.
+  const declared = Number(request.headers.get('content-length') ?? 0)
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
     return NextResponse.json({ error: 'Body too large' }, { status: 413 })
+  }
+  let rawBody: string
+  try {
+    const reader = request.body?.getReader()
+    if (!reader) {
+      return NextResponse.json({ error: 'Body required' }, { status: 400 })
+    }
+    const chunks: Uint8Array[] = []
+    let received = 0
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      if (value) {
+        received += value.byteLength
+        if (received > MAX_BODY_BYTES) {
+          await reader.cancel()
+          return NextResponse.json({ error: 'Body too large' }, { status: 413 })
+        }
+        chunks.push(value)
+      }
+    }
+    const total = new Uint8Array(received)
+    let offset = 0
+    for (const chunk of chunks) {
+      total.set(chunk, offset)
+      offset += chunk.byteLength
+    }
+    rawBody = new TextDecoder('utf-8', { fatal: false }).decode(total)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'body read failed'
+    return NextResponse.json({ error: message }, { status: 400 })
   }
   let parsedBody: z.infer<typeof BodySchema>
   try {
-    const json = await request.json()
-    parsedBody = BodySchema.parse(json)
+    parsedBody = BodySchema.parse(JSON.parse(rawBody))
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'invalid body'
     return NextResponse.json({ error: message }, { status: 400 })

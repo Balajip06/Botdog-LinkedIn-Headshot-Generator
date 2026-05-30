@@ -53,9 +53,7 @@ describe('FlashToasts', () => {
 
   it('fires toast.success when level=success and the matching key is present', () => {
     navMocks.params = new URLSearchParams('saved=1')
-    render(
-      <FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'All saved.' }]} />,
-    )
+    render(<FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'All saved.' }]} />)
     expect(toastMocks.success).toHaveBeenCalledWith('All saved.')
     expect(toastMocks.error).not.toHaveBeenCalled()
   })
@@ -83,9 +81,7 @@ describe('FlashToasts', () => {
 
   it('does nothing when the configured query param is absent', () => {
     navMocks.params = new URLSearchParams('') // no 'saved' key
-    render(
-      <FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'All saved.' }]} />,
-    )
+    render(<FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'All saved.' }]} />)
     expect(toastMocks.success).not.toHaveBeenCalled()
     expect(navMocks.replace).not.toHaveBeenCalled()
   })
@@ -93,7 +89,7 @@ describe('FlashToasts', () => {
   it('dedupes re-renders with the same params via the internal firedRef', () => {
     navMocks.params = new URLSearchParams('saved=1')
     const { rerender } = render(
-      <FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'Saved.' }]} />,
+      <FlashToasts flashes={[{ key: 'saved', level: 'success', message: 'Saved.' }]} />
     )
     expect(toastMocks.success).toHaveBeenCalledTimes(1)
 
@@ -122,7 +118,7 @@ describe('FlashToasts', () => {
           { key: 'saved', level: 'success', message: 'Saved.' },
           { key: 'error', level: 'error', message: 'Bad.' },
         ]}
-      />,
+      />
     )
     expect(toastMocks.success).toHaveBeenCalledWith('Saved.')
     expect(toastMocks.error).toHaveBeenCalledWith('Bad.')

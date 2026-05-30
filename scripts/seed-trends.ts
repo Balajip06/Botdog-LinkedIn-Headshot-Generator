@@ -70,11 +70,22 @@ const trends: SeedTrend[] = [
     input_schema: singlePhoto,
     display_order: 1,
     seo_title: 'Ghibli-style portrait generator — turn your photo into a Studio Ghibli still',
-    seo_description: 'Free Ghibli-style portrait generator. Upload a photo and get a soft, painterly result in seconds.',
+    seo_description:
+      'Free Ghibli-style portrait generator. Upload a photo and get a soft, painterly result in seconds.',
     faq: [
-      { question: 'Is it free?', answer: 'You get 5 free generations per week. Buy credits if you need more.' },
-      { question: 'Does it work on iPhone?', answer: 'Yes — all modern mobile + desktop browsers are supported.' },
-      { question: 'What photos work best?', answer: 'Clear front-facing photos with even lighting work best. Group shots vary in quality.' },
+      {
+        question: 'Is it free?',
+        answer: 'You get 5 free generations per week. Buy credits if you need more.',
+      },
+      {
+        question: 'Does it work on iPhone?',
+        answer: 'Yes — all modern mobile + desktop browsers are supported.',
+      },
+      {
+        question: 'What photos work best?',
+        answer:
+          'Clear front-facing photos with even lighting work best. Group shots vary in quality.',
+      },
     ],
     is_active: true,
     eval_status: 'passed',
@@ -90,10 +101,14 @@ const trends: SeedTrend[] = [
     input_schema: singlePhoto,
     display_order: 2,
     seo_title: 'Pixar character generator — turn yourself into a Pixar 3D animation',
-    seo_description: 'Get a Pixar-style 3D character of yourself. Upload one photo and the AI does the rest.',
+    seo_description:
+      'Get a Pixar-style 3D character of yourself. Upload one photo and the AI does the rest.',
     faq: [
       { question: 'How long does it take?', answer: 'About 20-40 seconds per generation.' },
-      { question: 'Can I use it commercially?', answer: 'Outputs are yours but stylistic likeness to Pixar IP is for personal use only.' },
+      {
+        question: 'Can I use it commercially?',
+        answer: 'Outputs are yours but stylistic likeness to Pixar IP is for personal use only.',
+      },
     ],
     is_active: true,
     eval_status: 'passed',
@@ -109,9 +124,13 @@ const trends: SeedTrend[] = [
     input_schema: singlePhoto,
     display_order: 3,
     seo_title: 'Anime portrait generator — turn your photo into anime art',
-    seo_description: 'Upload a photo, get an anime-style portrait in seconds. Sharp lines, vivid colors, free to try.',
+    seo_description:
+      'Upload a photo, get an anime-style portrait in seconds. Sharp lines, vivid colors, free to try.',
     faq: [
-      { question: 'Will it look like me?', answer: 'Yes — the AI preserves facial features while applying the anime style.' },
+      {
+        question: 'Will it look like me?',
+        answer: 'Yes — the AI preserves facial features while applying the anime style.',
+      },
     ],
     is_active: true,
     eval_status: 'passed',
@@ -127,9 +146,13 @@ const trends: SeedTrend[] = [
     input_schema: singlePhoto,
     display_order: 4,
     seo_title: 'Vintage Polaroid generator — turn any photo into a 70s Polaroid',
-    seo_description: 'Faded colors, film grain, classic Polaroid white border. Upload any photo to try it.',
+    seo_description:
+      'Faded colors, film grain, classic Polaroid white border. Upload any photo to try it.',
     faq: [
-      { question: 'Does it add the Polaroid border?', answer: 'Yes — the white frame is part of the output.' },
+      {
+        question: 'Does it add the Polaroid border?',
+        answer: 'Yes — the white frame is part of the output.',
+      },
     ],
     is_active: true,
     eval_status: 'passed',
@@ -145,9 +168,13 @@ const trends: SeedTrend[] = [
     input_schema: singlePhoto,
     display_order: 5,
     seo_title: 'Marble statue generator — turn your photo into a Greek sculpture',
-    seo_description: 'Get an ultra-realistic classical Greek marble statue of yourself. Free to try.',
+    seo_description:
+      'Get an ultra-realistic classical Greek marble statue of yourself. Free to try.',
     faq: [
-      { question: 'Does it work on full body shots?', answer: 'Yes, though headshots tend to look the most dramatic.' },
+      {
+        question: 'Does it work on full body shots?',
+        answer: 'Yes, though headshots tend to look the most dramatic.',
+      },
     ],
     is_active: true,
     eval_status: 'passed',

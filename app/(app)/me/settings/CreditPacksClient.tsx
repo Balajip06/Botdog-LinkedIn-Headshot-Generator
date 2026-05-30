@@ -56,30 +56,33 @@ export function CreditPacksClient({ packs }: CreditPacksClientProps) {
           <li
             key={pack.id}
             className={cn(
-              'relative flex flex-col gap-4 rounded-2xl border bg-card p-5 transition-shadow',
+              'bg-card relative flex flex-col gap-4 rounded-2xl border p-5 transition-shadow',
               popular
-                ? 'border-[var(--brand-grad-1)]/40 shadow-glow-pink'
-                : 'border-border/60 hover:shadow-soft',
+                ? 'shadow-glow-pink border-[var(--brand-grad-1)]/40'
+                : 'border-border/60 hover:shadow-soft'
             )}
           >
             {popular && (
-              <Badge className="absolute -top-2 left-5 rounded-full bg-gradient-hero px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+              <Badge className="bg-gradient-hero absolute -top-2 left-5 rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase">
                 <Sparkles className="size-3" /> Most popular
               </Badge>
             )}
             <div className="flex flex-col gap-1">
               <h3 className="text-base font-bold">{pack.label}</h3>
-              <p className="text-xs text-muted-foreground">${perCredit} / credit</p>
+              <p className="text-muted-foreground text-xs">${perCredit} / credit</p>
             </div>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl font-extrabold">${dollars}</span>
-              <span className="text-xs text-muted-foreground">USD</span>
+              <span className="text-muted-foreground text-xs">USD</span>
             </div>
             <GradientButton
               size="sm"
               onClick={() => onBuy(pack.id)}
               disabled={pendingId !== null}
-              className={cn('w-full', !popular && 'bg-foreground bg-none text-background shadow-none')}
+              className={cn(
+                'w-full',
+                !popular && 'bg-foreground text-background bg-none shadow-none'
+              )}
             >
               {pending ? 'Opening…' : `Buy ${pack.credits} credits`}
             </GradientButton>

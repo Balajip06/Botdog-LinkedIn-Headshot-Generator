@@ -19,7 +19,10 @@
 // @ts-expect-error Deno-only import; not resolved by Node typecheck.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-declare const Deno: { env: { get(name: string): string | undefined }; serve: (handler: (req: Request) => Response | Promise<Response>) => void }
+declare const Deno: {
+  env: { get(name: string): string | undefined }
+  serve: (handler: (req: Request) => Response | Promise<Response>) => void
+}
 
 type GenerationStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'failed_retryable'
 
@@ -74,8 +77,12 @@ Deno.serve(async (req: Request) => {
     return new Response('Method not allowed', { status: 405 })
   }
 
-  const expectedAuth = `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`
-  if (req.headers.get('authorization') !== expectedAuth) {
+  // Shared secret check — decoupled from SUPABASE_SERVICE_ROLE_KEY rotation.
+  // Set on platform via `supabase secrets set WEBHOOK_SECRET=...`; same value
+  // lives in .env.local + DB webhook header.
+  const webhookSecret = Deno.env.get('WEBHOOK_SECRET')
+  const expectedAuth = `Bearer ${webhookSecret}`
+  if (!webhookSecret || req.headers.get('authorization') !== expectedAuth) {
     return new Response('Unauthorized', { status: 401 })
   }
 
@@ -139,7 +146,8 @@ async function process(supabase: ReturnType<typeof createClient>, gen: Generatio
 
   // 3. Build prompt + collect image URLs.
   const prompt = interpolate(trendData.prompt_template, gen.input_payload.values)
-  const imageUrls = gen.input_payload.image_urls ?? collectImagesFromValues(gen.input_payload.values)
+  const imageUrls =
+    gen.input_payload.image_urls ?? collectImagesFromValues(gen.input_payload.values)
 
   // 4. Call Gemini.
   const result = await callGemini(trendData.model, prompt, imageUrls)
@@ -151,7 +159,11 @@ async function process(supabase: ReturnType<typeof createClient>, gen: Generatio
     }
     // transient / timeout / invalid
     if (gen.attempts + 1 >= MAX_ATTEMPTS) {
-      await terminalFail(supabase, gen, `terminal after ${MAX_ATTEMPTS} attempts: ${result.message}`)
+      await terminalFail(
+        supabase,
+        gen,
+        `terminal after ${MAX_ATTEMPTS} attempts: ${result.message}`
+      )
     } else {
       await markRetryable(supabase, gen, result.message)
     }

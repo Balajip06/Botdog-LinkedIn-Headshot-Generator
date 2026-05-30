@@ -31,13 +31,13 @@ export function GradientButton({
     <Comp
       data-slot="gradient-button"
       className={cn(
-        'group relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full font-semibold text-white outline-none transition-transform',
+        'group relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full font-semibold text-white transition-transform outline-none',
         'brand-grad brand-glow',
         'hover:scale-[1.02] active:scale-[0.98]',
-        'focus-visible:ring-[3px] focus-visible:ring-ring/60',
+        'focus-visible:ring-ring/60 focus-visible:ring-[3px]',
         'disabled:pointer-events-none disabled:opacity-50',
         SIZE_CLASSES[size],
-        className,
+        className
       )}
       {...props}
     />

@@ -106,12 +106,7 @@ describe('buildExportPayload', () => {
       avatar_url: null,
       deleted_at: null,
     }
-    const payload = buildExportPayload(
-      'user-uuid-1234',
-      sparseProfile,
-      [pendingGen],
-      FIXED_DATE
-    )
+    const payload = buildExportPayload('user-uuid-1234', sparseProfile, [pendingGen], FIXED_DATE)
     expect(payload.profile.name).toBeNull()
     expect(payload.profile.avatar_url).toBeNull()
     expect(payload.profile.deleted_at).toBeNull()

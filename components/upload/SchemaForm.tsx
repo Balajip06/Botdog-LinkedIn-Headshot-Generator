@@ -95,7 +95,7 @@ export function SchemaForm({
       if (!validate()) return
       await onSubmit({ values: state.values, files: state.files })
     },
-    [onSubmit, state.files, state.values, validate],
+    [onSubmit, state.files, state.values, validate]
   )
 
   return (
@@ -153,7 +153,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
             {field.label}
             {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
           </span>
-          {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+          {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
         </Label>
         <Input
           id={field.name}
@@ -162,7 +162,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           onChange={(e: ChangeEvent<HTMLInputElement>) => onText(field.name, e.target.value)}
           className="h-12 rounded-xl"
         />
-        {error && <span className="text-xs text-destructive">{error}</span>}
+        {error && <span className="text-destructive text-xs">{error}</span>}
       </div>
     )
   }
@@ -176,7 +176,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           {field.label}
           {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
         </span>
-        {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </Label>
       <Select value={current} onValueChange={(v) => onText(field.name, v)}>
         <SelectTrigger className="h-12 rounded-xl">
@@ -190,7 +190,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           ))}
         </SelectContent>
       </Select>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   )
 }
@@ -202,7 +202,14 @@ interface ImageFieldProps {
   onFiles: (files: File[]) => void
 }
 
-function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
+function ImageField(props: ImageFieldProps) {
+  if (props.field.max_count > 1) {
+    return <MultiSlotImageField {...props} />
+  }
+  return <SingleImageField {...props} />
+}
+
+function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
   const [dragOver, setDragOver] = useState(false)
   const [previews, setPreviews] = useState<string[]>([])
 
@@ -223,7 +230,7 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
       const arr = Array.from(incoming).slice(0, field.max_count)
       onFiles(arr)
     },
-    [field.max_count, onFiles],
+    [field.max_count, onFiles]
   )
 
   const removeAt = useCallback(
@@ -231,7 +238,7 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
       const next = files.filter((_, i) => i !== idx)
       onFiles(next)
     },
-    [files, onFiles],
+    [files, onFiles]
   )
 
   const inputId = `file-${field.name}`
@@ -243,7 +250,7 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
           {field.label}
           {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
         </span>
-        {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </Label>
 
       {previews.length > 0 ? (
@@ -251,7 +258,7 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
           {previews.map((src, idx) => (
             <div
               key={src}
-              className="group relative aspect-square overflow-hidden rounded-2xl border border-border bg-muted"
+              className="group border-border bg-muted relative aspect-square overflow-hidden rounded-2xl border"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
@@ -259,23 +266,12 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
                 type="button"
                 onClick={() => removeAt(idx)}
                 aria-label="Remove photo"
-                className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
               >
                 <X className="size-3.5" />
               </button>
             </div>
           ))}
-          {previews.length < field.max_count && (
-            <label
-              htmlFor={inputId}
-              className="grid aspect-square cursor-pointer place-items-center rounded-2xl border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-[var(--brand-grad-1)] hover:text-foreground"
-            >
-              <div className="flex flex-col items-center gap-1 text-xs font-medium">
-                <ImagePlus className="size-5" />
-                Add more
-              </div>
-            </label>
-          )}
         </div>
       ) : (
         <label
@@ -294,18 +290,15 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
             'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors',
             dragOver
               ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
-              : 'border-border bg-muted/40 hover:border-foreground/30',
+              : 'border-border bg-muted/40 hover:border-foreground/30'
           )}
         >
-          <div className="grid size-12 place-items-center rounded-full bg-gradient-hero text-white shadow-glow-pink">
+          <div className="bg-gradient-hero shadow-glow-pink grid size-12 place-items-center rounded-full text-white">
             <Upload className="size-5" />
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">Drop a photo, or tap to browse</span>
-            <span className="text-xs text-muted-foreground">
-              JPG, PNG, HEIC up to ~20MB
-              {field.max_count > 1 ? ` • up to ${field.max_count} photos` : ''}
-            </span>
+            <span className="text-muted-foreground text-xs">JPG, PNG, HEIC up to ~20MB</span>
           </div>
         </label>
       )}
@@ -314,14 +307,183 @@ function ImageField({ field, files, error, onFiles }: ImageFieldProps) {
         id={inputId}
         type="file"
         accept="image/*,.heic,.heif"
-        multiple={field.max_count > 1}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           if (e.target.files) handleFileList(e.target.files)
         }}
         className="sr-only"
       />
 
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
+    </div>
+  )
+}
+
+/**
+ * Multi-photo upload UI: renders exactly `field.max_count` fixed slots, each
+ * with its own hidden file input + preview. Each slot is independent — picking
+ * a file in slot 2 doesn't disturb slot 0. Submit gate (in parent `validate()`)
+ * requires `>= field.min_count` filled slots.
+ *
+ * Slots are kept index-aligned to a sparse `(File | null)[]` so removing the
+ * middle slot doesn't shift the rest. On submit we collapse to a dense `File[]`
+ * for the parent to forward to the upload pipeline.
+ */
+function MultiSlotImageField({ field, files, error, onFiles }: ImageFieldProps) {
+  const max = field.max_count
+  // Reconstruct sparse slot array from incoming dense file list. Files that
+  // come in via parent (e.g. after a removal) are packed left-to-right. New
+  // slot picks from this component always update via `setSlotFile` which keeps
+  // the index alignment locally.
+  const [slots, setSlots] = useState<(File | null)[]>(() => {
+    const arr: (File | null)[] = Array(max).fill(null)
+    for (let i = 0; i < Math.min(files.length, max); i++) arr[i] = files[i]
+    return arr
+  })
+
+  // Sync slots → dense `files` upward. Skips initial mount if external `files`
+  // already matches to avoid a needless render loop.
+  useEffect(() => {
+    const dense = slots.filter((f): f is File => f !== null)
+    const sameLength = dense.length === files.length
+    const sameRefs = sameLength && dense.every((f, i) => f === files[i])
+    if (!sameRefs) onFiles(dense)
+    // We intentionally exclude `files` + `onFiles` from deps: this effect is
+    // the slots→parent direction. Including them would loop because
+    // `onFiles` updates `files`, which then re-runs this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slots])
+
+  const [previews, setPreviews] = useState<(string | null)[]>(() => Array(max).fill(null))
+
+  useEffect(() => {
+    const urls = slots.map((f) => (f ? URL.createObjectURL(f) : null))
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPreviews(urls)
+    return () => {
+      urls.forEach((u) => {
+        if (u) URL.revokeObjectURL(u)
+      })
+    }
+  }, [slots])
+
+  const setSlotFile = useCallback((idx: number, file: File | null) => {
+    setSlots((s) => {
+      const next = [...s]
+      next[idx] = file
+      return next
+    })
+  }, [])
+
+  const filledCount = slots.filter(Boolean).length
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-baseline justify-between">
+        <Label className="flex items-baseline gap-2">
+          <span>
+            {field.label}
+            {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            {filledCount}/{max}
+            {field.min_count > 1 ? ` · min ${field.min_count}` : ''}
+          </span>
+        </Label>
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+        {slots.map((file, idx) => (
+          <SlotCell
+            key={`${field.name}-${idx}`}
+            fieldName={field.name}
+            idx={idx}
+            file={file}
+            preview={previews[idx] ?? null}
+            onPick={(f) => setSlotFile(idx, f)}
+            onClear={() => setSlotFile(idx, null)}
+          />
+        ))}
+      </div>
+
+      {error && <span className="text-destructive text-xs">{error}</span>}
+    </div>
+  )
+}
+
+interface SlotCellProps {
+  fieldName: string
+  idx: number
+  file: File | null
+  preview: string | null
+  onPick: (file: File) => void
+  onClear: () => void
+}
+
+function SlotCell({ fieldName, idx, file, preview, onPick, onClear }: SlotCellProps) {
+  const inputId = `file-${fieldName}-${idx}`
+  const [dragOver, setDragOver] = useState(false)
+
+  const handlePick = useCallback(
+    (incoming: FileList | File[]) => {
+      const first = Array.from(incoming)[0]
+      if (first) onPick(first)
+    },
+    [onPick]
+  )
+
+  return (
+    <div className="relative w-full sm:w-32">
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*,.heic,.heif"
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          if (e.target.files?.length) handlePick(e.target.files)
+          // Reset so picking the same file twice in a row still fires onChange.
+          e.target.value = ''
+        }}
+        className="sr-only"
+      />
+      {file && preview ? (
+        <div className="group border-border/60 bg-muted relative aspect-square w-full overflow-hidden rounded-2xl border">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={preview} alt={`Photo ${idx + 1}`} className="h-full w-full object-cover" />
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label={`Remove photo ${idx + 1}`}
+            className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+      ) : (
+        <label
+          htmlFor={inputId}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragOver(true)
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault()
+            setDragOver(false)
+            if (e.dataTransfer.files?.length) handlePick(e.dataTransfer.files)
+          }}
+          className={cn(
+            'text-muted-foreground grid aspect-square w-full cursor-pointer place-items-center rounded-2xl border-2 border-dashed transition-colors',
+            dragOver
+              ? 'text-foreground border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
+              : 'border-border/60 bg-muted/40 hover:border-foreground/30 hover:text-foreground'
+          )}
+        >
+          <div className="flex flex-col items-center gap-1 text-xs font-medium">
+            <ImagePlus className="size-5" />
+            Add photo
+          </div>
+        </label>
+      )}
     </div>
   )
 }

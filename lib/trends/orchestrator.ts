@@ -75,7 +75,9 @@ export async function runTrendDetector(
       .eq('status', 'pending')
     if (Array.isArray(data)) {
       for (const row of data as { payload: unknown }[]) {
-        const payload = row.payload as { candidate?: { source?: string; external_id?: string } } | null
+        const payload = row.payload as {
+          candidate?: { source?: string; external_id?: string }
+        } | null
         if (payload?.candidate?.source && payload.candidate.external_id) {
           existingIds.add(`${payload.candidate.source}:${payload.candidate.external_id}`)
         }

@@ -19,6 +19,8 @@ const STATIC_ROUTES: Array<{ name: string; path: string }> = [
   { name: 'trend-ghibli', path: '/trend/ghibli-portrait' },
   { name: 'trend-pixar', path: '/trend/pixar-3d-character' },
   { name: 'login', path: '/login' },
+  { name: 'studio-empty', path: '/me/studio' },
+  { name: 'studio-trend', path: '/me/studio?trend=ghibli-portrait' },
   { name: 'creations', path: '/me/creations' },
   { name: 'settings', path: '/me/settings' },
   { name: 'result-completed', path: '/result/mock-completed' },
@@ -38,7 +40,7 @@ async function captureRoute(
   page: import('@playwright/test').Page,
   testInfo: import('@playwright/test').TestInfo,
   routeName: string,
-  routePath: string,
+  routePath: string
 ): Promise<void> {
   const response = await page.goto(routePath, { waitUntil: 'networkidle' })
   expect(response, `${routePath} navigation`).not.toBeNull()
@@ -69,7 +71,10 @@ test.describe('visual baseline', () => {
       const ctx = await browser.newContext()
       const page = await ctx.newPage()
       await page.goto('/admin/trends', { waitUntil: 'networkidle' })
-      const href = await page.locator('a[href*="/admin/trends/"][href*="/edit"]').first().getAttribute('href')
+      const href = await page
+        .locator('a[href*="/admin/trends/"][href*="/edit"]')
+        .first()
+        .getAttribute('href')
       const match = href?.match(/\/admin\/trends\/([^/]+)\/edit/)
       trendId = match?.[1] ?? null
       await ctx.close()

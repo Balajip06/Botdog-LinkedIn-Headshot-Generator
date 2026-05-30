@@ -4,6 +4,7 @@
  * and for magic-link delivery via Supabase auth's `email-otp` template.
  */
 
+import * as Sentry from '@sentry/nextjs'
 import { Resend } from 'resend'
 
 let cached: Resend | null = null
@@ -28,9 +29,27 @@ export interface EmailSendResult {
   error?: string
 }
 
+function reportFailure(
+  reason: string,
+  payload: EmailPayload,
+  extra?: Record<string, unknown>
+): void {
+  // Mask the recipient — keep the domain for debugging, drop the local part so
+  // PII doesn't reach Sentry. e.g. "user@example.com" -> "***@example.com".
+  const maskedTo = payload.to.replace(/^[^@]+/, '***')
+  Sentry.captureMessage(`email send failed: ${reason}`, {
+    level: 'warning',
+    tags: { component: 'email', reason },
+    extra: { subject: payload.subject, to: maskedTo, ...extra },
+  })
+}
+
 export async function sendEmail(payload: EmailPayload): Promise<EmailSendResult> {
   const from = process.env.RESEND_FROM_EMAIL
-  if (!from) return { ok: false, error: 'RESEND_FROM_EMAIL missing' }
+  if (!from) {
+    reportFailure('from-missing', payload)
+    return { ok: false, error: 'RESEND_FROM_EMAIL missing' }
+  }
 
   try {
     const resend = getResend()
@@ -41,10 +60,15 @@ export async function sendEmail(payload: EmailPayload): Promise<EmailSendResult>
       html: payload.html,
       text: payload.text,
     })
-    if (error) return { ok: false, error: error.message }
+    if (error) {
+      reportFailure('resend-error', payload, { resendMessage: error.message })
+      return { ok: false, error: error.message }
+    }
     return { ok: true, id: data?.id }
   } catch (err: unknown) {
-    return { ok: false, error: err instanceof Error ? err.message : 'unknown email error' }
+    const message = err instanceof Error ? err.message : 'unknown email error'
+    reportFailure('throw', payload, { message })
+    return { ok: false, error: message }
   }
 }
 

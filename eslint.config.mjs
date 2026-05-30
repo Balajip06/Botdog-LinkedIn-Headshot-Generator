@@ -1,6 +1,6 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -8,17 +8,17 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
     // Generated coverage report — lcov-report/* + block-navigation.js etc.
-    "coverage/**",
+    'coverage/**',
     // E2E artifacts
-    "e2e/screenshots/**",
-    "playwright-report/**",
-    "test-results/**",
+    'e2e/screenshots/**',
+    'playwright-report/**',
+    'test-results/**',
   ]),
-]);
+])
 
-export default eslintConfig;
+export default eslintConfig

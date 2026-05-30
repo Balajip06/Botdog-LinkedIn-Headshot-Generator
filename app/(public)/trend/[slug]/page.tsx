@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import {
   Accordion,
   AccordionContent,
@@ -11,6 +11,7 @@ import {
 import { TrendImpressionBeacon } from '@/components/analytics/TrendImpressionBeacon'
 import { Badge } from '@/components/ui/badge'
 import { buildFAQJsonLd, buildHowToJsonLd } from '@/lib/seo/json-ld'
+import { createClient } from '@/lib/supabase/server'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 import { TrendUpload } from './TrendUpload'
 
@@ -44,7 +45,8 @@ export async function generateMetadata({ params }: TrendPageProps): Promise<Meta
   if (!trend) return { title: 'Trend not found' }
 
   const title = trend.seo_title ?? `${trend.title} — Trendly`
-  const description = trend.seo_description ?? trend.description ?? `Try the ${trend.title} trend with your photo.`
+  const description =
+    trend.seo_description ?? trend.description ?? `Try the ${trend.title} trend with your photo.`
 
   return {
     title,
@@ -66,6 +68,18 @@ export async function generateMetadata({ params }: TrendPageProps): Promise<Meta
 
 export default async function TrendPage({ params }: TrendPageProps) {
   const { slug } = await params
+
+  // Authed users go through the unified /me/studio dashboard with the trend
+  // pre-selected. Anonymous users fall through to the SSR + SEO + anonymous-
+  // trial flow below, which is what organic + social traffic lands on.
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (user) {
+    redirect(`/me/studio?trend=${slug}`)
+  }
+
   const trend = await getActiveTrendBySlug(slug)
   if (!trend) notFound()
 
@@ -87,10 +101,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
   return (
     <>
       <TrendImpressionBeacon trendSlug={trend.slug} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(howTo) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(howTo) }} />
       {trend.faq.length > 0 && (
         <script
           type="application/ld+json"
@@ -101,16 +112,24 @@ export default async function TrendPage({ params }: TrendPageProps) {
       <div className="relative">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-spotlight opacity-25 blur-3xl"
+          className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-25 blur-3xl"
         />
 
         <main className="mx-auto flex max-w-6xl flex-col gap-12 px-6 pt-10 pb-24">
           {/* Breadcrumb / back */}
           <Link
             href="/"
-            className="inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1.5 text-sm"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
               <path d="M19 12H5" />
               <path d="M11 5l-7 7 7 7" />
             </svg>
@@ -119,31 +138,31 @@ export default async function TrendPage({ params }: TrendPageProps) {
 
           {/* Hero — sample + intro */}
           <section className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr]">
-            <div className="flex flex-col gap-5 animate-fade-up">
+            <div className="animate-fade-up flex flex-col gap-5">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge className="rounded-full bg-foreground/5 text-foreground/70 hover:bg-foreground/10">
+                <Badge className="bg-foreground/5 text-foreground/70 hover:bg-foreground/10 rounded-full">
                   Trending now
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="rounded-full border-border/80 text-muted-foreground"
+                  className="border-border/80 text-muted-foreground rounded-full"
                 >
                   {ASPECT_LABEL[trend.aspect_ratio] ?? trend.aspect_ratio}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="rounded-full border-border/80 text-muted-foreground"
+                  className="border-border/80 text-muted-foreground rounded-full"
                 >
                   {trend.model === 'nano-banana-pro' ? 'Pro quality' : 'Quick render'}
                 </Badge>
               </div>
-              <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
+              <h1 className="text-5xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
                 {trend.title}
               </h1>
               {trend.description && (
-                <p className="text-lg text-muted-foreground">{trend.description}</p>
+                <p className="text-muted-foreground text-lg">{trend.description}</p>
               )}
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-emerald-500" /> Live
                 </span>
@@ -153,7 +172,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
               </div>
             </div>
 
-            <figure className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border/60 shadow-pop animate-pop-in">
+            <figure className="border-border/60 shadow-pop animate-pop-in relative aspect-[4/5] overflow-hidden rounded-3xl border">
               {trend.sample_after_url ? (
                 <Image
                   src={trend.sample_after_url}
@@ -164,17 +183,17 @@ export default async function TrendPage({ params }: TrendPageProps) {
                   className="object-cover"
                 />
               ) : (
-                <div className="h-full w-full bg-gradient-hero" />
+                <div className="bg-gradient-hero h-full w-full" />
               )}
             </figure>
           </section>
 
           {/* Upload + FAQ */}
           <section className="grid items-start gap-8 lg:grid-cols-[1.2fr_1fr]">
-            <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-soft sm:p-8">
+            <div className="border-border/60 bg-card shadow-soft rounded-3xl border p-6 sm:p-8">
               <header className="mb-6 flex flex-col gap-1.5">
                 <h2 className="text-2xl font-extrabold tracking-tight">Make yours</h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Drop a photo. We will do the rest in a few seconds.
                 </p>
               </header>
@@ -182,7 +201,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
             </div>
 
             {trend.faq.length > 0 ? (
-              <aside className="rounded-3xl border border-border/60 bg-card/80 p-6 backdrop-blur sm:p-8">
+              <aside className="border-border/60 bg-card/80 rounded-3xl border p-6 backdrop-blur sm:p-8">
                 <h2 className="text-2xl font-extrabold tracking-tight">Questions</h2>
                 <Accordion type="single" collapsible className="mt-2">
                   {trend.faq.map((item) => (
@@ -190,7 +209,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
                       <AccordionTrigger className="text-left text-base font-semibold">
                         {item.question}
                       </AccordionTrigger>
-                      <AccordionContent className="text-sm text-muted-foreground">
+                      <AccordionContent className="text-muted-foreground text-sm">
                         {item.answer}
                       </AccordionContent>
                     </AccordionItem>
@@ -198,7 +217,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
                 </Accordion>
               </aside>
             ) : (
-              <aside className="rounded-3xl border border-dashed border-border/60 bg-card/40 p-8 text-sm text-muted-foreground">
+              <aside className="border-border/60 bg-card/40 text-muted-foreground rounded-3xl border border-dashed p-8 text-sm">
                 Tips: bright lighting + face clearly visible = better results.
               </aside>
             )}

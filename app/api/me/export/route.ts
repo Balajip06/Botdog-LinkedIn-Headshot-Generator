@@ -20,18 +20,6 @@ import {
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-interface ProfileRow {
-  email: string
-  credits_balance: number
-  free_used_this_week: number
-  bonus_credits_earned: number
-  referral_code: string
-  created_at: string
-  deleted_at: string | null
-  name: string | null
-  avatar_url: string | null
-}
-
 interface GenerationRow {
   id: string
   user_id: string
@@ -102,7 +90,10 @@ export async function GET() {
   if (!rl.success) {
     return NextResponse.json(
       { error: 'Rate limit exceeded. Try again in an hour.' },
-      { status: 429, headers: { 'retry-after': String(Math.max(1, rl.reset - Math.floor(Date.now() / 1000))) } }
+      {
+        status: 429,
+        headers: { 'retry-after': String(Math.max(1, rl.reset - Math.floor(Date.now() / 1000))) },
+      }
     )
   }
 
@@ -115,7 +106,7 @@ export async function GET() {
   if (profileError || !profileRow) {
     return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
   }
-  const profile = profileRow as unknown as ProfileRow
+  const profile = profileRow
 
   // Paginate generations — full history, no cap. 1000-row pages keep memory
   // bounded if a power user has thousands of rows.
@@ -131,7 +122,7 @@ export async function GET() {
     if (error) {
       return NextResponse.json({ error: 'Failed to load generations' }, { status: 500 })
     }
-    const page = (data ?? []) as unknown as GenerationRow[]
+    const page = data ?? []
     allGenerations.push(...page)
     if (page.length < PAGE_SIZE) break
     from += PAGE_SIZE
@@ -148,7 +139,7 @@ export async function GET() {
         const { data, error } = await service.storage
           .from('outputs')
           .createSignedUrl(path, EXPORT_SIGNED_URL_TTL_SECONDS)
-        signedUrl = error ? null : data?.signedUrl ?? null
+        signedUrl = error ? null : (data?.signedUrl ?? null)
       }
       const exportRow: ExportGenerationInput = {
         id: g.id,

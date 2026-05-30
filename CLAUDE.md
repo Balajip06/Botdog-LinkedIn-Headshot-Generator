@@ -44,6 +44,7 @@ If any of these missing → stop, ask before proceeding.
 The amended plan overrides the original on: credit packs (not subscription), schema-driven inputs, 30d free / forever Pro storage, SSR SEO + JSON-LD + sitemap, eval workflow, push notifications, referral farming guard, GDPR soft-delete.
 
 **Post-audit reversals (plan §Decision Reversals):**
+
 - **Sentry day-1** (was PostHog only)
 - **Anonymous 1-try trial** (was login-wall day-1) — fingerprint + Turnstile + abuse budget
 - **Free tier: 5/week refill** (was 10 lifetime + share bonus)
@@ -86,34 +87,41 @@ The amended plan overrides the original on: credit packs (not subscription), sch
 ## Workflow
 
 ### Plan First
+
 - Enter plan mode for non-trivial task (3+ steps or architectural).
 - If something goes sideways → STOP, re-plan, update `.claude/todo.md`.
 - Use plan mode for verification, not just building.
 
 ### Karpathy Guardrails (auto-skill `karpathy-guidelines`)
+
 1. Think before coding — state assumptions, surface alternates, stop if unclear
 2. Simplicity first — minimum code, no speculative abstractions
 3. Surgical changes — every line traces to request; don't refactor adjacent
 4. Goal-driven — task → verifiable goal → loop until verified
 
 ### Subagents
+
 - Offload research, exploration, parallel analysis
 - One task per subagent
 
 ### Verification
+
 - Never mark `[x]` in `.claude/todo.md` without proof: tests pass, logs clean, behavior demonstrated
 - Diff vs main when relevant
 - 12-test verification matrix in amended plan §"Verification" must pass before MVP ship
 
 ### Autonomous Bug Fixing
+
 - Given bug report → fix it. No hand-holding requests.
 - Failing CI → fix without being told how.
 
 ### Demand Elegance
+
 - Non-trivial change → ask "is there a more elegant way?"
 - Skip for trivial obvious fixes — don't over-engineer.
 
 ### Self-Improvement
+
 - ANY user correction → append pattern to `.claude/lessons.md` same turn
 - Review `.claude/lessons.md` at session start (Step 2 of Protocol)
 
@@ -133,32 +141,32 @@ The amended plan overrides the original on: credit packs (not subscription), sch
 
 ## Active Skills (invoke proactively)
 
-| Skill | When |
-|---|---|
-| `karpathy-guidelines` | Before non-trivial code |
-| `superpowers:brainstorming` | Before new features/components |
-| `superpowers:test-driven-development` | New features, bug fixes |
-| `superpowers:systematic-debugging` | Any bug/unexpected behavior |
-| `superpowers:writing-plans` | Multi-step tasks before code |
-| `frontend-design` | Building UI surface |
-| `frontend-patterns` | React/Next patterns |
-| `nextjs-turbopack` / `vercel:nextjs` | Next 15 App Router |
-| `supabase:supabase` | ANY Supabase task |
-| `supabase:supabase-postgres-best-practices` | SQL/schema/perf |
-| `database-migrations` | Schema changes, RLS, pg_cron |
-| `postgres-patterns` | Indexes, triggers, RLS |
-| `api-design` | `/api/generate`, webhooks |
-| `security-review` | Auth, Stripe, RLS, uploads |
-| `seo` | SSR trend page, sitemap, JSON-LD, OG |
-| `accessibility` | All UI (WCAG 2.2 AA) |
-| `e2e-testing` | Login → generate → share → pay |
-| `deployment-patterns` | CI/CD, env vars |
-| `vercel:vercel-functions` | Edge Function tail-latency |
-| `e2e-testing` (Playwright) | E2E test authoring + flake quarantine |
-| `vercel:env-vars` | Secrets |
-| `tdd-workflow` | RED→GREEN→REFACTOR |
-| `cost-aware-llm-pipeline` | Gemini cost + alerts |
-| `content-hash-cache-pattern` | Image-hash caching |
+| Skill                                       | When                                  |
+| ------------------------------------------- | ------------------------------------- |
+| `karpathy-guidelines`                       | Before non-trivial code               |
+| `superpowers:brainstorming`                 | Before new features/components        |
+| `superpowers:test-driven-development`       | New features, bug fixes               |
+| `superpowers:systematic-debugging`          | Any bug/unexpected behavior           |
+| `superpowers:writing-plans`                 | Multi-step tasks before code          |
+| `frontend-design`                           | Building UI surface                   |
+| `frontend-patterns`                         | React/Next patterns                   |
+| `nextjs-turbopack` / `vercel:nextjs`        | Next 15 App Router                    |
+| `supabase:supabase`                         | ANY Supabase task                     |
+| `supabase:supabase-postgres-best-practices` | SQL/schema/perf                       |
+| `database-migrations`                       | Schema changes, RLS, pg_cron          |
+| `postgres-patterns`                         | Indexes, triggers, RLS                |
+| `api-design`                                | `/api/generate`, webhooks             |
+| `security-review`                           | Auth, Stripe, RLS, uploads            |
+| `seo`                                       | SSR trend page, sitemap, JSON-LD, OG  |
+| `accessibility`                             | All UI (WCAG 2.2 AA)                  |
+| `e2e-testing`                               | Login → generate → share → pay        |
+| `deployment-patterns`                       | CI/CD, env vars                       |
+| `vercel:vercel-functions`                   | Edge Function tail-latency            |
+| `e2e-testing` (Playwright)                  | E2E test authoring + flake quarantine |
+| `vercel:env-vars`                           | Secrets                               |
+| `tdd-workflow`                              | RED→GREEN→REFACTOR                    |
+| `cost-aware-llm-pipeline`                   | Gemini cost + alerts                  |
+| `content-hash-cache-pattern`                | Image-hash caching                    |
 
 ---
 
@@ -167,6 +175,7 @@ The amended plan overrides the original on: credit packs (not subscription), sch
 `planner`, `architect`, `tdd-guide`, `code-reviewer`, `security-reviewer`, `database-reviewer`, `typescript-reviewer`, `build-error-resolver`, `e2e-runner`, `refactor-cleaner`, `doc-updater`, `performance-optimizer`, `seo-specialist`.
 
 **Mandatory:**
+
 - `code-reviewer` immediately after writing/modifying code
 - `security-reviewer` before commit if touching auth/payments/RLS
 - `database-reviewer` for migrations + RLS
@@ -255,10 +264,12 @@ Full ship runbook (per-credential onboarding + 14-test verification matrix): [do
 Authoritative source: [`lib/env.ts`](lib/env.ts) (Zod `ServerEnvSchema`). What follows mirrors that file as of commit `9e439d8`.
 
 **Required (Zod throws at first `getServerEnv()` if missing):**
+
 - `NEXT_PUBLIC_SITE_URL` — canonical site URL; used by OG, Stripe success/cancel, push click-through, sitemap base
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (renamed from `SUPABASE_ANON_KEY` per commit `5bb647d`), `SUPABASE_SERVICE_ROLE_KEY`
 
 **Optional (call sites degrade gracefully — see CREDENTIALS.md for the "what breaks if missing" matrix):**
+
 - `GEMINI_API_KEY` (mock-mode fallback)
 - Stripe: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_PRICE_ID_SMALL` / `_MEDIUM` / `_LARGE`
 - Resend: `RESEND_API_KEY`, `RESEND_FROM_EMAIL` (`.email()` enforced)
@@ -271,6 +282,7 @@ Authoritative source: [`lib/env.ts`](lib/env.ts) (Zod `ServerEnvSchema`). What f
 - Phase 6 sources (post-MVP): `TIKTOK_CREATIVE_CENTER_KEY`, `INSTAGRAM_SESSION_COOKIE`, `REDDIT_USER_AGENT`
 
 **Dev-only:**
+
 - `MOCK_TRENDS` (string enum `'true' | 'false'`) — short-circuits Supabase reads with `lib/dev/mock-data.ts`; proxy.ts + `lib/supabase/middleware.ts` also bypass auth gates. Never set in prod.
 
 ---
@@ -316,12 +328,14 @@ _(append as discovered)_
 ## Pre-Build Checklist (status as of 2026-05-29)
 
 Shipped from the codebase side:
+
 - ToS draft (`docs/TERMS_OF_SERVICE.md`) + Privacy draft (`docs/PRIVACY_POLICY.md`) + public `/terms` and `/privacy` routes (commits `1be0727`, `6622794`)
 - 15 launch trends seeded with v2 prompts (commits `2ef4af8`, `1803428`, `0857b21`); FAQ + reference photos still pending real eval runs (need Gemini key)
 - Credit-pack pricing decided: $4.99=50 / $14.99=200 / $39.99=600 (`lib/payments/packs.ts`)
 - Checkout UI on `/me/settings` (`CreditPacksClient`, commit `e29462a`)
 
 Still user-side (creds not yet in `.env.local`):
+
 - Gemini API access + Nano Banana Pro pricing + region confirmed
 - Stripe production app submitted; test-mode price IDs paste into `STRIPE_PRICE_ID_*`
 - Resend domain DKIM/SPF/DMARC verified

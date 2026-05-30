@@ -50,16 +50,16 @@ We do **not** use your photos or generation outputs to train any model. Inputs a
 
 ## 4. How long we keep it
 
-| Data | Free tier retention | Pro tier retention |
-|---|---|---|
-| Uploaded photo | 24 hours, then deleted | 24 hours, then deleted |
-| Generated output image | 30 days, then auto-purged | While account is active |
-| Generation history rows | While account is active | While account is active |
-| Profile + quota counters | While account is active | While account is active |
-| Anonymous-trial fingerprint hash | 24 hours, then auto-purged | n/a |
-| Stripe webhook event log | 30 days (idempotency) | 30 days |
-| Sentry error logs | 30 days | 30 days |
-| PostHog events | 365 days | 365 days |
+| Data                             | Free tier retention        | Pro tier retention      |
+| -------------------------------- | -------------------------- | ----------------------- |
+| Uploaded photo                   | 24 hours, then deleted     | 24 hours, then deleted  |
+| Generated output image           | 30 days, then auto-purged  | While account is active |
+| Generation history rows          | While account is active    | While account is active |
+| Profile + quota counters         | While account is active    | While account is active |
+| Anonymous-trial fingerprint hash | 24 hours, then auto-purged | n/a                     |
+| Stripe webhook event log         | 30 days (idempotency)      | 30 days                 |
+| Sentry error logs                | 30 days                    | 30 days                 |
+| PostHog events                   | 365 days                   | 365 days                |
 
 After you delete your account (Settings → Danger zone → Delete my account):
 
@@ -115,7 +115,13 @@ The service is not directed to children under 13. We do not knowingly collect da
 
 We may update this policy. Material changes are announced via email + a home-page banner at least 14 days in advance.
 
-## 10. Contact + complaints
+## 10. Sub-processors
+
+We use the sub-processors listed at [`docs/legal/SUB_PROCESSORS.md`](./legal/SUB_PROCESSORS.md) — including the providers named in §2.3 above (Supabase, Vercel, Google, Stripe, Resend, Cloudflare, PostHog, Sentry, Upstash). That page is the canonical, up-to-date list, with each sub-processor's purpose, the data shared with them, their location, and a link to their published privacy or data-processing terms.
+
+We commit to giving at least **30 days' advance notice** by email to paid customers before adding, removing, or replacing any sub-processor that processes personal data on our behalf. The notice will identify the new sub-processor, the data categories that will be shared, and the effective date of the change. Customers may object on reasonable data-protection grounds within the notice period; unresolved objections give the customer a right to terminate paid services with a pro-rata refund.
+
+## 11. Contact + complaints
 
 For privacy questions: support@trendly.example.
 

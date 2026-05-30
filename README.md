@@ -1,129 +1,145 @@
-# Trend Image Generator
+# Trendly
 
-Viral-trend image generator. Next.js 16 + Supabase + Google Gemini (Nano Banana / Nano Banana Pro). Consumer-facing, IG + TikTok distribution.
+A curated viral-trend image generator. Pick a trend, upload your photo, ship the moment everyone is making.
 
-Status (2026-05-29): 30 routes, 278/283 Vitest passing (5-test `ShareBurst` regression open), `pnpm typecheck` / `lint` / `build` clean. Branch `main` at `origin/Balajip06/Trend-Image-Generator`. Codebase is feature-complete pending user-side credentials — see [`docs/RUNBOOK.md`](docs/RUNBOOK.md) for the ship gate.
+![Next.js 16](https://img.shields.io/badge/Next.js-16-black) ![React 19](https://img.shields.io/badge/React-19-149eca) ![TypeScript 5](https://img.shields.io/badge/TypeScript-5-3178c6) ![Tailwind v4](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests 404 passing](https://img.shields.io/badge/tests-404%20passing-22c55e) ![Routes 50](https://img.shields.io/badge/routes-50-8b5cf6) ![License Proprietary](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
-> **Authoritative plan:** [`trend-image-app-plan.md`](trend-image-app-plan.md) (original) — amendments live in `.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md` and supersede the original on conflict.
->
-> **Project instructions for AI agents:** [`CLAUDE.md`](CLAUDE.md).
+> Stack: Next.js 16 · React 19 · TypeScript 5 · Tailwind v4 · Backend: Supabase (Auth · DB · Storage · Edge Functions · pg_cron) · Tests: 404 passing across 43 files · Routes: 50 built · License: Proprietary
 
-## Stack
+Trendly turns a phone photo into a viral-trend image (Ghibli portrait, plushie maker, Pixar-style, etc.) by calling Google Gemini's Nano Banana / Pro image model through a provider-agnostic shim. Admins curate the trend catalogue with a JSONB-schema-driven editor + an eval gate; consumers upload, watch the result render, and share — anonymous trial, free weekly quota, and Stripe credit-packs cover the conversion funnel. The codebase is the asset: 50 routes, 404 tests, full admin dashboard suite, 7 ADRs, 5 SOPs, complete diligence data-room.
 
-- **Frontend:** Next.js 16.2 App Router, React 19.2, TypeScript 5.9, Tailwind v4, shadcn/ui
-- **Backend:** Supabase (Postgres + Auth + Storage + Realtime + Edge Functions + pg_cron)
-- **AI:** Google Gemini — Nano Banana Pro default, v1 quick toggle
-- **Payments:** Stripe Checkout, USD, one-time credit packs
-- **Email:** Resend
-- **Push:** Web Push (VAPID); iOS via PWA install
-- **Anti-bot:** Cloudflare Turnstile
-- **Observability:** PostHog (analytics) + Sentry (errors)
-- **Rate limit:** Upstash Redis (sliding window)
-- **Testing:** Vitest + Playwright (chromium / webkit / mobile-chrome / mobile-safari)
+---
 
 ## Quick start
 
-`pnpm` is the only supported package manager — virtual-store layout is path-sensitive (see CLAUDE.md gotchas) and lockfile + CI assume it.
-
 ```bash
 pnpm install
-cp .env.local.example .env.local        # fill secrets (see docs/CREDENTIALS.md)
-pnpm exec playwright install chromium webkit
-# Either: local Supabase stack (needs Docker Desktop)
-pnpm supabase start
-pnpm supabase db reset                  # applies all 7 migrations + seed
-# Or: link to the already-provisioned remote
-pnpm supabase link --project-ref <ref>
-pnpm supabase:types                     # regenerate lib/supabase/database.types.ts
+cp .env.local.example .env.local          # then fill values per docs/CREDENTIALS.md
+pnpm supabase start                       # optional — local Supabase stack (Docker required)
 pnpm dev
 ```
 
-Open <http://localhost:3008>.
+Open <http://localhost:3000>.
+
+`pnpm` is the only supported package manager — the lockfile + CI assume it and the virtual-store layout is path-sensitive.
+
+---
 
 ## Scripts
 
-| Command | Purpose |
-|---|---|
-| `pnpm dev` | Next dev server (Turbopack default) |
-| `pnpm build` | Production build — emits the 30-route table |
-| `pnpm analyze` | `cross-env ANALYZE=true next build` (bundle analyzer report) |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm lint` / `pnpm lint:fix` | ESLint 9 (flat config) |
-| `pnpm format` / `pnpm format:check` | Prettier 3 + tailwind plugin |
-| `pnpm test` / `pnpm test:watch` / `pnpm test:ui` | Vitest |
-| `pnpm test:e2e` / `pnpm test:e2e:ui` | Playwright E2E (chromium, webkit, mobile-chrome, mobile-safari) |
-| `pnpm test:e2e:visual` | Visual baseline sweep (`RUN_VISUAL_BASELINE=true`) — 40 PNGs |
-| `pnpm supabase:start` / `pnpm supabase:stop` / `pnpm supabase:reset` | Local Supabase stack |
-| `pnpm supabase:types` | Regenerate `lib/supabase/database.types.ts` from live schema |
-| `pnpm supabase:diff` | Diff local DB against migrations (catches drift) |
-| `pnpm supabase:migration:new <name>` | Create timestamped migration |
+| Command               | Purpose                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| `pnpm dev`            | Next.js dev server (Turbopack default) on `:3000`                  |
+| `pnpm build`          | Production build — emits the 50-route table                        |
+| `pnpm test`           | Vitest unit + component tests (404 across 43 files)                |
+| `pnpm test:e2e`       | Playwright E2E (chromium / webkit / mobile-chrome / mobile-safari) |
+| `pnpm typecheck`      | `tsc --noEmit` — strict TypeScript, zero `any` permitted           |
+| `pnpm lint`           | ESLint 9 flat config                                               |
+| `pnpm format`         | Prettier 3 + tailwind plugin (`format:check` for CI mode)          |
+| `pnpm supabase:reset` | Re-apply all migrations + seed against the local Supabase stack    |
+| `pnpm supabase:types` | Regenerate `lib/supabase/database.types.ts` from live schema       |
+| `pnpm analyze`        | `cross-env ANALYZE=true next build` — emits bundle analyzer report |
 
-## Folder layout
+Full script list in [`package.json`](./package.json).
+
+---
+
+## Architecture
+
+Next.js 16 App Router on Vercel + Supabase (Postgres / Auth / Storage / Edge Functions / pg_cron) + Google Gemini behind a provider abstraction (`lib/image-provider/index.ts`) + Stripe Checkout for credit packs. Image generation is asynchronous — `/api/generate` returns in under a second; a Database Webhook fires the Edge Function which calls Gemini, uploads the output, and updates the row; the result page subscribes via Realtime and falls back to Web Push + Resend email when the user navigates away.
+
+Full system diagram, sequence diagrams, data model, RLS posture, and infra cost shape live in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
+
+---
+
+## Key features
+
+- **Curated viral-trend pipeline** — admin CRUD with JSONB schema editor + eval gate (`is_active=true` requires `eval_status='passed'` via DB constraint) + auto-detector polling Reddit for emerging trends
+- **Schema-driven trend inputs** — `trends.input_schema jsonb` renders a dynamic upload form; never hardcode "1 photo"
+- **Anonymous trial** — exactly 1 generation per `(fingerprint_hash, ip_hash)` lifetime, gated by Cloudflare Turnstile and a global $20/day cost ceiling
+- **RLS-enforced free-tier quota** — DB trigger blocks `generations` INSERT when `free_used_this_week >= 5 AND credits_balance <= 0`; pg_cron refills every Sunday 00:00 UTC
+- **Stripe credit packs** — three SKUs ($4.99 / $14.99 / $39.99 = 50 / 200 / 600 credits); idempotent webhook handler dedups via `webhook_events.event_id`
+- **Provider abstraction** — Gemini is the default, OpenAI is wired as a stub; switching is a one-env-var change (`IMAGE_PROVIDER=openai`)
+- **Admin dashboards** — Engagement / Margin (revenue cohorts + unit economics) / Users (WAU/DAU + funnel + retention) / Quota blocks / Trends / Suggestions / VIP / Refunds / Audit / Export / Marketing spend
+- **GDPR soft-delete + 30d purge** — `profiles.deleted_at` cascades through user data; pg_cron hard-deletes after 30 days; cookie consent banner ships with the app
+- **Buyer due-diligence dashboards** — 4 diligence surfaces (Engagement, Margin, Users, Quota Blocks) plus a complete data-room at [`docs/data-room/`](./docs/data-room/)
+
+---
+
+## Project layout
 
 ```
-/app                  Routes — (public), (auth), (app), admin, api
-/lib
-  /supabase           Browser + server + service-role clients, middleware helper, generated types
-  /utils              cn, …
-/components           UI primitives
-/e2e                  Playwright specs
-/supabase/migrations  Timestamped SQL migrations
-/.claude              Project tracker (todo, lessons, session-log)
-/.github/workflows    CI pipelines
+app/                    Routes — (public), (auth), (app), admin, api — App Router
+lib/                    Domain logic — image-provider, payments, supabase, push, eval, referrals
+components/             UI primitives + brand layer (shadcn/ui ejected into components/ui/)
+supabase/               Migrations (timestamped SQL) + Edge Function (generate-image)
+docs/                   ADRs, SOPs, runbooks, architecture, legal templates, press kit, data room
 ```
 
-## Non-negotiables
+- **`app/`** — `(public)` (home + SSR trend pages + legal), `(auth)` (login), `(app)` (result + me/creations + me/settings), `admin/*` (full dashboard suite), `api/*` (generate / stripe / push / referral / export endpoints)
+- **`lib/`** — feature-organized, not type-organized; every module under 800 lines; provider abstractions for image generation, payments, push, email
+- **`supabase/migrations/`** — 19 timestamped migrations; every schema change has its own file; regenerate types with `pnpm supabase:types` after each
+- **`docs/`** — buyer-facing; ADRs cover load-bearing decisions, SOPs cover daily operations, runbook covers cred-to-ship sequence, data-room covers diligence
 
-- **RLS-enforced quota.** DB trigger blocks generation insert when `free_used_this_week ≥ 5 AND credits_balance ≤ 0`.
-- **Idempotency.** `/api/generate` accepts `Idempotency-Key`; duplicate POST = 1 Gemini call.
-- **Eval gate.** `is_active=true` requires `eval_status='passed'` (DB constraint).
-- **Cost tracking.** Every `generations` row records `cost_usd`.
-- **Soft-delete + audit log.** GDPR-compliant, cascading via `deleted_at`.
-- **Stripe webhook idempotency.** `webhook_events.event_id` unique.
-- **Per-IP rate limit.** 20 generations / hour / IP at Edge.
-- **Anonymous trial.** Exactly 1 attempt per fingerprint + IP lifetime; global $20/day abuse budget.
+---
 
-See [`CLAUDE.md`](CLAUDE.md) for the full list and current phase state.
+## Documentation
 
-## Verification
+| Doc                                                      | Purpose                                                                                                                                                        |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)         | System diagram, sequence diagrams, data model, RLS posture, infra cost shape                                                                                   |
+| [`docs/RUNBOOK.md`](./docs/RUNBOOK.md)                   | Cred-arrival to ship sequence + 14-test verification matrix                                                                                                    |
+| [`docs/CREDENTIALS.md`](./docs/CREDENTIALS.md)           | Per-env-var reference — where to source, what breaks if missing                                                                                                |
+| [`docs/LAUNCH_CHECKLIST.md`](./docs/LAUNCH_CHECKLIST.md) | Placeholder-string + dev-flag audit; brand swap targets; final pre-DNS gate                                                                                    |
+| [`docs/adr/`](./docs/adr/)                               | 7 Architecture Decision Records — credit packs vs subscription, RLS quota strategy, schema-driven inputs, eval gate, idempotency, soft-delete, anonymous trial |
+| [`docs/sops/`](./docs/sops/)                             | 5 Standard Operating Procedures — daily ops, incident response, refund handling, weekly new-trend workflow, takedown handling                                  |
+| [`docs/legal/`](./docs/legal/)                           | DPA template + sub-processor list (GDPR Article 28 compliant)                                                                                                  |
+| [`docs/transferability/`](./docs/transferability/)       | Per-account transfer plan + post-acquisition timeline                                                                                                          |
+| [`docs/data-room/`](./docs/data-room/)                   | Buyer-facing diligence package (financial / customer / product / infrastructure / ownership / legal / runbooks)                                                |
+| [`docs/press-kit/`](./docs/press-kit/)                   | Sell sheet, launch thread templates, founder bio                                                                                                               |
+| [`CLAUDE.md`](./CLAUDE.md)                               | Project conventions, non-negotiables, active skills (AI-agent oriented)                                                                                        |
+| [`CHANGELOG.md`](./CHANGELOG.md)                         | Keep-a-Changelog history of releases                                                                                                                           |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md)                   | Branch + commit + migration discipline; reviewer checklist                                                                                                     |
+| [`SECURITY.md`](./SECURITY.md)                           | Vulnerability disclosure policy                                                                                                                                |
 
-The full ship gate is a 14-test matrix in [`docs/RUNBOOK.md`](docs/RUNBOOK.md) (RLS quota, idempotency replay, retry + refund, schema-driven form, eval gate, push + email fallback, SSR HTML, pg_cron purges, referral farming guard, Stripe webhook dedup, GDPR cascade, PostHog funnel). Run after every external credential is in `.env.local`.
+---
 
-Quick local sanity check (no creds needed):
+## Verification gates
+
+Local sanity loop (no creds needed, runs in ~90s on a current laptop):
 
 ```bash
 pnpm typecheck && pnpm lint && pnpm test && pnpm build
 ```
 
-## Documentation
+Production gate — the 14-test verification matrix in [`docs/RUNBOOK.md`](./docs/RUNBOOK.md) §3 — must pass against the production deploy before DNS goes live. Covers RLS quota, idempotency replay, retry + refund, schema-driven form, eval gate, push + email fallback, SSR HTML, pg_cron purge, referral farming guard, Stripe webhook dedup, GDPR delete cascade, PostHog funnel, sitemap + robots.
 
-| File | Purpose |
-|---|---|
-| [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Step-by-step from creds-arrival to MVP ship, plus the 14-test verification matrix |
-| [`docs/CREDENTIALS.md`](docs/CREDENTIALS.md) | Every env var, where to get it, what breaks if missing |
+End-to-end (Playwright, full creds required for paid flows):
 
-## Database Webhooks (configure in Supabase Dashboard)
+```bash
+pnpm test:e2e
+```
 
-Bridges between Postgres state changes and the Next.js app.
+---
 
-| Name | Table | Event | URL | Headers |
-|---|---|---|---|---|
-| `generate-on-insert` | `public.generations` | INSERT | `${SITE_URL}/functions/v1/generate-image` (the Edge Function) | `Authorization: Bearer <service-role-key>` |
-| `referral-redeemed` | `public.referrals` | UPDATE | `${SITE_URL}/api/analytics/referral` | `Authorization: Bearer <service-role-key>` |
+## Security
 
-`referral-redeemed` filters internally for the `pending → rewarded` transition; other UPDATEs return `{ skipped: true }`.
+See [`SECURITY.md`](./SECURITY.md) for the vulnerability disclosure policy, scope, and safe-harbor language. Critical-severity issues get an initial response within 72 hours and a fix or mitigation plan within 14 days.
 
-## Plan + state docs
+---
 
-| File | Purpose |
-|---|---|
-| `CLAUDE.md` | Project conventions, non-negotiables, active skills |
-| `trend-image-app-plan.md` | Original product plan |
-| `../../.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md` | Amended plan (authoritative) — decision reversals + verification gates |
-| `.claude/todo.md` | Per-phase task tracker |
-| `.claude/session-log.md` | Session-by-session change log |
-| `.claude/lessons.md` | Patterns learned + corrections (read at every session start) |
+## Contributing
+
+This is a proprietary solo project today. The contribution process is documented in [`CONTRIBUTING.md`](./CONTRIBUTING.md) so a new owner (or invited collaborator) can ramp without re-deriving the conventions.
+
+---
 
 ## License
 
-Proprietary — all rights reserved.
+Proprietary — all rights reserved. See [`LICENSE`](./LICENSE). For licensing or acquisition inquiries, see [`docs/press-kit/sell-sheet.md`](./docs/press-kit/sell-sheet.md).
+
+---
+
+## Status
+
+Pre-launch (last updated 2026-05-29). Codebase is feature-complete pending user-side credentials; phases W0 through W5 of the sellable-asset plan are code-complete; W6+ is gated on domain + Stripe live-mode + Resend DNS verification. For acquirer inquiries see [`docs/press-kit/sell-sheet.md`](./docs/press-kit/sell-sheet.md).

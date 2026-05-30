@@ -1,0 +1,30 @@
+-- Migration 0027 — Restrict public read on outputs/eval/* (DOCUMENTED MANUAL STEP)
+--
+-- Red-team MEDIUM M7: the `outputs_public_read` policy from migration
+-- 0007 allows unrestricted SELECT for the entire `outputs` bucket,
+-- including admin QA outputs at outputs/eval/<trend_id>/<run_id>.png.
+--
+-- The fix requires `drop policy ... on storage.objects` which only
+-- the supabase_storage_admin role can run. The CLI's migration runner
+-- ('postgres' on hosted, a restricted role on supabase db reset) does
+-- NOT have a grantable path to that role, so an automated migration
+-- repeatedly fails with either:
+--   - 'must be owner of relation objects'      (no implicit ownership)
+--   - 'permission denied to set role ...admin' (set role blocked)
+--
+-- This file is intentionally a NO-OP so `supabase db reset` succeeds.
+-- The corrective SQL lives in docs/RUNBOOK.md §"M7 manual storage
+-- policy fix" — applied via Supabase Dashboard SQL editor (which runs
+-- as postgres superuser) on each environment by hand.
+--
+-- Once M7 is applied via the dashboard, the file system can confirm
+-- via:
+--   select polname, polqual from pg_policy
+--    join pg_class on pg_class.oid = pg_policy.polrelid
+--    where polname = 'outputs_public_read';
+--
+-- and look for the `eval` filter in the polqual.
+
+-- Idempotent guard: this file is intentionally empty so future
+-- `db reset` runs apply cleanly across all environments.
+select 1 where false;

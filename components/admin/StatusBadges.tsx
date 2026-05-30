@@ -9,35 +9,29 @@ const EVAL_TONE: Record<EvalStatus, string> = {
   untested: 'bg-muted text-muted-foreground border-transparent',
 }
 
-export function EvalBadge({
-  status,
-  className,
-}: {
-  status: EvalStatus
-  className?: string
-}) {
+export function EvalBadge({ status, className }: { status: EvalStatus; className?: string }) {
   return (
-    <Badge className={cn('rounded-full px-2.5 py-0.5 text-[11px] font-semibold', EVAL_TONE[status], className)}>
+    <Badge
+      className={cn(
+        'rounded-full px-2.5 py-0.5 text-[11px] font-semibold',
+        EVAL_TONE[status],
+        className
+      )}
+    >
       {status}
     </Badge>
   )
 }
 
-export function ActiveBadge({
-  active,
-  className,
-}: {
-  active: boolean
-  className?: string
-}) {
+export function ActiveBadge({ active, className }: { active: boolean; className?: string }) {
   return (
     <Badge
       className={cn(
-        'rounded-full px-2.5 py-0.5 text-[11px] font-semibold border-transparent',
+        'rounded-full border-transparent px-2.5 py-0.5 text-[11px] font-semibold',
         active
           ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
           : 'bg-muted text-muted-foreground',
-        className,
+        className
       )}
     >
       {active ? 'live' : 'draft'}
@@ -56,9 +50,11 @@ export function SourceBadge({
     <Badge
       variant="outline"
       className={cn(
-        'rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
-        source === 'auto' ? 'text-[var(--brand-cyan)] border-[var(--brand-cyan)]/30' : 'text-foreground/70',
-        className,
+        'rounded-full px-2.5 py-0.5 text-[11px] font-semibold tracking-wide uppercase',
+        source === 'auto'
+          ? 'border-[var(--brand-cyan)]/30 text-[var(--brand-cyan)]'
+          : 'text-foreground/70',
+        className
       )}
     >
       {source}
