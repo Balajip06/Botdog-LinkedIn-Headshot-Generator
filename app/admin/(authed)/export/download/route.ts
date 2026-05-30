@@ -57,7 +57,7 @@ async function buildCustomersCsv(): Promise<{ csv: string; rows: number }> {
   const { data } = await service
     .from('profiles')
     .select(
-      'id, email, created_at, credits_balance, bonus_credits_earned, referred_by, is_vip, deleted_at, acquisition_source',
+      'id, email, created_at, credits_balance, bonus_credits_earned, referred_by, is_vip, deleted_at, acquisition_source'
     )
   const rows = (data as ProfileRow[] | null) ?? []
   const header = [
@@ -87,7 +87,7 @@ async function buildCustomersCsv(): Promise<{ csv: string; rows: number }> {
         r.is_vip ? 'vip' : 'standard',
         r.deleted_at ?? '',
         r.acquisition_source?.utm_source ?? '',
-      ]),
+      ])
     )
   }
   return { csv: lines.join('\n'), rows: rows.length }
@@ -105,10 +105,7 @@ async function buildGenerationsCsv(): Promise<{ csv: string; rows: number }> {
   const trendIds = Array.from(new Set(rows.map((r) => r.trend_id)))
   const slugById = new Map<string, string>()
   if (trendIds.length > 0) {
-    const { data: trendRows } = await service
-      .from('trends')
-      .select('id, slug')
-      .in('id', trendIds)
+    const { data: trendRows } = await service.from('trends').select('id, slug').in('id', trendIds)
     for (const t of trendRows ?? []) {
       slugById.set(t.id, t.slug)
     }
@@ -136,7 +133,7 @@ async function buildGenerationsCsv(): Promise<{ csv: string; rows: number }> {
         r.created_at,
         r.completed_at ?? '',
         r.model_used ?? '',
-      ]),
+      ])
     )
   }
   return { csv: lines.join('\n'), rows: rows.length }
@@ -188,7 +185,7 @@ async function buildRevenueCsv(): Promise<{ csv: string; rows: number }> {
         hashShort(email),
         r.created_at,
         redactPayloadEmails(r.payload) ?? null,
-      ]),
+      ])
     )
   }
   return { csv: lines.join('\n'), rows: rows.length }
@@ -216,10 +213,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
   const datasetRaw = request.nextUrl.searchParams.get('dataset')
   if (!datasetRaw || !(DATASETS as readonly string[]).includes(datasetRaw)) {
-    return NextResponse.json(
-      { error: 'invalid_dataset', allowed: DATASETS },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'invalid_dataset', allowed: DATASETS }, { status: 400 })
   }
   const dataset = datasetRaw as Dataset
 

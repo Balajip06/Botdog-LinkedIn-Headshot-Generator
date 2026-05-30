@@ -22,13 +22,7 @@ export function ReferralCopyButton({ url }: ReferralCopyButtonProps) {
     }
   }
   return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={onCopy}
-      className="rounded-xl"
-    >
+    <Button type="button" variant="outline" size="sm" onClick={onCopy} className="rounded-xl">
       {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
       {copied ? 'Copied' : 'Copy'}
     </Button>

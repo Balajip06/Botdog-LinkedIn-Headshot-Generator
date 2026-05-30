@@ -129,9 +129,7 @@ function mockDailySeries(days: number): MarginDailyPoint[] {
   return series
 }
 
-export async function getMarginSummary(
-  supabase: SupabaseClient
-): Promise<MarginSummary> {
+export async function getMarginSummary(supabase: SupabaseClient): Promise<MarginSummary> {
   const weekStart = new Date(Date.now() - ONE_WEEK_MS).toISOString()
 
   const [{ data: genData }, { data: webhookData }] = await Promise.all([
@@ -159,8 +157,7 @@ export async function getMarginSummary(
   const avgCostUsd = weekGenerations > 0 ? weekSpendUsd / weekGenerations : 0
 
   // Stripe `amount_total` is in cents on the checkout.session payload.
-  const weekRevenueUsd =
-    webhooks.reduce((sum, e) => sum + (e.payload?.amount_total ?? 0), 0) / 100
+  const weekRevenueUsd = webhooks.reduce((sum, e) => sum + (e.payload?.amount_total ?? 0), 0) / 100
 
   const marginPct =
     weekRevenueUsd > 0 ? ((weekRevenueUsd - weekSpendUsd) / weekRevenueUsd) * 100 : 0
@@ -220,7 +217,7 @@ function mockTrendBreakdown(): TrendBreakdownRow[] {
     ['Cyberpunk passport', 2.55, 96],
     ['Vintage Polaroid', 2.04, 84],
     ['Watercolor sketch', 1.34, 64],
-    ['Saturday morning cartoon', 1.30, 68],
+    ['Saturday morning cartoon', 1.3, 68],
   ] as const
   return seeded.map(([title, spendUsd, generations], idx) => ({
     trendId: `mock-${idx}`,
@@ -335,7 +332,7 @@ const MOCK_LEADERBOARD: TrendLeaderboardRow[] = [
  */
 export async function getTrendLeaderboard(
   supabase: SupabaseClient,
-  options: { days?: number; limit?: number } = {},
+  options: { days?: number; limit?: number } = {}
 ): Promise<TrendLeaderboardRow[]> {
   const days = options.days ?? 30
   const limit = options.limit ?? 20
@@ -364,10 +361,7 @@ export async function getTrendLeaderboard(
   }
 
   // Aggregate per trend_id.
-  const agg = new Map<
-    string,
-    { genCount: number; shareTotal: number; userIds: Set<string> }
-  >()
+  const agg = new Map<string, { genCount: number; shareTotal: number; userIds: Set<string> }>()
   for (const g of generations) {
     const bucket = agg.get(g.trend_id) ?? {
       genCount: 0,
@@ -409,15 +403,13 @@ export async function getTrendLeaderboard(
     })
   }
 
-  return out
-    .sort((a, b) => b.genCount - a.genCount)
-    .slice(0, limit)
+  return out.sort((a, b) => b.genCount - a.genCount).slice(0, limit)
 }
 
 export async function getMarginDetail(
   supabase: SupabaseClient,
   days = 7,
-  options?: { forceMock?: boolean },
+  options?: { forceMock?: boolean }
 ): Promise<MarginDetail> {
   // Force-mock path used by the /admin/margin "Demo data" toggle during the
   // W2 parallel-run validation period. Returns the mock-shaped result without
@@ -521,10 +513,7 @@ export async function getMarginDetail(
   let trendBreakdown: TrendBreakdownRow[] = []
   if (spendByTrend.size > 0) {
     const ids = Array.from(spendByTrend.keys())
-    const { data: trendRows } = await supabase
-      .from('trends')
-      .select('id, title')
-      .in('id', ids)
+    const { data: trendRows } = await supabase.from('trends').select('id, title').in('id', ids)
     const titleMap = new Map<string, string>()
     for (const row of (trendRows as unknown as TrendBriefRow[] | null) ?? []) {
       titleMap.set(row.id, row.title)
@@ -643,10 +632,10 @@ function mockRevenueCohorts(weeks: number): RevenueCohortRow[] {
  */
 export async function getRevenueCohorts(
   supabase: SupabaseClient,
-  weeks: number = 12,
+  weeks: number = 12
 ): Promise<RevenueCohortRow[]> {
   const since = new Date(
-    startOfUtcWeek(new Date()).getTime() - (weeks - 1) * 7 * DAY_MS,
+    startOfUtcWeek(new Date()).getTime() - (weeks - 1) * 7 * DAY_MS
   ).toISOString()
 
   try {
@@ -789,11 +778,11 @@ interface CohortGenerationRow {
 }
 
 const MOCK_CAC_BY_CHANNEL: CacByChannelRow[] = [
-  { channel: 'tiktok',     signupsAttributed: 92, spendUsd: 240.0, cac: 240.0 / 92 },
-  { channel: 'instagram',  signupsAttributed: 64, spendUsd: 180.0, cac: 180.0 / 64 },
-  { channel: 'reddit',     signupsAttributed: 38, spendUsd: 60.0,  cac: 60.0 / 38 },
-  { channel: 'google',     signupsAttributed: 21, spendUsd: 95.0,  cac: 95.0 / 21 },
-  { channel: 'direct',     signupsAttributed: 47, spendUsd: 0.0,   cac: 0.0 },
+  { channel: 'tiktok', signupsAttributed: 92, spendUsd: 240.0, cac: 240.0 / 92 },
+  { channel: 'instagram', signupsAttributed: 64, spendUsd: 180.0, cac: 180.0 / 64 },
+  { channel: 'reddit', signupsAttributed: 38, spendUsd: 60.0, cac: 60.0 / 38 },
+  { channel: 'google', signupsAttributed: 21, spendUsd: 95.0, cac: 95.0 / 21 },
+  { channel: 'direct', signupsAttributed: 47, spendUsd: 0.0, cac: 0.0 },
 ]
 
 function mockLtvCohorts(weeks: number): LtvByCohortRow[] {
@@ -826,8 +815,7 @@ function mockUnitEconomics(weeks: number): UnitEconomicsResult {
   const recent = ltv.slice(-4)
   const blendedLtv30 =
     recent.length > 0 ? recent.reduce((s, r) => s + r.ltvDay30, 0) / recent.length : 0
-  const paybackDays =
-    blendedLtv30 > 0 ? blendedCac / (blendedLtv30 / 30) : Number.POSITIVE_INFINITY
+  const paybackDays = blendedLtv30 > 0 ? blendedCac / (blendedLtv30 / 30) : Number.POSITIVE_INFINITY
   return {
     cacByChannel: cac.sort((a, b) => b.spendUsd - a.spendUsd),
     ltvByCohort: ltv,
@@ -852,13 +840,13 @@ function mockUnitEconomics(weeks: number): UnitEconomicsResult {
  */
 export async function getUnitEconomics(
   supabase: SupabaseClient,
-  cohortWeeks: number = 8,
+  cohortWeeks: number = 8
 ): Promise<UnitEconomicsResult> {
   const now = Date.now()
   const cacWindowMs = 30 * DAY_MS
   const cacSince = new Date(now - cacWindowMs).toISOString()
   const cohortSince = new Date(
-    startOfUtcWeek(new Date(now)).getTime() - (cohortWeeks - 1) * 7 * DAY_MS,
+    startOfUtcWeek(new Date(now)).getTime() - (cohortWeeks - 1) * 7 * DAY_MS
   ).toISOString()
   // LTV needs +60 days post the oldest cohort week to evaluate day-60 buckets.
   const ltvRevenueSince = cohortSince
@@ -913,16 +901,12 @@ export async function getUnitEconomics(
       const channel = p.acquisition_source?.utm_source?.toLowerCase() ?? 'direct'
       signupsByChannel.set(channel, (signupsByChannel.get(channel) ?? 0) + 1)
     }
-    const channels = new Set<string>([
-      ...spendByChannel.keys(),
-      ...signupsByChannel.keys(),
-    ])
+    const channels = new Set<string>([...spendByChannel.keys(), ...signupsByChannel.keys()])
     const cacByChannel: CacByChannelRow[] = []
     for (const channel of channels) {
       const spendUsd = Number((spendByChannel.get(channel) ?? 0).toFixed(2))
       const signupsAttributed = signupsByChannel.get(channel) ?? 0
-      const cac =
-        signupsAttributed > 0 ? spendUsd / signupsAttributed : Number.POSITIVE_INFINITY
+      const cac = signupsAttributed > 0 ? spendUsd / signupsAttributed : Number.POSITIVE_INFINITY
       cacByChannel.push({ channel, signupsAttributed, spendUsd, cac })
     }
     cacByChannel.sort((a, b) => b.spendUsd - a.spendUsd)
@@ -942,13 +926,12 @@ export async function getUnitEconomics(
       if (created < cohortStartMs) continue
       const weekStart = startOfUtcWeek(new Date(created))
       const key = weekStart.toISOString().slice(0, 10)
-      const bucket =
-        cohorts.get(key) ?? {
-          cohortStartMs: weekStart.getTime(),
-          userIds: new Set<string>(),
-          revenueByDayBucket: { d7: 0, d30: 0, d60: 0 },
-          costUsd: 0,
-        }
+      const bucket = cohorts.get(key) ?? {
+        cohortStartMs: weekStart.getTime(),
+        userIds: new Set<string>(),
+        revenueByDayBucket: { d7: 0, d30: 0, d60: 0 },
+        costUsd: 0,
+      }
       bucket.userIds.add(p.id)
       cohorts.set(key, bucket)
     }
@@ -1023,9 +1006,7 @@ export async function getUnitEconomics(
       ltvByCohort,
       blendedCac: Number(blendedCac.toFixed(2)),
       blendedLtv30: Number(blendedLtv30.toFixed(2)),
-      paybackDays: Number.isFinite(paybackDays)
-        ? Number(paybackDays.toFixed(1))
-        : paybackDays,
+      paybackDays: Number.isFinite(paybackDays) ? Number(paybackDays.toFixed(1)) : paybackDays,
       isMock: false,
     }
   } catch (err: unknown) {

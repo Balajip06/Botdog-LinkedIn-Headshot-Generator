@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   if (processedError) {
     Sentry.captureException(
       new Error(`webhook_events processed_at stamp failed: ${processedError.message}`),
-      { extra: { event_id: event.id, event_type: event.type } },
+      { extra: { event_id: event.id, event_type: event.type } }
     )
   }
 
@@ -109,7 +109,11 @@ async function handleEvent(
 ): Promise<void> {
   switch (event.type) {
     case 'checkout.session.completed':
-      await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session, event.id, supabase)
+      await handleCheckoutCompleted(
+        event.data.object as Stripe.Checkout.Session,
+        event.id,
+        supabase
+      )
       return
     // Other event types (charge.refunded, etc.) wired post-MVP.
     default:

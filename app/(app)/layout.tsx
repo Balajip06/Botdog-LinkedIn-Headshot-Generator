@@ -21,7 +21,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       {/* Silent service-worker registration — opt-in for push subscription
           happens later in ResultView after the first successful generation. */}
       <PushBootstrapper />
-      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
+      <header className="border-border/60 bg-background/80 sticky top-0 z-30 border-b backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-4">
           <Link href="/" aria-label="Trendly home" className="-m-2 p-2">
             <Logo gradient />
@@ -29,36 +29,36 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <nav className="flex items-center gap-1 text-sm">
             <Link
               href="/me/studio"
-              className="rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
             >
               Studio
             </Link>
             <Link
               href="/me/creations"
-              className="rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
             >
               My creations
             </Link>
             <Link
               href="/me/settings"
-              className="rounded-full px-3 py-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
             >
               Settings
             </Link>
             <ThemeToggle />
             {email && (
               <div
-                className="ml-1 hidden items-center gap-2 rounded-full border border-border/60 bg-card/40 py-1 pl-3 pr-1 sm:flex"
+                className="border-border/60 bg-card/40 ml-1 hidden items-center gap-2 rounded-full border py-1 pr-1 pl-3 sm:flex"
                 title={email}
               >
-                <span className="max-w-[160px] truncate text-xs font-semibold text-foreground">
+                <span className="text-foreground max-w-[160px] truncate text-xs font-semibold">
                   {email}
                 </span>
                 <form action={signOutAction}>
                   <button
                     type="submit"
                     aria-label="Sign out"
-                    className="grid size-6 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                    className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:ring-ring/60 grid size-6 place-items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none"
                   >
                     <LogOut className="size-3.5" aria-hidden="true" />
                   </button>
@@ -70,7 +70,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
                 <button
                   type="submit"
                   aria-label="Sign out"
-                  className="grid size-8 place-items-center rounded-full border border-border/60 bg-card/40 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                  className="border-border/60 bg-card/40 text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:ring-ring/60 grid size-8 place-items-center rounded-full border transition-colors focus-visible:ring-2 focus-visible:outline-none"
                 >
                   <LogOut className="size-3.5" aria-hidden="true" />
                 </button>

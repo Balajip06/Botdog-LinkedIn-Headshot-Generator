@@ -280,32 +280,32 @@ Source: `app/api/stripe/checkout/route.ts`, `app/api/stripe/webhook/route.ts`, `
 
 Every user-facing table has RLS on. Service-role client (`createServiceClient()` in `lib/supabase/server.ts`) is the only consumer that bypasses, and is used only by trusted server-side code paths (webhook, Edge Function dispatch, admin actions). Migration files are dated `YYYYMMDD000N`.
 
-| Table | Purpose | RLS posture | Origin migration |
-|---|---|---|---|
-| `profiles` | User row keyed to `auth.uid()`. Holds `credits_balance`, `free_used_this_week`, `bonus_credits_earned`, `deleted_at`, `tos_accepted_at`, `acquisition_source`, `first_purchase_discount_used_at`, `is_vip`, `push_subscription`. | Own row read/update. Soft-deleted rows filtered out. `tos_accepted_at` protected from being cleared. | `20260527000001_profiles.sql` + `20260529000001_tos_acceptance.sql` + `20260529000003_profiles_acquisition_source.sql` + `20260529000004_profiles_first_purchase_discount.sql` + `20260529000006_profiles_vip.sql` |
-| `trends` | Catalog of generatable styles. Holds `slug`, `prompt_template`, `input_schema jsonb` (drives dynamic forms), `eval_status`, `is_active`, `share_caption`, lifecycle counters. | Public read where `is_active=true`. Admin-only write. CHECK constraint: `is_active=true` requires `eval_status='passed'`. | `20260527000002_trends.sql` + `20260529000005_trends_share_caption.sql` + `20260529000008_trends_lifecycle.sql` |
-| `generations` | Every image generation attempt. Holds `idempotency_key UNIQUE`, `status`, `output_image_url`, `cost_usd`, `attempts`, `purge_at`, `is_favorite`, `search_text`. | Own row read; insert/update gated by quota trigger; service-role write on Edge Function completion. | `20260527000003_generations.sql` + `20260529000007_generations_favorites_search.sql` + `20260529000009_quota_trigger_vip_and_alert.sql` |
-| `anonymous_attempts` | One row per anonymous trial. `(fingerprint_hash, ip_hash) UNIQUE` enforces the lifetime cap. | Service-role only. Purged after 14d by pg_cron. | `20260527000004_ancillary.sql` + ADR 7 |
-| `referrals` | `referrer_id`, `referred_id`, `status`. Reward trigger fires when referee's first generation completes. | Own referrals read; service-role write. | `20260527000004_ancillary.sql` |
-| `webhook_events` | Stripe (and future provider) event log. `(source, event_id) UNIQUE` is the idempotency key. | Service-role only. | `20260527000004_ancillary.sql` |
-| `admin_audit_log` | Append-only record of every admin write + every credit grant. Written via `logAdminAction()` and the `grant_credits` `SECURITY DEFINER`. | Admin read; insert via trigger / definer functions only. Immutable. | `20260527000004_ancillary.sql` + `20260528000001_grant_credits.sql` |
-| `admin_users` | `(user_id, role)`. Seed `admin` role for `/admin/*` access. | Self read; admin-only write. | `20260527000004_ancillary.sql` |
-| `trend_events` | Impression / view counter per trend (used for cold-trend auto-deactivate). | Service-role write; admin read. | `20260529000002_trend_events.sql` |
-| `trend_eval_inputs` | Eval-suite fixture images per trend. | Admin read/write. | `20260527000002_trends.sql` |
-| `trend_eval_runs` | Per-run eval result rows that gate `is_active`. | Admin read/write. | `20260527000002_trends.sql` |
-| `trend_suggestions` | Auto-detector inbox (Phase 6) + user suggestions. | User insert; admin read/triage. | `20260527000004_ancillary.sql` |
-| `admin_marketing_spend` | Monthly UTM-sourced spend for CAC math. | Admin only. | `20260529000011_admin_marketing_spend.sql` |
+| Table                   | Purpose                                                                                                                                                                                                                          | RLS posture                                                                                                               | Origin migration                                                                                                                                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `profiles`              | User row keyed to `auth.uid()`. Holds `credits_balance`, `free_used_this_week`, `bonus_credits_earned`, `deleted_at`, `tos_accepted_at`, `acquisition_source`, `first_purchase_discount_used_at`, `is_vip`, `push_subscription`. | Own row read/update. Soft-deleted rows filtered out. `tos_accepted_at` protected from being cleared.                      | `20260527000001_profiles.sql` + `20260529000001_tos_acceptance.sql` + `20260529000003_profiles_acquisition_source.sql` + `20260529000004_profiles_first_purchase_discount.sql` + `20260529000006_profiles_vip.sql` |
+| `trends`                | Catalog of generatable styles. Holds `slug`, `prompt_template`, `input_schema jsonb` (drives dynamic forms), `eval_status`, `is_active`, `share_caption`, lifecycle counters.                                                    | Public read where `is_active=true`. Admin-only write. CHECK constraint: `is_active=true` requires `eval_status='passed'`. | `20260527000002_trends.sql` + `20260529000005_trends_share_caption.sql` + `20260529000008_trends_lifecycle.sql`                                                                                                    |
+| `generations`           | Every image generation attempt. Holds `idempotency_key UNIQUE`, `status`, `output_image_url`, `cost_usd`, `attempts`, `purge_at`, `is_favorite`, `search_text`.                                                                  | Own row read; insert/update gated by quota trigger; service-role write on Edge Function completion.                       | `20260527000003_generations.sql` + `20260529000007_generations_favorites_search.sql` + `20260529000009_quota_trigger_vip_and_alert.sql`                                                                            |
+| `anonymous_attempts`    | One row per anonymous trial. `(fingerprint_hash, ip_hash) UNIQUE` enforces the lifetime cap.                                                                                                                                     | Service-role only. Purged after 14d by pg_cron.                                                                           | `20260527000004_ancillary.sql` + ADR 7                                                                                                                                                                             |
+| `referrals`             | `referrer_id`, `referred_id`, `status`. Reward trigger fires when referee's first generation completes.                                                                                                                          | Own referrals read; service-role write.                                                                                   | `20260527000004_ancillary.sql`                                                                                                                                                                                     |
+| `webhook_events`        | Stripe (and future provider) event log. `(source, event_id) UNIQUE` is the idempotency key.                                                                                                                                      | Service-role only.                                                                                                        | `20260527000004_ancillary.sql`                                                                                                                                                                                     |
+| `admin_audit_log`       | Append-only record of every admin write + every credit grant. Written via `logAdminAction()` and the `grant_credits` `SECURITY DEFINER`.                                                                                         | Admin read; insert via trigger / definer functions only. Immutable.                                                       | `20260527000004_ancillary.sql` + `20260528000001_grant_credits.sql`                                                                                                                                                |
+| `admin_users`           | `(user_id, role)`. Seed `admin` role for `/admin/*` access.                                                                                                                                                                      | Self read; admin-only write.                                                                                              | `20260527000004_ancillary.sql`                                                                                                                                                                                     |
+| `trend_events`          | Impression / view counter per trend (used for cold-trend auto-deactivate).                                                                                                                                                       | Service-role write; admin read.                                                                                           | `20260529000002_trend_events.sql`                                                                                                                                                                                  |
+| `trend_eval_inputs`     | Eval-suite fixture images per trend.                                                                                                                                                                                             | Admin read/write.                                                                                                         | `20260527000002_trends.sql`                                                                                                                                                                                        |
+| `trend_eval_runs`       | Per-run eval result rows that gate `is_active`.                                                                                                                                                                                  | Admin read/write.                                                                                                         | `20260527000002_trends.sql`                                                                                                                                                                                        |
+| `trend_suggestions`     | Auto-detector inbox (Phase 6) + user suggestions.                                                                                                                                                                                | User insert; admin read/triage.                                                                                           | `20260527000004_ancillary.sql`                                                                                                                                                                                     |
+| `admin_marketing_spend` | Monthly UTM-sourced spend for CAC math.                                                                                                                                                                                          | Admin only.                                                                                                               | `20260529000011_admin_marketing_spend.sql`                                                                                                                                                                         |
 
 Tables referenced in the plan but **not yet shipped**: `collections`, `notifications`, `gift_codes`, `content_reports`. The schemas are in [.claude/todo.md](../.claude/todo.md) post-MVP backlog. Buyer should treat them as planned-but-not-built, not present-but-unused.
 
 Storage buckets (from `20260528000002_storage_buckets.sql`):
 
-| Bucket | Public | Purpose |
-|---|---|---|
-| `uploads` | private | User-supplied source photos. Signed URLs only. |
-| `generations` | public | Pro-tier full-res outputs. Public so OG images work. |
-| `generations-watermarked` | public | Free-tier watermarked outputs. |
-| `trend-thumbnails` | public | Admin-curated thumbnails shown on the trend grid. |
+| Bucket                    | Public  | Purpose                                              |
+| ------------------------- | ------- | ---------------------------------------------------- |
+| `uploads`                 | private | User-supplied source photos. Signed URLs only.       |
+| `generations`             | public  | Pro-tier full-res outputs. Public so OG images work. |
+| `generations-watermarked` | public  | Free-tier watermarked outputs.                       |
+| `trend-thumbnails`        | public  | Admin-curated thumbnails shown on the trend grid.    |
 
 ---
 
@@ -378,18 +378,18 @@ The buyer should plan to revisit scaling at the 50k MAU mark — none of the abo
 
 Monthly USD, MVP scale (≤ 5k MAU). All numbers are public-tier pricing as of 2026-05-29 — buyer should re-verify before committing to a number in due diligence.
 
-| Service | Free tier covers | Cost beyond free | MVP run-rate |
-|---|---|---|---|
-| Vercel | Hobby tier supports MVP traffic | Pro tier $20/mo when bandwidth or build minutes exceed Hobby | $0-$20/mo |
-| Supabase | Free tier: 50k MAU + 500MB DB + 1GB Storage | Pro tier $25/mo for higher caps + daily backups + better SLA | $0-$25/mo |
-| Gemini (Nano Banana Pro) | Pay-per-call ~$0.03-0.05 per image | Variable; ~$30-$50/mo at 1000 generations/mo | $30-$50/mo |
-| Resend | 3000 emails/mo free | $20/mo for 50k | $0/mo |
-| PostHog | 1M events/mo free | $0.00031/event beyond | $0/mo |
-| Sentry | 5k errors/mo + 10k perf transactions free | Team plan $26/mo for 50k errors | $0/mo |
-| Cloudflare Turnstile | Unlimited free | n/a | $0 |
-| Upstash Redis | 10k commands/day free | Pay-as-you-go beyond | $0/mo |
-| Domain | n/a | ~$15/year | $1.25/mo |
-| **Total at MVP** | | | **<$50/mo** |
+| Service                  | Free tier covers                            | Cost beyond free                                             | MVP run-rate |
+| ------------------------ | ------------------------------------------- | ------------------------------------------------------------ | ------------ |
+| Vercel                   | Hobby tier supports MVP traffic             | Pro tier $20/mo when bandwidth or build minutes exceed Hobby | $0-$20/mo    |
+| Supabase                 | Free tier: 50k MAU + 500MB DB + 1GB Storage | Pro tier $25/mo for higher caps + daily backups + better SLA | $0-$25/mo    |
+| Gemini (Nano Banana Pro) | Pay-per-call ~$0.03-0.05 per image          | Variable; ~$30-$50/mo at 1000 generations/mo                 | $30-$50/mo   |
+| Resend                   | 3000 emails/mo free                         | $20/mo for 50k                                               | $0/mo        |
+| PostHog                  | 1M events/mo free                           | $0.00031/event beyond                                        | $0/mo        |
+| Sentry                   | 5k errors/mo + 10k perf transactions free   | Team plan $26/mo for 50k errors                              | $0/mo        |
+| Cloudflare Turnstile     | Unlimited free                              | n/a                                                          | $0           |
+| Upstash Redis            | 10k commands/day free                       | Pay-as-you-go beyond                                         | $0/mo        |
+| Domain                   | n/a                                         | ~$15/year                                                    | $1.25/mo     |
+| **Total at MVP**         |                                             |                                                              | **<$50/mo**  |
 
 The dominant cost line is Gemini, which is also directly margin-coupled — every dollar spent there underpins ~$3 of revenue at the 200-credit pack price. Vercel + Supabase Pro upgrades become worthwhile around 5k-10k MAU.
 
@@ -413,15 +413,15 @@ PRs that fail any of these are blocked. The workflow file is `.github/workflows/
 
 Production deploys via the GitHub integration on every push to `main`. Preview deploys auto-generated per PR. Region: `iad1` (US East). Function timeouts pinned in `vercel.json`:
 
-| Route | maxDuration |
-|---|---|
-| `app/api/generate/route.ts` | 60s |
-| `app/api/generate-anonymous/route.ts` | 60s |
-| `app/api/stripe/webhook/route.ts` | 30s |
-| `app/api/push/dispatch/route.ts` | 30s |
-| `app/api/me/export/route.ts` | 60s |
-| `app/api/download/[id]/route.ts` | 30s |
-| `app/api/admin/run-trend-discovery/route.ts` | 60s |
+| Route                                        | maxDuration |
+| -------------------------------------------- | ----------- |
+| `app/api/generate/route.ts`                  | 60s         |
+| `app/api/generate-anonymous/route.ts`        | 60s         |
+| `app/api/stripe/webhook/route.ts`            | 30s         |
+| `app/api/push/dispatch/route.ts`             | 30s         |
+| `app/api/me/export/route.ts`                 | 60s         |
+| `app/api/download/[id]/route.ts`             | 30s         |
+| `app/api/admin/run-trend-discovery/route.ts` | 60s         |
 
 Defaults to 10s for any route not listed.
 
@@ -447,21 +447,21 @@ Configured once in the Supabase Dashboard → Database → Webhooks. Trigger: `I
 
 Defined in migrations, not externally orchestrated. Current jobs:
 
-| Job | Schedule | Migration |
-|---|---|---|
-| `reset_free_weekly` | Sunday 00:00 UTC | `20260527000005_pg_cron.sql` |
-| `purge_expired_anonymous` | daily 03:00 UTC | `20260527000005_pg_cron.sql` |
-| `purge_expired_generations` | daily 03:15 UTC | `20260527000005_pg_cron.sql` |
-| `purge_soft_deleted_profiles` | daily 03:30 UTC | `20260527000005_pg_cron.sql` |
-| `auto_deactivate_cold_trends` | daily 04:00 UTC | `20260529000010_pg_cron_auto_deactivate.sql` |
+| Job                             | Schedule             | Migration                                    |
+| ------------------------------- | -------------------- | -------------------------------------------- |
+| `reset_free_weekly`             | Sunday 00:00 UTC     | `20260527000005_pg_cron.sql`                 |
+| `purge_expired_anonymous`       | daily 03:00 UTC      | `20260527000005_pg_cron.sql`                 |
+| `purge_expired_generations`     | daily 03:15 UTC      | `20260527000005_pg_cron.sql`                 |
+| `purge_soft_deleted_profiles`   | daily 03:30 UTC      | `20260527000005_pg_cron.sql`                 |
+| `auto_deactivate_cold_trends`   | daily 04:00 UTC      | `20260529000010_pg_cron_auto_deactivate.sql` |
 | `run_trend_discovery` (Phase 6) | weekly Mon 08:00 UTC | `20260529000012_pg_cron_trend_discovery.sql` |
 
 ### Vercel cron
 
 `vercel.json` `crons[]` entries (one as of 2026-05-29):
 
-| Path | Schedule |
-|---|---|
+| Path                             | Schedule          |
+| -------------------------------- | ----------------- |
 | `/api/admin/run-trend-discovery` | Mondays 08:00 UTC |
 
 This duplicates the `pg_cron` Phase 6 job on purpose: the Vercel cron invokes the API route which orchestrates the LLM proposer, while the pg_cron version is a fallback for when the API route is degraded.

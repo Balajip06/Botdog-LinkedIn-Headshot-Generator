@@ -16,7 +16,10 @@ test('happy path: home → trend → login → creations → settings → result
   await expect(page.getByText(/Make the trend/i)).toBeVisible()
 
   // 2. Click first trend card → trend page
-  await page.getByRole('link', { name: /Ghibli|Pixar|Anime|Vintage|Cyberpunk/i }).first().click()
+  await page
+    .getByRole('link', { name: /Ghibli|Pixar|Anime|Vintage|Cyberpunk/i })
+    .first()
+    .click()
   await expect(page).toHaveURL(/\/trend\//)
   await expect(page.getByRole('heading', { name: /Make yours/i })).toBeVisible()
 

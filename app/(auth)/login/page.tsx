@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
         <h1 className="text-3xl font-extrabold tracking-tight">
           Sign <span className="text-gradient-hero">in</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Sign in to save your creations, unlock the gallery, and refer friends for free credits.
         </p>
       </header>
@@ -35,21 +35,24 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
         </div>
       )}
       {errorMessage && (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-2xl border px-4 py-3 text-sm">
           {errorMessage}
         </div>
       )}
 
       <LoginForms next={next} />
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         Admin?{' '}
-        <Link href="/admin/login" className="font-medium text-foreground underline-offset-2 hover:underline">
+        <Link
+          href="/admin/login"
+          className="text-foreground font-medium underline-offset-2 hover:underline"
+        >
           Sign in here
         </Link>
       </p>
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         By continuing you agree to our{' '}
         <Link href="/terms" className="font-medium underline-offset-2 hover:underline">
           terms

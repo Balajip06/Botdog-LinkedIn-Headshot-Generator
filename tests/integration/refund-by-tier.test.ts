@@ -24,7 +24,7 @@ describe('refund_quota_on_failure (tier-driven)', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`
     )
     // After insert: credits=1, freeUsed=1, tier=credit.
     await sql.unsafe(`update public.generations set status = 'failed' where id = '${genId}'`)
@@ -44,7 +44,7 @@ describe('refund_quota_on_failure (tier-driven)', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`
     )
     // After insert: credits=0, freeUsed=4, tier=free.
     await sql.unsafe(`update public.generations set status = 'failed' where id = '${genId}'`)
@@ -64,7 +64,7 @@ describe('refund_quota_on_failure (tier-driven)', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k', '{}'::jsonb)`
     )
     await sql.unsafe(`update public.generations set status = 'failed' where id = '${genId}'`)
 

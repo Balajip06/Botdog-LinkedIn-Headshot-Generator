@@ -24,16 +24,16 @@ INTEGRATION_DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54322/postgres \
 
 Every red-team trigger / RLS / constraint added in the 2026-05-30 audit:
 
-| Spec | Surface | Red-team ref |
-|------|---------|--------------|
-| `quota-trigger.test.ts` | `consume_quota_on_generation_insert` — credit/free/vip branches, tier snapshot, exhaustion+quota_blocked, concurrent race under FOR UPDATE | non-negotiable #1, C2 |
-| `profiles-self-update.test.ts` | `profiles_self_update` column allowlist + soft-delete monotonicity | C1 |
-| `anonymous-attempts.test.ts` | per-field UNIQUE on fingerprint_hash + ip_hash | C3 |
-| `eval-proof.test.ts` | `require_eval_proof_for_passed` — passed needs a matching `trend_eval_runs` row at current version | H5 |
-| `admin-audit-triggers.test.ts` | `audit_trends_changes` + `audit_profiles_vip_changes` — captures auth.uid() OR app.admin_actor GUC | C4 |
-| `referral-ledger.test.ts` | `referral_rewards` ledger blocks delete+recreate farming | M6 |
-| `refund-by-tier.test.ts` | `refund_quota_on_failure` uses `tier_at_generation` snapshot | L2 |
-| `webhook-dedup.test.ts` | `webhook_events` UNIQUE (source, event_id) + source CHECK + partial idx | non-negotiable #9 |
+| Spec                           | Surface                                                                                                                                    | Red-team ref          |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
+| `quota-trigger.test.ts`        | `consume_quota_on_generation_insert` — credit/free/vip branches, tier snapshot, exhaustion+quota_blocked, concurrent race under FOR UPDATE | non-negotiable #1, C2 |
+| `profiles-self-update.test.ts` | `profiles_self_update` column allowlist + soft-delete monotonicity                                                                         | C1                    |
+| `anonymous-attempts.test.ts`   | per-field UNIQUE on fingerprint_hash + ip_hash                                                                                             | C3                    |
+| `eval-proof.test.ts`           | `require_eval_proof_for_passed` — passed needs a matching `trend_eval_runs` row at current version                                         | H5                    |
+| `admin-audit-triggers.test.ts` | `audit_trends_changes` + `audit_profiles_vip_changes` — captures auth.uid() OR app.admin_actor GUC                                         | C4                    |
+| `referral-ledger.test.ts`      | `referral_rewards` ledger blocks delete+recreate farming                                                                                   | M6                    |
+| `refund-by-tier.test.ts`       | `refund_quota_on_failure` uses `tier_at_generation` snapshot                                                                               | L2                    |
+| `webhook-dedup.test.ts`        | `webhook_events` UNIQUE (source, event_id) + source CHECK + partial idx                                                                    | non-negotiable #9     |
 
 ## What is NOT covered yet
 

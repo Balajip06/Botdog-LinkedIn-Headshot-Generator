@@ -26,7 +26,7 @@ function makeSupabase(): {
       upsert: vi.fn(function (
         this: unknown,
         payload: Record<string, unknown>,
-        options?: Record<string, unknown>,
+        options?: Record<string, unknown>
       ) {
         lastUpsertPayload = payload
         lastUpsertOptions = options ?? null
@@ -63,7 +63,7 @@ function resetState(
   overrides: {
     upsertResult?: { error: { message: string } | null }
     authUser?: { id: string } | null
-  } = {},
+  } = {}
 ) {
   upsertResult = overrides.upsertResult ?? { error: null }
   authUser = overrides.authUser === undefined ? { id: 'admin-1' } : overrides.authUser
@@ -113,7 +113,7 @@ describe('recordMarketingSpend — happy path', () => {
         action: 'marketing_spend_recorded',
         targetTable: 'admin_marketing_spend',
         targetId: null,
-      }),
+      })
     )
 
     expect(revalidatePath).toHaveBeenCalledWith('/admin/marketing-spend')
@@ -122,16 +122,16 @@ describe('recordMarketingSpend — happy path', () => {
   })
 
   it('lowercases the channel even when input is mixed case', async () => {
-    await expect(
-      recordMarketingSpend(makeForm({ channel: 'Instagram-Reels' })),
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(recordMarketingSpend(makeForm({ channel: 'Instagram-Reels' }))).rejects.toThrow(
+      /NEXT_REDIRECT:/
+    )
     expect(lastUpsertPayload?.channel).toBe('instagram-reels')
   })
 
   it('accepts a zero-spend value', async () => {
-    await expect(
-      recordMarketingSpend(makeForm({ usd_spent: '0' })),
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(recordMarketingSpend(makeForm({ usd_spent: '0' }))).rejects.toThrow(
+      /NEXT_REDIRECT:/
+    )
     expect(lastUpsertPayload?.usd_spent).toBe(0)
   })
 
@@ -144,25 +144,23 @@ describe('recordMarketingSpend — happy path', () => {
 
 describe('recordMarketingSpend — input validation', () => {
   it('malformed week_start (not YYYY-MM-DD) → redirects with error', async () => {
-    await expect(
-      recordMarketingSpend(makeForm({ week_start: '05/25/2026' })),
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(recordMarketingSpend(makeForm({ week_start: '05/25/2026' }))).rejects.toThrow(
+      /NEXT_REDIRECT:/
+    )
     expect(lastRedirectUrl()).toMatch(/^\/admin\/marketing-spend\?error=/)
     expect(lastUpsertPayload).toBeNull()
   })
 
   it('negative usd_spent → redirects with error', async () => {
-    await expect(
-      recordMarketingSpend(makeForm({ usd_spent: '-5' })),
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(recordMarketingSpend(makeForm({ usd_spent: '-5' }))).rejects.toThrow(
+      /NEXT_REDIRECT:/
+    )
     expect(lastRedirectUrl()).toMatch(/^\/admin\/marketing-spend\?error=/)
     expect(lastUpsertPayload).toBeNull()
   })
 
   it('empty channel → redirects with error', async () => {
-    await expect(
-      recordMarketingSpend(makeForm({ channel: '' })),
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(recordMarketingSpend(makeForm({ channel: '' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/marketing-spend\?error=/)
     expect(lastUpsertPayload).toBeNull()
   })

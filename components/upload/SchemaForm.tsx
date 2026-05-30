@@ -95,7 +95,7 @@ export function SchemaForm({
       if (!validate()) return
       await onSubmit({ values: state.values, files: state.files })
     },
-    [onSubmit, state.files, state.values, validate],
+    [onSubmit, state.files, state.values, validate]
   )
 
   return (
@@ -153,7 +153,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
             {field.label}
             {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
           </span>
-          {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+          {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
         </Label>
         <Input
           id={field.name}
@@ -162,7 +162,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           onChange={(e: ChangeEvent<HTMLInputElement>) => onText(field.name, e.target.value)}
           className="h-12 rounded-xl"
         />
-        {error && <span className="text-xs text-destructive">{error}</span>}
+        {error && <span className="text-destructive text-xs">{error}</span>}
       </div>
     )
   }
@@ -176,7 +176,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           {field.label}
           {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
         </span>
-        {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </Label>
       <Select value={current} onValueChange={(v) => onText(field.name, v)}>
         <SelectTrigger className="h-12 rounded-xl">
@@ -190,7 +190,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
           ))}
         </SelectContent>
       </Select>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   )
 }
@@ -230,7 +230,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
       const arr = Array.from(incoming).slice(0, field.max_count)
       onFiles(arr)
     },
-    [field.max_count, onFiles],
+    [field.max_count, onFiles]
   )
 
   const removeAt = useCallback(
@@ -238,7 +238,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
       const next = files.filter((_, i) => i !== idx)
       onFiles(next)
     },
-    [files, onFiles],
+    [files, onFiles]
   )
 
   const inputId = `file-${field.name}`
@@ -250,7 +250,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
           {field.label}
           {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
         </span>
-        {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </Label>
 
       {previews.length > 0 ? (
@@ -258,7 +258,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
           {previews.map((src, idx) => (
             <div
               key={src}
-              className="group relative aspect-square overflow-hidden rounded-2xl border border-border bg-muted"
+              className="group border-border bg-muted relative aspect-square overflow-hidden rounded-2xl border"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={src} alt={`Preview ${idx + 1}`} className="h-full w-full object-cover" />
@@ -266,7 +266,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
                 type="button"
                 onClick={() => removeAt(idx)}
                 aria-label="Remove photo"
-                className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+                className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
               >
                 <X className="size-3.5" />
               </button>
@@ -290,15 +290,15 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
             'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors',
             dragOver
               ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
-              : 'border-border bg-muted/40 hover:border-foreground/30',
+              : 'border-border bg-muted/40 hover:border-foreground/30'
           )}
         >
-          <div className="grid size-12 place-items-center rounded-full bg-gradient-hero text-white shadow-glow-pink">
+          <div className="bg-gradient-hero shadow-glow-pink grid size-12 place-items-center rounded-full text-white">
             <Upload className="size-5" />
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">Drop a photo, or tap to browse</span>
-            <span className="text-xs text-muted-foreground">JPG, PNG, HEIC up to ~20MB</span>
+            <span className="text-muted-foreground text-xs">JPG, PNG, HEIC up to ~20MB</span>
           </div>
         </label>
       )}
@@ -313,7 +313,7 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
         className="sr-only"
       />
 
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   )
 }
@@ -384,12 +384,12 @@ function MultiSlotImageField({ field, files, error, onFiles }: ImageFieldProps) 
             {field.label}
             {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
           </span>
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {filledCount}/{max}
             {field.min_count > 1 ? ` · min ${field.min_count}` : ''}
           </span>
         </Label>
-        {field.hint && <span className="text-xs text-muted-foreground">{field.hint}</span>}
+        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
@@ -406,7 +406,7 @@ function MultiSlotImageField({ field, files, error, onFiles }: ImageFieldProps) 
         ))}
       </div>
 
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      {error && <span className="text-destructive text-xs">{error}</span>}
     </div>
   )
 }
@@ -429,7 +429,7 @@ function SlotCell({ fieldName, idx, file, preview, onPick, onClear }: SlotCellPr
       const first = Array.from(incoming)[0]
       if (first) onPick(first)
     },
-    [onPick],
+    [onPick]
   )
 
   return (
@@ -446,14 +446,14 @@ function SlotCell({ fieldName, idx, file, preview, onPick, onClear }: SlotCellPr
         className="sr-only"
       />
       {file && preview ? (
-        <div className="group relative aspect-square w-full overflow-hidden rounded-2xl border border-border/60 bg-muted">
+        <div className="group border-border/60 bg-muted relative aspect-square w-full overflow-hidden rounded-2xl border">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={preview} alt={`Photo ${idx + 1}`} className="h-full w-full object-cover" />
           <button
             type="button"
             onClick={onClear}
             aria-label={`Remove photo ${idx + 1}`}
-            className="absolute right-1.5 top-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
+            className="absolute top-1.5 right-1.5 grid size-7 place-items-center rounded-full bg-black/60 text-white opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100"
           >
             <X className="size-3.5" />
           </button>
@@ -472,10 +472,10 @@ function SlotCell({ fieldName, idx, file, preview, onPick, onClear }: SlotCellPr
             if (e.dataTransfer.files?.length) handlePick(e.dataTransfer.files)
           }}
           className={cn(
-            'grid aspect-square w-full cursor-pointer place-items-center rounded-2xl border-2 border-dashed text-muted-foreground transition-colors',
+            'text-muted-foreground grid aspect-square w-full cursor-pointer place-items-center rounded-2xl border-2 border-dashed transition-colors',
             dragOver
-              ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5 text-foreground'
-              : 'border-border/60 bg-muted/40 hover:border-foreground/30 hover:text-foreground',
+              ? 'text-foreground border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
+              : 'border-border/60 bg-muted/40 hover:border-foreground/30 hover:text-foreground'
           )}
         >
           <div className="flex flex-col items-center gap-1 text-xs font-medium">

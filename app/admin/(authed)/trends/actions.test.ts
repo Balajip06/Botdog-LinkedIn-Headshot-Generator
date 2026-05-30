@@ -19,8 +19,7 @@ interface ChainMockOverrides {
 }
 
 function makeMockSupabase(overrides: ChainMockOverrides = {}) {
-  const insertResult =
-    overrides.insertResult ?? { data: { id: 'new-trend-id' }, error: null }
+  const insertResult = overrides.insertResult ?? { data: { id: 'new-trend-id' }, error: null }
   const updateResult = overrides.updateResult ?? { error: null }
 
   const queryBuilder = {
@@ -62,7 +61,14 @@ vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: vi.fn(() => mockSupabase),
 }))
 
-import { createTrend, updateTrend, toggleActive, cloneTrend, toggleFeatured, bumpOrder } from './actions'
+import {
+  createTrend,
+  updateTrend,
+  toggleActive,
+  cloneTrend,
+  toggleFeatured,
+  bumpOrder,
+} from './actions'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
@@ -166,7 +172,9 @@ describe('createTrend', () => {
     const fd = buildFormData({ faq: '' })
     await expect(createTrend(fd)).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends/new-trend-id/edit?created=1')
-    const calls = mockSupabase._queryBuilder.insert.mock.calls as unknown as Array<[{ faq: unknown }]>
+    const calls = mockSupabase._queryBuilder.insert.mock.calls as unknown as Array<
+      [{ faq: unknown }]
+    >
     expect(calls[0]?.[0]?.faq).toEqual([])
   })
 
@@ -207,9 +215,9 @@ describe('updateTrend', () => {
   })
 
   it('revalidates trend list, edit page, and public trend slug on success', async () => {
-    await expect(
-      updateTrend('trend-1', buildFormData({ slug: 'fresh-slug' }))
-    ).rejects.toThrow(/NEXT_REDIRECT:/)
+    await expect(updateTrend('trend-1', buildFormData({ slug: 'fresh-slug' }))).rejects.toThrow(
+      /NEXT_REDIRECT:/
+    )
     expect(revalidatePath).toHaveBeenCalledWith('/admin/trends')
     expect(revalidatePath).toHaveBeenCalledWith('/admin/trends/trend-1/edit')
     expect(revalidatePath).toHaveBeenCalledWith('/trend/fresh-slug')
@@ -273,7 +281,7 @@ interface ScriptableMockSupabase {
 
 function makeScriptable(
   queue: ScriptableBehavior[],
-  user: { id: string } | null = { id: 'admin-1' },
+  user: { id: string } | null = { id: 'admin-1' }
 ): ScriptableMockSupabase {
   const calls = {
     updates: [] as Array<{ table: string; payload: Record<string, unknown>; eqArgs: unknown[] }>,
@@ -400,9 +408,7 @@ describe('cloneTrend', () => {
   })
 
   it('redirects to clone_failed when source trend is not found', async () => {
-    installScriptable(
-      makeScriptable([{ maybeSingle: { data: null, error: null } }]),
-    )
+    installScriptable(makeScriptable([{ maybeSingle: { data: null, error: null } }]))
     await expect(cloneTrend(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\?error=clone_failed/)
     expect(lastRedirectUrl()).toMatch(/reason=not_found/)
@@ -410,9 +416,7 @@ describe('cloneTrend', () => {
 
   it('redirects to clone_failed with reason on read error', async () => {
     installScriptable(
-      makeScriptable([
-        { maybeSingle: { data: null, error: { message: 'permission denied' } } },
-      ]),
+      makeScriptable([{ maybeSingle: { data: null, error: { message: 'permission denied' } } }])
     )
     await expect(cloneTrend(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\?error=clone_failed/)
@@ -447,7 +451,7 @@ describe('cloneTrend', () => {
         action: 'clone',
         targetTable: 'trends',
         targetId: 'cloned-id',
-      }),
+      })
     )
   })
 
@@ -477,7 +481,7 @@ describe('cloneTrend', () => {
         { maybeSingle: { data: sourceRow, error: null } },
         { like: { data: [], error: null } },
         { insert: { data: null, error: { message: 'unique violation' } } },
-      ]),
+      ])
     )
     await expect(cloneTrend(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\?error=clone_failed/)
@@ -508,7 +512,7 @@ describe('toggleFeatured', () => {
         targetTable: 'trends',
         targetId: validId,
         after: { is_featured: true },
-      }),
+      })
     )
   })
 
@@ -518,31 +522,23 @@ describe('toggleFeatured', () => {
     await expect(toggleFeatured(makeForm({ featured: '0' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?unfeatured=1')
     expect(script._calls.updates[0]?.payload).toEqual({ is_featured: false })
-    expect(logAdminAction).toHaveBeenCalledWith(
-      expect.objectContaining({ action: 'unfeature' }),
-    )
+    expect(logAdminAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'unfeature' }))
   })
 
   it('redirects with invalid_input when id is not a UUID', async () => {
     installScriptable(makeScriptable([]))
-    await expect(toggleFeatured(makeForm({ id: 'not-a-uuid' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(toggleFeatured(makeForm({ id: 'not-a-uuid' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?error=invalid_input')
   })
 
   it('redirects with invalid_input when featured is not "0" or "1"', async () => {
     installScriptable(makeScriptable([]))
-    await expect(toggleFeatured(makeForm({ featured: 'yes' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(toggleFeatured(makeForm({ featured: 'yes' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?error=invalid_input')
   })
 
   it('redirects with ?error= on DB error', async () => {
-    installScriptable(
-      makeScriptable([{ update: { error: { message: 'rls denied' } } }]),
-    )
+    installScriptable(makeScriptable([{ update: { error: { message: 'rls denied' } } }]))
     await expect(toggleFeatured(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\?error=rls%20denied/)
   })
@@ -562,24 +558,18 @@ describe('bumpOrder', () => {
 
   it('redirects with invalid_input when id is not a UUID', async () => {
     installScriptable(makeScriptable([]))
-    await expect(bumpOrder(makeForm({ id: 'not-a-uuid' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(bumpOrder(makeForm({ id: 'not-a-uuid' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?error=invalid_input')
   })
 
   it('redirects with invalid_input when direction is not up/down', async () => {
     installScriptable(makeScriptable([]))
-    await expect(bumpOrder(makeForm({ direction: 'sideways' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(bumpOrder(makeForm({ direction: 'sideways' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?error=invalid_input')
   })
 
   it('redirects ?error=not_found when current row missing', async () => {
-    installScriptable(
-      makeScriptable([{ maybeSingle: { data: null, error: null } }]),
-    )
+    installScriptable(makeScriptable([{ maybeSingle: { data: null, error: null } }]))
     await expect(bumpOrder(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends?error=not_found')
   })
@@ -589,11 +579,9 @@ describe('bumpOrder', () => {
       makeScriptable([
         { maybeSingle: { data: { id: validId, display_order: 0 }, error: null } },
         { maybeSingle: { data: null, error: null } },
-      ]),
+      ])
     )
-    await expect(bumpOrder(makeForm({ direction: 'up' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(bumpOrder(makeForm({ direction: 'up' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends')
   })
 
@@ -609,9 +597,7 @@ describe('bumpOrder', () => {
       { update: { error: null } },
     ])
     installScriptable(script)
-    await expect(bumpOrder(makeForm({ direction: 'up' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(bumpOrder(makeForm({ direction: 'up' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends')
     expect(script._calls.updates.length).toBe(2)
     expect(script._calls.updates[0]?.payload).toEqual({ display_order: 4 })
@@ -625,7 +611,7 @@ describe('bumpOrder', () => {
         targetId: validId,
         before: { display_order: 5 },
         after: { display_order: 4, swapped_with: adjacentId },
-      }),
+      })
     )
   })
 
@@ -637,9 +623,7 @@ describe('bumpOrder', () => {
       { update: { error: null } },
     ])
     installScriptable(script)
-    await expect(bumpOrder(makeForm({ direction: 'down' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(bumpOrder(makeForm({ direction: 'down' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends')
     expect(script._calls.updates[0]?.payload).toEqual({ display_order: 6 })
     expect(script._calls.updates[1]?.payload).toEqual({ display_order: 5 })
@@ -651,7 +635,7 @@ describe('bumpOrder', () => {
         { maybeSingle: { data: { id: validId, display_order: 5 }, error: null } },
         { maybeSingle: { data: { id: adjacentId, display_order: 4 }, error: null } },
         { update: { error: { message: 'constraint fail' } } },
-      ]),
+      ])
     )
     await expect(bumpOrder(makeForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\?error=constraint%20fail/)

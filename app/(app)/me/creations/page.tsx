@@ -31,7 +31,10 @@ const STATUS_BADGE: Record<CreationRow['status'], { label: string; cls: string }
   pending: { label: 'Queued', cls: 'bg-muted text-foreground/70' },
   processing: { label: 'Cooking', cls: 'bg-[var(--brand-cyan)]/15 text-[var(--brand-cyan)]' },
   completed: { label: 'Done', cls: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' },
-  failed_retryable: { label: 'Retrying', cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300' },
+  failed_retryable: {
+    label: 'Retrying',
+    cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
+  },
   failed: { label: 'Failed', cls: 'bg-destructive/15 text-destructive' },
 }
 
@@ -120,10 +123,7 @@ export default async function CreationsPage({ searchParams }: PageProps) {
 
     const trendIds = Array.from(new Set(creations.map((c) => c.trend_id)))
     if (trendIds.length > 0) {
-      const { data: trends } = await supabase
-        .from('trends')
-        .select('id, title')
-        .in('id', trendIds)
+      const { data: trends } = await supabase.from('trends').select('id, title').in('id', trendIds)
       trendOptions = (trends ?? []).filter(Boolean)
     } else {
       trendOptions = []
@@ -150,7 +150,7 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           <h1 className="text-4xl font-extrabold tracking-tight">
             Your <span className="text-gradient-hero">creations</span>
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             {completed} ready · Free-tier renders purge 30 days after creation.
           </p>
         </div>
@@ -161,11 +161,11 @@ export default async function CreationsPage({ searchParams }: PageProps) {
 
       <form
         method="get"
-        className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/40 p-4 sm:flex-row sm:items-end"
+        className="border-border/60 bg-card/40 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-end"
       >
         {view !== 'all' ? <input type="hidden" name="view" value={view} /> : null}
         <label className="flex-1">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Search</span>
+          <span className="text-muted-foreground mb-1 block text-xs font-medium">Search</span>
           <Input
             name="q"
             defaultValue={rawQ}
@@ -174,11 +174,11 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           />
         </label>
         <label className="sm:w-44">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Trend</span>
+          <span className="text-muted-foreground mb-1 block text-xs font-medium">Trend</span>
           <select
             name="trend"
             defaultValue={trendFilter}
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           >
             <option value="">All trends</option>
             {trendOptions.map((t) => (
@@ -189,11 +189,11 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           </select>
         </label>
         <label className="sm:w-32">
-          <span className="mb-1 block text-xs font-medium text-muted-foreground">Range</span>
+          <span className="text-muted-foreground mb-1 block text-xs font-medium">Range</span>
           <select
             name="range"
             defaultValue={range}
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           >
             <option value="all">All time</option>
             <option value="24h">Last 24h</option>
@@ -204,14 +204,14 @@ export default async function CreationsPage({ searchParams }: PageProps) {
         <div className="flex gap-2 sm:items-end">
           <button
             type="submit"
-            className="h-9 rounded-md border border-border bg-foreground px-4 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+            className="border-border bg-foreground text-background h-9 rounded-md border px-4 text-sm font-semibold transition-opacity hover:opacity-90"
           >
             Filter
           </button>
           {isFiltered ? (
             <Link
               href="/me/creations"
-              className="grid h-9 place-items-center rounded-md border border-border px-3 text-sm text-muted-foreground hover:text-foreground"
+              className="border-border text-muted-foreground hover:text-foreground grid h-9 place-items-center rounded-md border px-3 text-sm"
             >
               Reset
             </Link>
@@ -219,12 +219,14 @@ export default async function CreationsPage({ searchParams }: PageProps) {
         </div>
       </form>
 
-      <nav className="inline-flex w-fit items-center gap-1 rounded-lg border border-border/60 bg-muted p-1 text-sm font-medium">
+      <nav className="border-border/60 bg-muted inline-flex w-fit items-center gap-1 rounded-lg border p-1 text-sm font-medium">
         <Link
           href={buildViewHref('all')}
           aria-current={view === 'all' ? 'page' : undefined}
           className={`rounded-md px-3 py-1.5 transition-colors ${
-            view === 'all' ? 'bg-background text-foreground shadow-sm' : 'text-foreground/60 hover:text-foreground'
+            view === 'all'
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-foreground/60 hover:text-foreground'
           }`}
         >
           All
@@ -233,7 +235,9 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           href={buildViewHref('favorites')}
           aria-current={view === 'favorites' ? 'page' : undefined}
           className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 transition-colors ${
-            view === 'favorites' ? 'bg-background text-foreground shadow-sm' : 'text-foreground/60 hover:text-foreground'
+            view === 'favorites'
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-foreground/60 hover:text-foreground'
           }`}
         >
           <Star className="size-3.5" aria-hidden />
@@ -242,8 +246,8 @@ export default async function CreationsPage({ searchParams }: PageProps) {
       </nav>
 
       {creations.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/40 p-16 text-center">
-          <div className="grid size-14 place-items-center rounded-full bg-gradient-hero text-white shadow-glow-pink">
+        <div className="border-border/60 bg-card/40 flex flex-col items-center gap-4 rounded-3xl border border-dashed p-16 text-center">
+          <div className="bg-gradient-hero shadow-glow-pink grid size-14 place-items-center rounded-full text-white">
             {view === 'favorites' ? <Star className="size-6" /> : <ImageIcon className="size-6" />}
           </div>
           <div>
@@ -254,7 +258,7 @@ export default async function CreationsPage({ searchParams }: PageProps) {
                   ? `No matches for "${rawQ}"`
                   : 'No creations yet'}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               {view === 'favorites'
                 ? 'Star a creation to keep your shortlist.'
                 : rawQ || isFiltered
@@ -265,7 +269,7 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           {view === 'favorites' || isFiltered ? (
             <Link
               href="/me/creations"
-              className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+              className="text-foreground text-sm font-medium underline-offset-4 hover:underline"
             >
               Clear filters
             </Link>
@@ -278,15 +282,11 @@ export default async function CreationsPage({ searchParams }: PageProps) {
       ) : (
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {creations.map((c, idx) => (
-            <li
-              key={c.id}
-              className="animate-fade-up"
-              style={{ animationDelay: `${idx * 60}ms` }}
-            >
+            <li key={c.id} className="animate-fade-up" style={{ animationDelay: `${idx * 60}ms` }}>
               <div className="relative">
                 <Link
                   href={`/result/${c.id}`}
-                  className="group relative block aspect-square overflow-hidden rounded-2xl border border-border/60 bg-card transition-transform hover:-translate-y-1 hover:shadow-pop"
+                  className="group border-border/60 bg-card hover:shadow-pop relative block aspect-square overflow-hidden rounded-2xl border transition-transform hover:-translate-y-1"
                 >
                   {c.output_image_url ? (
                     <Image
@@ -297,11 +297,11 @@ export default async function CreationsPage({ searchParams }: PageProps) {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-hero/30 text-xs text-foreground">
+                    <div className="bg-gradient-hero/30 text-foreground flex h-full w-full items-center justify-center text-xs">
                       {STATUS_BADGE[c.status].label}
                     </div>
                   )}
-                  <div className="absolute left-2 top-2 flex flex-col gap-1">
+                  <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge
                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${STATUS_BADGE[c.status].cls}`}
                     >
@@ -314,13 +314,13 @@ export default async function CreationsPage({ searchParams }: PageProps) {
                     ) : null}
                   </div>
                 </Link>
-                <form action={toggleFavorite} className="absolute right-2 top-2">
+                <form action={toggleFavorite} className="absolute top-2 right-2">
                   <input type="hidden" name="generation_id" value={c.id} />
                   <button
                     type="submit"
                     aria-label={c.is_favorite ? 'Unfavorite' : 'Favorite'}
                     aria-pressed={c.is_favorite}
-                    className="grid size-8 place-items-center rounded-full border border-border/60 bg-card/90 backdrop-blur-sm transition-colors hover:bg-card"
+                    className="border-border/60 bg-card/90 hover:bg-card grid size-8 place-items-center rounded-full border backdrop-blur-sm transition-colors"
                   >
                     <Star
                       className={`size-4 ${

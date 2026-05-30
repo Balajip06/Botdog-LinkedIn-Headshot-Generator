@@ -8,11 +8,11 @@ Trendly is a consumer-facing SaaS handling user images, email addresses, payment
 
 Only the `main` branch — deployed at the production domain (registration in progress; current placeholder `trendly.app`) — receives security updates. Forks, archived branches, and local dev clones are not supported. Pre-release tags before `0.4.0` are not supported.
 
-| Version | Supported |
-|---|---|
-| `main` (current) | Yes |
-| `< 0.4.0` (pre-release) | No |
-| Forks / archived branches | No |
+| Version                   | Supported |
+| ------------------------- | --------- |
+| `main` (current)          | Yes       |
+| `< 0.4.0` (pre-release)   | No        |
+| Forks / archived branches | No        |
 
 ---
 
@@ -31,12 +31,12 @@ Include in the report:
 
 **Response SLA:**
 
-| Severity | Initial acknowledgement | Fix or mitigation plan |
-|---|---|---|
-| Critical (auth bypass, RCE, data exfil at scale, payment manipulation) | Within 72 hours | Within 14 days |
-| High (account takeover for one user, IDOR, stored XSS) | Within 5 business days | Within 30 days |
-| Medium (CSRF, info disclosure, weak crypto) | Within 10 business days | Within 60 days |
-| Low (cosmetic, hardening suggestions) | Within 15 business days | Best-effort |
+| Severity                                                               | Initial acknowledgement | Fix or mitigation plan |
+| ---------------------------------------------------------------------- | ----------------------- | ---------------------- |
+| Critical (auth bypass, RCE, data exfil at scale, payment manipulation) | Within 72 hours         | Within 14 days         |
+| High (account takeover for one user, IDOR, stored XSS)                 | Within 5 business days  | Within 30 days         |
+| Medium (CSRF, info disclosure, weak crypto)                            | Within 10 business days | Within 60 days         |
+| Low (cosmetic, hardening suggestions)                                  | Within 15 business days | Best-effort            |
 
 We will acknowledge the report, triage severity, communicate a fix timeline, and credit the reporter (with permission) in the changelog once the issue is patched.
 
@@ -153,6 +153,6 @@ _No reports to date._
 
 ## Changelog
 
-| Date | Change |
-|---|---|
+| Date       | Change                    |
+| ---------- | ------------------------- |
 | 2026-05-29 | Initial policy published. |

@@ -19,7 +19,10 @@
 // @ts-expect-error Deno-only import; not resolved by Node typecheck.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-declare const Deno: { env: { get(name: string): string | undefined }; serve: (handler: (req: Request) => Response | Promise<Response>) => void }
+declare const Deno: {
+  env: { get(name: string): string | undefined }
+  serve: (handler: (req: Request) => Response | Promise<Response>) => void
+}
 
 type GenerationStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'failed_retryable'
 
@@ -143,7 +146,8 @@ async function process(supabase: ReturnType<typeof createClient>, gen: Generatio
 
   // 3. Build prompt + collect image URLs.
   const prompt = interpolate(trendData.prompt_template, gen.input_payload.values)
-  const imageUrls = gen.input_payload.image_urls ?? collectImagesFromValues(gen.input_payload.values)
+  const imageUrls =
+    gen.input_payload.image_urls ?? collectImagesFromValues(gen.input_payload.values)
 
   // 4. Call Gemini.
   const result = await callGemini(trendData.model, prompt, imageUrls)
@@ -155,7 +159,11 @@ async function process(supabase: ReturnType<typeof createClient>, gen: Generatio
     }
     // transient / timeout / invalid
     if (gen.attempts + 1 >= MAX_ATTEMPTS) {
-      await terminalFail(supabase, gen, `terminal after ${MAX_ATTEMPTS} attempts: ${result.message}`)
+      await terminalFail(
+        supabase,
+        gen,
+        `terminal after ${MAX_ATTEMPTS} attempts: ${result.message}`
+      )
     } else {
       await markRetryable(supabase, gen, result.message)
     }

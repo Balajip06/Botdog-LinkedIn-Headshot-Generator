@@ -124,7 +124,7 @@ describe('POST /api/push/dispatch', () => {
   it('401 when bearer token wrong', async () => {
     const { POST } = await loadRoute()
     const res = await POST(
-      makeReq({ auth: 'Bearer wrong-token-of-wrong-length', body: { generation_id: VALID_GEN_ID } }),
+      makeReq({ auth: 'Bearer wrong-token-of-wrong-length', body: { generation_id: VALID_GEN_ID } })
     )
     expect(res.status).toBe(401)
   })
@@ -137,20 +137,36 @@ describe('POST /api/push/dispatch', () => {
 
   it('404 when generation row not found', async () => {
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(404)
   })
 
   it('skips when generation status is not completed', async () => {
-    supabaseState.gen = { id: VALID_GEN_ID, user_id: VALID_USER_ID, status: 'pending', trend_id: 't', output_image_url: null }
+    supabaseState.gen = {
+      id: VALID_GEN_ID,
+      user_id: VALID_USER_ID,
+      status: 'pending',
+      trend_id: 't',
+      output_image_url: null,
+    }
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ skipped: true, reason: 'not completed' })
+    expect(await res.json()).toEqual({ skipped: true, reason: 'not completed' })
   })
 
   it('delivers push when subscription valid and sendPush succeeds', async () => {
-    supabaseState.gen = { id: VALID_GEN_ID, user_id: VALID_USER_ID, status: 'completed', trend_id: 't', output_image_url: 'u' }
+    supabaseState.gen = {
+      id: VALID_GEN_ID,
+      user_id: VALID_USER_ID,
+      status: 'completed',
+      trend_id: 't',
+      output_image_url: 'u',
+    }
     supabaseState.profile = {
       email: 'u@test.local',
       push_subscription: {
@@ -160,15 +176,23 @@ describe('POST /api/push/dispatch', () => {
     }
     supabaseState.trend = { slug: 's', title: 'T' }
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ delivered: 'push' })
+    expect(await res.json()).toEqual({ delivered: 'push' })
     expect(sendPush).toHaveBeenCalledTimes(1)
     expect(sendEmail).not.toHaveBeenCalled()
   })
 
   it('clears subscription + sends email when push reports expired', async () => {
-    supabaseState.gen = { id: VALID_GEN_ID, user_id: VALID_USER_ID, status: 'completed', trend_id: 't', output_image_url: 'u' }
+    supabaseState.gen = {
+      id: VALID_GEN_ID,
+      user_id: VALID_USER_ID,
+      status: 'completed',
+      trend_id: 't',
+      output_image_url: 'u',
+    }
     supabaseState.profile = {
       email: 'u@test.local',
       push_subscription: {
@@ -179,18 +203,30 @@ describe('POST /api/push/dispatch', () => {
     supabaseState.trend = { slug: 's', title: 'T' }
     sendPush.mockResolvedValue({ ok: false, expired: true })
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ delivered: 'email' })
+    expect(await res.json()).toEqual({ delivered: 'email' })
     // Push subscription nulled.
     expect(supabaseState.updates).toContainEqual(
-      expect.objectContaining({ table: 'profiles', payload: { push_subscription: null }, idEq: VALID_USER_ID }),
+      expect.objectContaining({
+        table: 'profiles',
+        payload: { push_subscription: null },
+        idEq: VALID_USER_ID,
+      })
     )
     expect(sendEmail).toHaveBeenCalledTimes(1)
   })
 
   it('clears subscription on Zod drift and falls through to email (H9)', async () => {
-    supabaseState.gen = { id: VALID_GEN_ID, user_id: VALID_USER_ID, status: 'completed', trend_id: 't', output_image_url: 'u' }
+    supabaseState.gen = {
+      id: VALID_GEN_ID,
+      user_id: VALID_USER_ID,
+      status: 'completed',
+      trend_id: 't',
+      output_image_url: 'u',
+    }
     // Drifted shape: endpoint missing, keys mis-typed.
     supabaseState.profile = {
       email: 'u@test.local',
@@ -198,23 +234,37 @@ describe('POST /api/push/dispatch', () => {
     }
     supabaseState.trend = { slug: 's', title: 'T' }
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ delivered: 'email' })
+    expect(await res.json()).toEqual({ delivered: 'email' })
     expect(sendPush).not.toHaveBeenCalled()
     expect(sendEmail).toHaveBeenCalledTimes(1)
     expect(supabaseState.updates).toContainEqual(
-      expect.objectContaining({ table: 'profiles', payload: { push_subscription: null }, idEq: VALID_USER_ID }),
+      expect.objectContaining({
+        table: 'profiles',
+        payload: { push_subscription: null },
+        idEq: VALID_USER_ID,
+      })
     )
   })
 
   it('returns delivered:none when no push subscription and no email', async () => {
-    supabaseState.gen = { id: VALID_GEN_ID, user_id: VALID_USER_ID, status: 'completed', trend_id: 't', output_image_url: 'u' }
+    supabaseState.gen = {
+      id: VALID_GEN_ID,
+      user_id: VALID_USER_ID,
+      status: 'completed',
+      trend_id: 't',
+      output_image_url: 'u',
+    }
     supabaseState.profile = { email: null, push_subscription: null }
     supabaseState.trend = { slug: 's', title: 'T' }
     const { POST } = await loadRoute()
-    const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } }))
+    const res = await POST(
+      makeReq({ auth: `Bearer ${SECRET}`, body: { generation_id: VALID_GEN_ID } })
+    )
     expect(res.status).toBe(200)
-    expect((await res.json())).toMatchObject({ delivered: 'none' })
+    expect(await res.json()).toMatchObject({ delivered: 'none' })
   })
 })

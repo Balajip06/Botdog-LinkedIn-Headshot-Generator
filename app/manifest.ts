@@ -12,8 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Trendly — Trend Image Generator',
     short_name: 'Trendly',
-    description:
-      'Pick a viral trend. Upload your photo. Make the moment everyone is making.',
+    description: 'Pick a viral trend. Upload your photo. Make the moment everyone is making.',
     start_url: '/',
     scope: '/',
     display: 'standalone',

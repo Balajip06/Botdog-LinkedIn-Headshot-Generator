@@ -13,15 +13,15 @@ This SOP turns an inbound support email into either (a) a credit grant via `/adm
 
 Decide which bucket the request falls into **before** opening Supabase. The right reply differs per bucket.
 
-| Customer claim | Bucket | Action |
-|---|---|---|
-| "Gemini rejected my photo / safety filter" | Auto-refunded already | Verify in `generations`. Reply confirming. No manual action needed. |
-| "Generation looks bad / not like me / wrong style" | Quality complaint | **Denied** per TOS §7 (AI-quality disclaimer). Polite reply, offer one-time goodwill credit if customer is regular. |
-| "I bought credits by mistake / never used them" | Buyer's remorse | **Full refund** if within 7 days and `credits_balance >= credits_purchased` (i.e. they haven't spent any). TOS §8. |
-| "I bought credits, used some, want partial refund" | Mixed | **Credits-only refund** for the unused portion. Stripe refund only if you decide to be generous (logged). |
-| "Charged twice / duplicate purchase" | Billing bug | **Full Stripe refund** of the duplicate + verify the dedup logic (`webhook_events.event_id` UNIQUE — should have caught this). Credits do not need adjustment since the dedup prevents the second grant. |
-| "Charge I don't recognize / fraud" | Chargeback risk | Respond immediately. Refund preemptively if claim looks legitimate. Suspend account if you suspect compromised card on our side. |
-| "Subscription / monthly charge" (we have neither) | Misdirected | Polite reply: "We only sell one-time credit packs. Are you sure the charge is from Trendly?" Ask for the last 4 of the card + date. |
+| Customer claim                                     | Bucket                | Action                                                                                                                                                                                                   |
+| -------------------------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Gemini rejected my photo / safety filter"         | Auto-refunded already | Verify in `generations`. Reply confirming. No manual action needed.                                                                                                                                      |
+| "Generation looks bad / not like me / wrong style" | Quality complaint     | **Denied** per TOS §7 (AI-quality disclaimer). Polite reply, offer one-time goodwill credit if customer is regular.                                                                                      |
+| "I bought credits by mistake / never used them"    | Buyer's remorse       | **Full refund** if within 7 days and `credits_balance >= credits_purchased` (i.e. they haven't spent any). TOS §8.                                                                                       |
+| "I bought credits, used some, want partial refund" | Mixed                 | **Credits-only refund** for the unused portion. Stripe refund only if you decide to be generous (logged).                                                                                                |
+| "Charged twice / duplicate purchase"               | Billing bug           | **Full Stripe refund** of the duplicate + verify the dedup logic (`webhook_events.event_id` UNIQUE — should have caught this). Credits do not need adjustment since the dedup prevents the second grant. |
+| "Charge I don't recognize / fraud"                 | Chargeback risk       | Respond immediately. Refund preemptively if claim looks legitimate. Suspend account if you suspect compromised card on our side.                                                                         |
+| "Subscription / monthly charge" (we have neither)  | Misdirected           | Polite reply: "We only sell one-time credit packs. Are you sure the charge is from Trendly?" Ask for the last 4 of the card + date.                                                                      |
 
 ---
 
@@ -36,6 +36,7 @@ select id, email, credits_balance, free_used_this_week, created_at, deleted_at
 ```
 
 **Record:**
+
 - `user_id` (the UUID — you'll need it for step 2)
 - `credits_balance` (so you know how many they still have)
 - `deleted_at` (if non-null, they've requested account deletion — see "When NOT to refund")
@@ -55,6 +56,7 @@ select id, status, cost_usd, created_at, trend_id, error_message
 ```
 
 **What to look for:**
+
 - `status = 'failed'` rows — quota should already be refunded (`refund_quota_on_failure` trigger in migration `20260527000003_generations.sql`). Confirm by re-querying `profiles.credits_balance` / `free_used_this_week`.
 - `status = 'completed'` rows the customer is complaining about — these are quality complaints. See decision matrix.
 - `status = 'failed_retryable'` rows older than a few hours — these may have stalled. Manual refund warranted.
@@ -138,6 +140,7 @@ The audit-log row from step 3 is your proof of action. The reply is your custome
 ## Step 6 — Verify the audit trail
 
 Open `/admin/audit` (`app/admin/audit/page.tsx`). Filter to the last hour. You should see:
+
 - One row with `action='credit_grant'`, `after.source='support'`, `target_id=<user_id>` for each credit grant you issued.
 - Zero rows you did not personally trigger (anything else is a bug or another admin — flag it).
 

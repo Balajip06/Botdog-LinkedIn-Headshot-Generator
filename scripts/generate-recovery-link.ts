@@ -67,7 +67,7 @@ async function main(): Promise<void> {
   console.log(url)
   console.log('')
   console.log(
-    'One-time use. Expires in 1 hour. Lands at /admin/reset-password where you set a new password.',
+    'One-time use. Expires in 1 hour. Lands at /admin/reset-password where you set a new password.'
   )
 }
 

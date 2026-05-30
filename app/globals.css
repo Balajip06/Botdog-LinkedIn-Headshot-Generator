@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /*
  * TikTok-native design tokens.
@@ -14,8 +14,8 @@
 
 :root {
   /* Light surfaces */
-  --background: oklch(0.99 0.005 80);            /* #fafaf7 warm off-white */
-  --foreground: oklch(0.18 0.01 280);            /* near-black ink */
+  --background: oklch(0.99 0.005 80); /* #fafaf7 warm off-white */
+  --foreground: oklch(0.18 0.01 280); /* near-black ink */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.01 280);
   --popover: oklch(1 0 0);
@@ -26,14 +26,14 @@
   --accent-foreground: oklch(0.18 0.01 280);
   --border: oklch(0.92 0.005 280);
   --input: oklch(0.92 0.005 280);
-  --ring: oklch(0.65 0.2 10);                    /* hot-pink ring on focus */
+  --ring: oklch(0.65 0.2 10); /* hot-pink ring on focus */
   --destructive: oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
   /* Brand — primary is hot pink, then gradient via brand-grad-* */
-  --primary: oklch(0.65 0.24 10);                /* hot pink */
+  --primary: oklch(0.65 0.24 10); /* hot pink */
   --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.78 0.16 215);             /* electric cyan */
+  --secondary: oklch(0.78 0.16 215); /* electric cyan */
   --secondary-foreground: oklch(0.18 0.01 280);
 
   /* Gradient stops */
@@ -66,7 +66,7 @@
 }
 
 .dark {
-  --background: oklch(0.13 0.025 280);           /* deep ink with violet tilt */
+  --background: oklch(0.13 0.025 280); /* deep ink with violet tilt */
   --foreground: oklch(0.96 0.005 80);
   --card: oklch(0.18 0.02 280);
   --card-foreground: oklch(0.96 0.005 80);
@@ -138,7 +138,9 @@
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     letter-spacing: -0.035em;
   }
   h1 {
@@ -149,10 +151,20 @@
 @layer utilities {
   /* Brand surface utilities */
   .bg-gradient-hero {
-    background-image: linear-gradient(135deg, var(--brand-grad-1) 0%, var(--brand-grad-2) 50%, var(--brand-grad-3) 100%);
+    background-image: linear-gradient(
+      135deg,
+      var(--brand-grad-1) 0%,
+      var(--brand-grad-2) 50%,
+      var(--brand-grad-3) 100%
+    );
   }
   .brand-grad {
-    background-image: linear-gradient(135deg, var(--brand-grad-1) 0%, var(--brand-grad-2) 50%, var(--brand-grad-3) 100%);
+    background-image: linear-gradient(
+      135deg,
+      var(--brand-grad-1) 0%,
+      var(--brand-grad-2) 50%,
+      var(--brand-grad-3) 100%
+    );
   }
   .brand-glow {
     box-shadow: var(--shadow-glow-pink);
@@ -161,20 +173,34 @@
     background-image: linear-gradient(135deg, var(--brand-violet) 0%, var(--brand-cyan) 100%);
   }
   .bg-gradient-spotlight {
-    background-image: radial-gradient(120% 80% at 50% 0%, var(--brand-grad-1) 0%, transparent 55%),
-                      radial-gradient(120% 80% at 100% 100%, var(--brand-grad-3) 0%, transparent 55%),
-                      radial-gradient(120% 80% at 0% 100%, var(--brand-violet) 0%, transparent 55%);
+    background-image:
+      radial-gradient(120% 80% at 50% 0%, var(--brand-grad-1) 0%, transparent 55%),
+      radial-gradient(120% 80% at 100% 100%, var(--brand-grad-3) 0%, transparent 55%),
+      radial-gradient(120% 80% at 0% 100%, var(--brand-violet) 0%, transparent 55%);
   }
   .text-gradient-hero {
-    background-image: linear-gradient(135deg, var(--brand-grad-1) 0%, var(--brand-grad-2) 50%, var(--brand-grad-3) 100%);
+    background-image: linear-gradient(
+      135deg,
+      var(--brand-grad-1) 0%,
+      var(--brand-grad-2) 50%,
+      var(--brand-grad-3) 100%
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .shadow-glow-pink { box-shadow: var(--shadow-glow-pink); }
-  .shadow-glow-cyan { box-shadow: var(--shadow-glow-cyan); }
-  .shadow-soft     { box-shadow: var(--shadow-soft); }
-  .shadow-pop      { box-shadow: var(--shadow-pop); }
+  .shadow-glow-pink {
+    box-shadow: var(--shadow-glow-pink);
+  }
+  .shadow-glow-cyan {
+    box-shadow: var(--shadow-glow-cyan);
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-pop {
+    box-shadow: var(--shadow-pop);
+  }
 
   .ring-brand {
     --tw-ring-color: var(--brand-grad-1);
@@ -192,7 +218,12 @@
   }
   .animate-shimmer {
     animation: shimmer 1.8s linear infinite;
-    background-image: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+    background-image: linear-gradient(
+      110deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.35) 50%,
+      transparent 70%
+    );
     background-size: 200% 100%;
   }
   .animate-float {
@@ -200,30 +231,60 @@
   }
 
   @keyframes fade-up {
-    0%   { opacity: 0; transform: translateY(12px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   @keyframes pop-in {
-    0%   { opacity: 0; transform: scale(0.92); }
-    60%  { opacity: 1; transform: scale(1.03); }
-    100% { transform: scale(1); }
+    0% {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    60% {
+      opacity: 1;
+      transform: scale(1.03);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
   @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 46, 99, 0.45); }
-    50%      { box-shadow: 0 0 0 16px rgba(255, 46, 99, 0); }
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 46, 99, 0.45);
+    }
+    50% {
+      box-shadow: 0 0 0 16px rgba(255, 46, 99, 0);
+    }
   }
   @keyframes shimmer {
-    0%   { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -6,11 +6,13 @@ Status: Accepted
 ## Context
 
 Trends ship in three lifecycle states:
+
 - **draft**: `is_active = false`, `eval_status = 'untested'` — admin is composing the prompt.
 - **failed eval**: `eval_status = 'failed'` — Gemini eval surfaced safety blocks or quality failures.
 - **live**: `is_active = true`, `eval_status = 'passed'` — visible to the public.
 
 A trend going live without passing eval is the worst-case content shipping failure:
+
 - A bad prompt (e.g., one that triggers Gemini safety on most inputs) wastes user credits.
 - A franchise-IP-grey-area prompt (see [docs/TREND_BANLIST.md](../TREND_BANLIST.md) and ADR comments) reaches users without operator review.
 - A poorly-rated trend dilutes the catalog's average quality and tanks repeat-purchase rate — directly hits the diligence KPI.
@@ -22,6 +24,7 @@ The risk: every UPDATE statement that touches `is_active` is a potential trapdoo
 A **check constraint plus a BEFORE-UPDATE trigger** on `public.trends` enforces the invariant (see [supabase/migrations/20260527000002_trends.sql](../../supabase/migrations/20260527000002_trends.sql)).
 
 Trigger logic on UPDATE:
+
 1. If `NEW.is_active = true AND NEW.eval_status != 'passed'`, RAISE `'eval gate: trend must pass eval before activation'`.
 2. If `NEW.prompt_template != OLD.prompt_template`, automatically set `NEW.eval_status = 'untested'` and `NEW.is_active = false`. (Prompt edits invalidate prior eval results.)
 
@@ -32,11 +35,13 @@ The second clause was added after an incident on 2026-05-29 where an admin shipp
 ## Consequences
 
 **Positive:**
-- Impossible to ship a non-evaluated trend via *any* path (admin UI, SQL console, future API).
+
+- Impossible to ship a non-evaluated trend via _any_ path (admin UI, SQL console, future API).
 - Prompt edits auto-reset eval state — operator can't accidentally re-activate stale-eval'd trends.
 - Diligence: a buyer can query `select id, slug from trends where is_active = true and eval_status != 'passed';` and confirm zero rows. The constraint guarantees this is always empty.
 
 **Negative:**
+
 - Bulk admin operations (e.g., "deactivate all trends for franchise-IP review") still work, but bulk re-activate requires re-eval of every touched trend. Annoying during incident response.
 - The trigger raises a Postgres exception; [app/admin/trends/actions.ts](../../app/admin/trends/actions.ts) has to translate it to a user-facing form error. One more error path to maintain.
 - A one-time SQL bypass exists during migration scripts. Documented in the project lessons log; reserved for emergency-only.

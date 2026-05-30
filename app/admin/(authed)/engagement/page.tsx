@@ -2,18 +2,8 @@ import { BarChart3, Eye, MousePointerClick, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { BarChart, Delta, Sparkline } from '@/components/admin/Charts'
 import { KpiCard } from '@/components/admin/KpiCard'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import {
-  getCountsBatch,
-  getDailySeries,
-  getPeriodTotals,
-} from '@/lib/analytics/event-store'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { getCountsBatch, getDailySeries, getPeriodTotals } from '@/lib/analytics/event-store'
 import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -70,18 +60,18 @@ export default async function AdminEngagementPage() {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Growth
         </p>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="text-3xl font-extrabold tracking-tight">
             <span className="text-gradient-hero">Engagement</span>
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Rolling 7-day window · UTC · {trends.length} trends tracked
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Trend-page impressions, generate-button clicks, and click-through rate. Numbers come from
           the in-memory event store today and will flip to Supabase aggregates once{' '}
           <code className="font-mono text-xs">trend_events</code> ships.
@@ -94,10 +84,7 @@ export default async function AdminEngagementPage() {
           label="Impressions"
           value={formatNumber(period.current.impressions)}
           delta={
-            <Delta
-              current={period.current.impressions}
-              previous={period.previous.impressions}
-            />
+            <Delta current={period.current.impressions} previous={period.previous.impressions} />
           }
           tone="text-[var(--brand-grad-1)]"
           series={dailyEngagement.map((d) => ({ label: d.label, value: d.impressions }))}
@@ -128,7 +115,7 @@ export default async function AdminEngagementPage() {
 
       <Card className="gap-3 py-5">
         <CardHeader className="px-5">
-          <CardDescription className="text-xs uppercase tracking-[0.18em]">
+          <CardDescription className="text-xs tracking-[0.18em] uppercase">
             Funnel · 7 days
           </CardDescription>
           <CardTitle className="text-xl font-bold">Impressions vs clicks per day</CardTitle>
@@ -156,14 +143,14 @@ export default async function AdminEngagementPage() {
           </CardDescription>
         </CardHeader>
         {ranked.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-5 py-10 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-col items-center gap-2 px-5 py-10 text-center text-sm">
             <BarChart3 className="size-6" />
             <p>No trends yet — add one to start collecting engagement data.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50 text-[11px] uppercase tracking-wide text-muted-foreground">
+              <thead className="bg-muted/50 text-muted-foreground text-[11px] tracking-wide uppercase">
                 <tr>
                   <th className="px-4 py-3 font-semibold">#</th>
                   <th className="px-4 py-3 font-semibold">Trend</th>
@@ -177,19 +164,17 @@ export default async function AdminEngagementPage() {
                 {ranked.map((t, idx) => (
                   <tr
                     key={t.id}
-                    className="border-t border-border/60 transition-colors hover:bg-muted/30"
+                    className="border-border/60 hover:bg-muted/30 border-t transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">
-                      {idx + 1}
-                    </td>
+                    <td className="text-muted-foreground px-4 py-3 font-mono text-xs">{idx + 1}</td>
                     <td className="px-4 py-3">
                       <Link
                         href={`/admin/trends/${t.id}/edit`}
-                        className="font-semibold text-foreground hover:underline"
+                        className="text-foreground font-semibold hover:underline"
                       >
                         {t.title}
                       </Link>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="text-muted-foreground flex items-center gap-2 text-xs">
                         <span className="font-mono">/{t.slug}</span>
                         <span
                           className={`inline-block size-1.5 rounded-full ${
@@ -206,7 +191,7 @@ export default async function AdminEngagementPage() {
                     <td className="px-4 py-3 text-right font-mono text-xs tabular-nums">
                       {formatNumber(t.clicks)}
                     </td>
-                    <td className="px-4 py-3 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                    <td className="text-muted-foreground px-4 py-3 text-right font-mono text-xs tabular-nums">
                       {ctrPct(t.impressions, t.clicks)}
                     </td>
                     <td className="w-40 px-4 py-3 text-[var(--brand-grad-1)]">
@@ -226,4 +211,3 @@ export default async function AdminEngagementPage() {
     </section>
   )
 }
-

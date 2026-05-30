@@ -10,13 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/utils/cn'
-import {
-  addEvalInput,
-  markTrendEval,
-  rateEvalRun,
-  removeEvalInput,
-  runEval,
-} from './actions'
+import { addEvalInput, markTrendEval, rateEvalRun, removeEvalInput, runEval } from './actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -74,7 +68,7 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
   }, {})
 
   const rated = Object.values(latestRuns).filter(
-    (r) => r.admin_rating === 'pass' || r.admin_rating === 'fail',
+    (r) => r.admin_rating === 'pass' || r.admin_rating === 'fail'
   )
   const allRated = inputs.length > 0 && rated.length === inputs.length
   const anyFail = rated.some((r) => r.admin_rating === 'fail')
@@ -105,19 +99,23 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
           { key: 'added', level: 'success', message: 'Reference photo added.' },
           { key: 'removed', level: 'info', message: 'Reference removed.' },
           { key: 'ran', level: 'success', message: 'Test run dispatched.' },
-          { key: 'marked-passed', level: 'success', message: 'Trend eval marked passed. Activate from Edit page.' },
+          {
+            key: 'marked-passed',
+            level: 'success',
+            message: 'Trend eval marked passed. Activate from Edit page.',
+          },
           { key: 'marked-failed', level: 'success', message: 'Trend eval marked failed.' },
         ]}
       />
 
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
             Eval workflow
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight">{trend.title}</h1>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <code className="rounded bg-muted px-1.5 py-0.5">/{trend.slug}</code>
+          <div className="text-muted-foreground mt-2 flex flex-wrap items-center gap-2 text-xs">
+            <code className="bg-muted rounded px-1.5 py-0.5">/{trend.slug}</code>
             <span>·</span>
             <span>v{trend.version}</span>
             <span>·</span>
@@ -140,11 +138,11 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                 <StepDot n={1} /> Reference photos
               </CardTitle>
               <CardDescription>
-                Public image URLs covering the demographics, lighting, and ages this trend
-                must handle.
+                Public image URLs covering the demographics, lighting, and ages this trend must
+                handle.
               </CardDescription>
             </div>
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-mono">
+            <span className="bg-muted rounded-full px-2.5 py-0.5 font-mono text-[11px]">
               {inputs.length}
             </span>
           </div>
@@ -152,19 +150,34 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
         <CardContent className="flex flex-col gap-4">
           <form action={boundAdd} className="grid gap-3 sm:grid-cols-[1fr_2fr_1fr_auto]">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ref-label" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Label
+                htmlFor="ref-label"
+                className="text-muted-foreground text-[11px] tracking-wide uppercase"
+              >
                 Label
               </Label>
-              <Input id="ref-label" name="label" required maxLength={80} placeholder="child / glasses / dark" />
+              <Input
+                id="ref-label"
+                name="label"
+                required
+                maxLength={80}
+                placeholder="child / glasses / dark"
+              />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ref-url" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Label
+                htmlFor="ref-url"
+                className="text-muted-foreground text-[11px] tracking-wide uppercase"
+              >
                 Image URL
               </Label>
               <Input id="ref-url" name="image_url" required type="url" placeholder="https://…" />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ref-tag" className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <Label
+                htmlFor="ref-tag"
+                className="text-muted-foreground text-[11px] tracking-wide uppercase"
+              >
                 Tag
               </Label>
               <Input id="ref-tag" name="demographic_tag" maxLength={40} placeholder="optional" />
@@ -186,9 +199,9 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                 return (
                   <li
                     key={input.id}
-                    className="group relative flex flex-col gap-2 overflow-hidden rounded-xl border border-border/60 bg-card p-2"
+                    className="group border-border/60 bg-card relative flex flex-col gap-2 overflow-hidden rounded-xl border p-2"
                   >
-                    <div className="aspect-square overflow-hidden rounded-md bg-muted">
+                    <div className="bg-muted aspect-square overflow-hidden rounded-md">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={input.image_url}
@@ -200,7 +213,7 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                       <div className="min-w-0">
                         <div className="truncate text-xs font-semibold">{input.label}</div>
                         {input.demographic_tag && (
-                          <div className="truncate text-[10px] text-muted-foreground">
+                          <div className="text-muted-foreground truncate text-[10px]">
                             {input.demographic_tag}
                           </div>
                         )}
@@ -278,9 +291,13 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                 return (
                   <li
                     key={run.id}
-                    className="grid gap-3 rounded-xl border border-border/60 bg-card p-3 sm:grid-cols-[120px_120px_1fr_auto] sm:items-center"
+                    className="border-border/60 bg-card grid gap-3 rounded-xl border p-3 sm:grid-cols-[120px_120px_1fr_auto] sm:items-center"
                   >
-                    <EvalThumb src={input.image_url} alt={`input ${input.label}`} placeholder="input" />
+                    <EvalThumb
+                      src={input.image_url}
+                      alt={`input ${input.label}`}
+                      placeholder="input"
+                    />
                     <EvalThumb
                       src={run.output_url}
                       alt={`output ${input.label}`}
@@ -290,9 +307,9 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                     <div className="flex min-w-0 flex-col gap-0.5">
                       <div className="truncate text-sm font-semibold">{input.label}</div>
                       {input.demographic_tag && (
-                        <div className="text-xs text-muted-foreground">{input.demographic_tag}</div>
+                        <div className="text-muted-foreground text-xs">{input.demographic_tag}</div>
                       )}
-                      <div className="mt-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      <div className="text-muted-foreground mt-1 text-[10px] tracking-wide uppercase">
                         v{run.prompt_version}
                       </div>
                     </div>
@@ -304,7 +321,7 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                           variant={run.admin_rating === 'pass' ? 'default' : 'outline'}
                           className={cn(
                             run.admin_rating === 'pass' &&
-                              'bg-emerald-600 text-white hover:bg-emerald-700',
+                              'bg-emerald-600 text-white hover:bg-emerald-700'
                           )}
                         >
                           <Check className="size-3.5" /> Pass
@@ -345,7 +362,7 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
         <CardContent>
           <Separator className="mb-4" />
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {allRated && !anyFail && (
                 <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
                   <ArrowRight className="size-3.5" /> Next: activate on the Edit page.
@@ -364,12 +381,7 @@ export default async function EvalPage({ params, searchParams }: EvalPageProps) 
                 </Button>
               </form>
               <form action={boundMarkFailed}>
-                <Button
-                  type="submit"
-                  variant="destructive"
-                  size="default"
-                  disabled={!allRated}
-                >
+                <Button type="submit" variant="destructive" size="default" disabled={!allRated}>
                   <X className="size-4" /> Mark failed
                 </Button>
               </form>
@@ -398,7 +410,7 @@ interface EvalThumbProps {
 
 function EvalThumb({ src, alt, placeholder, isError }: EvalThumbProps) {
   return (
-    <div className="aspect-square overflow-hidden rounded-lg border border-border/60 bg-muted">
+    <div className="border-border/60 bg-muted aspect-square overflow-hidden rounded-lg border">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={alt} className="h-full w-full object-cover" />
@@ -406,7 +418,7 @@ function EvalThumb({ src, alt, placeholder, isError }: EvalThumbProps) {
         <div
           className={cn(
             'flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center text-[10px]',
-            isError ? 'text-destructive' : 'text-muted-foreground',
+            isError ? 'text-destructive' : 'text-muted-foreground'
           )}
         >
           <ImageOff className="size-4" />

@@ -122,7 +122,7 @@ export function ResultView({ initial, trend }: ResultViewProps) {
         (payload) => {
           const next = payload.new as Initial
           setRow((prev) => ({ ...prev, ...next }))
-        },
+        }
       )
       .subscribe()
 
@@ -159,7 +159,7 @@ export function ResultView({ initial, trend }: ResultViewProps) {
       <header className="flex items-center justify-between">
         <Link
           href={`/trend/${trend.slug}`}
-          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="text-muted-foreground hover:bg-muted hover:text-foreground inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm"
         >
           <ArrowLeft className="size-4" />
           Back to {trend.title}
@@ -231,7 +231,7 @@ export function ResultView({ initial, trend }: ResultViewProps) {
       )}
 
       {pushHint && (
-        <p className="rounded-full bg-muted px-4 py-2 text-center text-xs text-muted-foreground">
+        <p className="bg-muted text-muted-foreground rounded-full px-4 py-2 text-center text-xs">
           {pushHint}
         </p>
       )}

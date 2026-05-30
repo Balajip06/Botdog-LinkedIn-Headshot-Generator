@@ -22,7 +22,7 @@ describe('webhook_events idempotency constraint', () => {
       sql`
         insert into public.webhook_events (source, event_id, payload)
         values ('stripe', 'evt_test_dedup', '{}'::jsonb)
-      `,
+      `
     ).rejects.toThrow(/duplicate key|unique/i)
   })
 
@@ -40,7 +40,7 @@ describe('webhook_events idempotency constraint', () => {
       sql`
         insert into public.webhook_events (source, event_id, payload)
         values ('not-a-real-source', 'evt_test_same', '{}'::jsonb)
-      `,
+      `
     ).rejects.toThrow(/check constraint|webhook_events_source_check/i)
   })
 

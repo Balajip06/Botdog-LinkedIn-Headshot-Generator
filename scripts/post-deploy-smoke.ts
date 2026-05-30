@@ -40,10 +40,7 @@ function p50(samples: number[]): number {
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]
 }
 
-async function timedFetch(
-  url: string,
-  init?: RequestInit,
-): Promise<{ res: Response; ms: number }> {
+async function timedFetch(url: string, init?: RequestInit): Promise<{ res: Response; ms: number }> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
   const start = performance.now()
@@ -210,15 +207,11 @@ function renderTable(results: CheckResult[]): string {
   const nameWidth = Math.max(...results.map((r) => r.name.length))
   const lines: string[] = []
   lines.push('')
-  lines.push(
-    `${'CHECK'.padEnd(nameWidth)}  ${'STATUS'.padEnd(6)}  ${'TIME'.padStart(8)}  DETAIL`,
-  )
-  lines.push(
-    `${'-'.repeat(nameWidth)}  ${'-'.repeat(6)}  ${'-'.repeat(8)}  ${'-'.repeat(40)}`,
-  )
+  lines.push(`${'CHECK'.padEnd(nameWidth)}  ${'STATUS'.padEnd(6)}  ${'TIME'.padStart(8)}  DETAIL`)
+  lines.push(`${'-'.repeat(nameWidth)}  ${'-'.repeat(6)}  ${'-'.repeat(8)}  ${'-'.repeat(40)}`)
   for (const r of results) {
     lines.push(
-      `${r.name.padEnd(nameWidth)}  ${r.status.padEnd(6)}  ${fmt(r.ms).padStart(8)}  ${r.detail}`,
+      `${r.name.padEnd(nameWidth)}  ${r.status.padEnd(6)}  ${fmt(r.ms).padStart(8)}  ${r.detail}`
     )
   }
   return lines.join('\n')
@@ -258,7 +251,7 @@ async function main(): Promise<void> {
   console.log(renderTable(results))
   console.log('')
   console.log(
-    `Result: ${results.length - failed.length}/${results.length} passed in ${fmt(totalMs)}`,
+    `Result: ${results.length - failed.length}/${results.length} passed in ${fmt(totalMs)}`
   )
 
   if (failed.length > 0) {

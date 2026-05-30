@@ -4,7 +4,11 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { parseIdempotencyKey } from '@/lib/idempotency'
 import { anonymousFingerprintLimiter } from '@/lib/rate-limit'
 import { isAnonymousBudgetExceeded } from '@/lib/gemini/cost'
-import { collectImageInputs, interpolatePrompt, type TrendInputValues } from '@/lib/trends/interpolate'
+import {
+  collectImageInputs,
+  interpolatePrompt,
+  type TrendInputValues,
+} from '@/lib/trends/interpolate'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 import { verifyTurnstile } from '@/lib/turnstile/verify'

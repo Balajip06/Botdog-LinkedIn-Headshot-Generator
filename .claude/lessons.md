@@ -3,6 +3,7 @@
 Append on EVERY user correction. Review at session start.
 
 Format:
+
 ```
 ## YYYY-MM-DD — short title
 **Trigger:** what user corrected
@@ -80,7 +81,7 @@ Format:
 
 **Trigger:** `ResultView.ShareBurst` computed `siteUrl = window.location.origin + ...` at render time. Server-side `window` is undefined so the SSR'd `<a href>` differed from the hydrated client `<a href>`, producing a React hydration error in dev (`Text content does not match server-rendered HTML`).
 **Lesson:** For URLs needed during render in a client component that is also SSR'd, derive from `process.env.NEXT_PUBLIC_SITE_URL` (resolved identically on both sides) rather than `window.location`. Only reach for `window` inside `useEffect` (after mount) or behind a mounted-flag.
-**Apply when:** Any client component reads `window.location.*` or `document.*` at render time. Replace with NEXT_PUBLIC_* env or move into useEffect.
+**Apply when:** Any client component reads `window.location.*` or `document.*` at render time. Replace with NEXT*PUBLIC*\* env or move into useEffect.
 
 ---
 
@@ -107,6 +108,7 @@ Format:
 **Apply when:** Any prompt edit to `public.trends.prompt_template` post-launch. Default path = use the admin eval workflow. SQL bypass requires explicit user override + lessons.md entry.
 
 **One-time bypasses logged:**
+
 - 2026-05-29: All 15 trends upgraded to v2 prompts (146-411 chars → 694-1214 chars). Override approved by user via AskUserQuestion. `prompt_template_history` retains the v1 prompts for diff. Future re-evals via admin workflow will validate v2 against reference photos.
 
 ---

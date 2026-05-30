@@ -108,7 +108,7 @@ When they reply, the same 4-5 questions surface. Have these saved as text snippe
 
 ### "Can I customize the trend / get an exclusive style?"
 
-> Not yet — every Trendly user sees the same trend catalog. Custom trends are roadmapped for W8+. What we *can* offer top creators: 48-hour early access to new trends before they go live to the public, so your audience gets the "first to try" angle.
+> Not yet — every Trendly user sees the same trend catalog. Custom trends are roadmapped for W8+. What we _can_ offer top creators: 48-hour early access to new trends before they go live to the public, so your audience gets the "first to try" angle.
 
 ---
 
@@ -116,15 +116,15 @@ When they reply, the same 4-5 questions surface. Have these saved as text snippe
 
 One row per creator. Recompute conversions weekly from the `referrals` table via a 1-line SQL query (`select count(*) from public.referrals where referrer_id = <creator's profile_id> and status = 'rewarded'`).
 
-| Column | Type | Notes |
-|---|---|---|
-| `handle` | string | `@creator_handle` — include the @ for greppability |
-| `platform` | enum | `x` / `tiktok` / `ig` / `threads` / `bluesky` |
-| `sent_date` | date | When first DM went out |
-| `replied` | boolean | Any non-bounce reply (positive or negative) |
-| `code_issued` | string | Their branded referral code (12-hex from `profiles.referral_code`) |
-| `conversions` | int | Successful invites attributed to their code (purchase OR 3+ generations) |
-| `LTV_so_far` | decimal | Sum of `cost_usd` × pack margin for converted users (eyeball — formal LTV is a W6 task) |
+| Column        | Type    | Notes                                                                                   |
+| ------------- | ------- | --------------------------------------------------------------------------------------- |
+| `handle`      | string  | `@creator_handle` — include the @ for greppability                                      |
+| `platform`    | enum    | `x` / `tiktok` / `ig` / `threads` / `bluesky`                                           |
+| `sent_date`   | date    | When first DM went out                                                                  |
+| `replied`     | boolean | Any non-bounce reply (positive or negative)                                             |
+| `code_issued` | string  | Their branded referral code (12-hex from `profiles.referral_code`)                      |
+| `conversions` | int     | Successful invites attributed to their code (purchase OR 3+ generations)                |
+| `LTV_so_far`  | decimal | Sum of `cost_usd` × pack margin for converted users (eyeball — formal LTV is a W6 task) |
 
 Tracking sheet template lives in `~/Documents/trendly-ops/creator-outreach-tracking.xlsx` (you create on Day 1).
 
@@ -134,16 +134,16 @@ Tracking sheet template lives in `~/Documents/trendly-ops/creator-outreach-track
 
 Day-by-day for one cycle:
 
-| Day | Action | Target volume |
-|---|---|---|
-| Mon | Source list (build 100-row sheet) + send 20 DMs | 20 sent |
-| Tue | Send 20 DMs | 40 sent cumulative |
-| Wed | Send 20 DMs + reply to any Mon-Tue replies | 60 sent |
-| Thu | Send 20 DMs + reply to Tue-Wed | 80 sent |
-| Fri | Send 20 DMs + reply to all open threads | 100 sent |
-| Mon (W+1) | Day-3 follow-up to Mon-Thu unanswered DMs (only if read receipt fired; otherwise skip) | ~30 follow-ups |
-| Fri (W+1) | Day-7 follow-up to any remaining unanswered + read | ~15 follow-ups |
-| After 2 unread follow-ups | Drop. Move on. | — |
+| Day                       | Action                                                                                 | Target volume      |
+| ------------------------- | -------------------------------------------------------------------------------------- | ------------------ |
+| Mon                       | Source list (build 100-row sheet) + send 20 DMs                                        | 20 sent            |
+| Tue                       | Send 20 DMs                                                                            | 40 sent cumulative |
+| Wed                       | Send 20 DMs + reply to any Mon-Tue replies                                             | 60 sent            |
+| Thu                       | Send 20 DMs + reply to Tue-Wed                                                         | 80 sent            |
+| Fri                       | Send 20 DMs + reply to all open threads                                                | 100 sent           |
+| Mon (W+1)                 | Day-3 follow-up to Mon-Thu unanswered DMs (only if read receipt fired; otherwise skip) | ~30 follow-ups     |
+| Fri (W+1)                 | Day-7 follow-up to any remaining unanswered + read                                     | ~15 follow-ups     |
+| After 2 unread follow-ups | Drop. Move on.                                                                         | —                  |
 
 Follow-up template (same across platforms):
 
@@ -169,7 +169,7 @@ in partnership with @trendly
 Position requirements (per FTC 16 CFR Part 255):
 
 - X / Threads / Bluesky: in the body text, not just the bio. Above the link.
-- TikTok: in the caption *and* spoken/text-overlay in the video (FTC requires both for video content).
+- TikTok: in the caption _and_ spoken/text-overlay in the video (FTC requires both for video content).
 - Instagram: in the caption (first sentence preferred), plus the built-in "Paid partnership" label (Instagram surfaces this above the post).
 
 If a creator pushes back on disclosure, walk away. The legal exposure is asymmetric — they lose, we lose harder.

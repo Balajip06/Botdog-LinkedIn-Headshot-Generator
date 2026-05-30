@@ -77,9 +77,18 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '1:1',
     faq: [
-      { question: 'Is it free?', answer: 'You get 5 free generations per week. Buy credits if you need more.' },
-      { question: 'Does it work on iPhone?', answer: 'Yes — all modern mobile + desktop browsers are supported.' },
-      { question: 'What photos work best?', answer: 'Clear front-facing photos with even lighting work best.' },
+      {
+        question: 'Is it free?',
+        answer: 'You get 5 free generations per week. Buy credits if you need more.',
+      },
+      {
+        question: 'Does it work on iPhone?',
+        answer: 'Yes — all modern mobile + desktop browsers are supported.',
+      },
+      {
+        question: 'What photos work best?',
+        answer: 'Clear front-facing photos with even lighting work best.',
+      },
     ],
   },
   {
@@ -90,7 +99,10 @@ const SEEDS: Seed[] = [
     aspect: '1:1',
     faq: [
       { question: 'How long does it take?', answer: 'About 20–40 seconds per generation.' },
-      { question: 'Can I use it commercially?', answer: 'Outputs are yours but Pixar likeness is for personal use only.' },
+      {
+        question: 'Can I use it commercially?',
+        answer: 'Outputs are yours but Pixar likeness is for personal use only.',
+      },
     ],
   },
   {
@@ -100,7 +112,10 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'Will it look like me?', answer: 'Yes — the AI preserves facial features while applying the anime style.' },
+      {
+        question: 'Will it look like me?',
+        answer: 'Yes — the AI preserves facial features while applying the anime style.',
+      },
     ],
   },
   {
@@ -110,7 +125,10 @@ const SEEDS: Seed[] = [
     model: 'nano-banana',
     aspect: '1:1',
     faq: [
-      { question: 'Does it add the Polaroid border?', answer: 'Yes — the white frame is part of the output.' },
+      {
+        question: 'Does it add the Polaroid border?',
+        answer: 'Yes — the white frame is part of the output.',
+      },
     ],
   },
   {
@@ -120,29 +138,47 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'Does it work on full body shots?', answer: 'Yes, though headshots tend to look the most dramatic.' },
+      {
+        question: 'Does it work on full body shots?',
+        answer: 'Yes, though headshots tend to look the most dramatic.',
+      },
     ],
   },
   {
     slug: 'stranger-things-poster',
     title: 'Stranger Things 80s poster',
-    description: 'Cinematic Netflix-style poster — neon red & teal, fog, retro grain, Upside Down vibes.',
+    description:
+      'Cinematic Netflix-style poster — neon red & teal, fog, retro grain, Upside Down vibes.',
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'Does it preserve my face?', answer: 'Yes — facial features are kept while lighting/color/atmosphere are restyled.' },
-      { question: 'Why 3:4?', answer: 'Matches classic VHS / movie-poster framing and reads well as a story or print.' },
+      {
+        question: 'Does it preserve my face?',
+        answer: 'Yes — facial features are kept while lighting/color/atmosphere are restyled.',
+      },
+      {
+        question: 'Why 3:4?',
+        answer: 'Matches classic VHS / movie-poster framing and reads well as a story or print.',
+      },
     ],
   },
   {
     slug: 'action-figure-box',
     title: 'Action figure in box',
-    description: 'You as a collectible toy, packaged in a branded blister card — Barbie / Funko vibes.',
+    description:
+      'You as a collectible toy, packaged in a branded blister card — Barbie / Funko vibes.',
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'Can I change the accessories?', answer: 'V1 ships fixed accessories (laptop, coffee, headphones). Custom in a later release.' },
-      { question: 'Random cardback?', answer: 'Yes — the model picks color/style each run. Generate a few to find one you like.' },
+      {
+        question: 'Can I change the accessories?',
+        answer:
+          'V1 ships fixed accessories (laptop, coffee, headphones). Custom in a later release.',
+      },
+      {
+        question: 'Random cardback?',
+        answer: 'Yes — the model picks color/style each run. Generate a few to find one you like.',
+      },
     ],
   },
   {
@@ -152,8 +188,14 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '1:1',
     faq: [
-      { question: 'Does it keep my hairstyle?', answer: 'The prompt preserves hairstyle + clothing palette so the Pop is recognizable.' },
-      { question: 'Can I put it in a box?', answer: 'Use the "Action figure in box" trend — it ships the figure already packaged.' },
+      {
+        question: 'Does it keep my hairstyle?',
+        answer: 'The prompt preserves hairstyle + clothing palette so the Pop is recognizable.',
+      },
+      {
+        question: 'Can I put it in a box?',
+        answer: 'Use the "Action figure in box" trend — it ships the figure already packaged.',
+      },
     ],
   },
   {
@@ -163,17 +205,26 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '1:1',
     faq: [
-      { question: 'Why yellow skin?', answer: 'Classic LEGO minifigures use the iconic yellow face. Custom skin tones in a later release.' },
+      {
+        question: 'Why yellow skin?',
+        answer:
+          'Classic LEGO minifigures use the iconic yellow face. Custom skin tones in a later release.',
+      },
     ],
   },
   {
     slug: 'wes-anderson-pastel',
     title: 'Wes Anderson pastel',
-    description: 'Centered symmetrical composition, pastel palette, dollhouse lighting — Grand Budapest aesthetic.',
+    description:
+      'Centered symmetrical composition, pastel palette, dollhouse lighting — Grand Budapest aesthetic.',
     model: 'nano-banana-pro',
     aspect: '16:9',
     faq: [
-      { question: 'Why 16:9?', answer: 'Matches Wes Anderson’s anamorphic cinematic framing and reads as a film still on social.' },
+      {
+        question: 'Why 16:9?',
+        answer:
+          'Matches Wes Anderson’s anamorphic cinematic framing and reads as a film still on social.',
+      },
     ],
   },
   {
@@ -183,7 +234,10 @@ const SEEDS: Seed[] = [
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'Can I pick the era?', answer: 'V1 uses High Renaissance (~1500s). Baroque + Rococo land in a future release.' },
+      {
+        question: 'Can I pick the era?',
+        answer: 'V1 uses High Renaissance (~1500s). Baroque + Rococo land in a future release.',
+      },
     ],
   },
   {
@@ -191,42 +245,63 @@ const SEEDS: Seed[] = [
     // what's actually in Supabase, not the trend-list checklist label.
     slug: 'south-park-cartoon',
     title: 'South Park character',
-    description: 'You as a paper-cutout South Park kid — round head, beady eyes, mountain backdrop.',
+    description:
+      'You as a paper-cutout South Park kid — round head, beady eyes, mountain backdrop.',
     model: 'nano-banana',
     aspect: '1:1',
     faq: [
-      { question: 'Why the quick model?', answer: "South Park's flat low-detail style doesn't need Pro. Quick is faster and cheaper." },
+      {
+        question: 'Why the quick model?',
+        answer: "South Park's flat low-detail style doesn't need Pro. Quick is faster and cheaper.",
+      },
     ],
   },
   {
     slug: 'cyberpunk-neon',
     title: 'Cyberpunk neon portrait',
-    description: 'You as a Night City netrunner — chrome implants, rain-slick neon streets, holographic ads.',
+    description:
+      'You as a Night City netrunner — chrome implants, rain-slick neon streets, holographic ads.',
     model: 'nano-banana-pro',
     aspect: '3:4',
     faq: [
-      { question: 'How prominent are the implants?', answer: 'Subtle by default — small chrome plates + temple chip. Re-roll for variations.' },
+      {
+        question: 'How prominent are the implants?',
+        answer: 'Subtle by default — small chrome plates + temple chip. Re-roll for variations.',
+      },
     ],
   },
   {
     slug: 'y2k-digicam-flash',
     title: 'Y2K digicam flash',
-    description: '2006 nightlife aesthetic — harsh on-camera flash, glowy skin, low-res digicam grain.',
+    description:
+      '2006 nightlife aesthetic — harsh on-camera flash, glowy skin, low-res digicam grain.',
     model: 'nano-banana',
     aspect: '1:1',
     faq: [
-      { question: 'Does it work on group photos?', answer: 'Yes — multi-person photos read as classic 2000s party shots. Faces stay recognizable.' },
+      {
+        question: 'Does it work on group photos?',
+        answer:
+          'Yes — multi-person photos read as classic 2000s party shots. Faces stay recognizable.',
+      },
     ],
   },
   {
     slug: 'linkedin-headshot',
     title: 'LinkedIn headshot',
-    description: 'Professional studio headshot from any selfie — soft key light, neutral backdrop, business attire.',
+    description:
+      'Professional studio headshot from any selfie — soft key light, neutral backdrop, business attire.',
     model: 'nano-banana-pro',
     aspect: '1:1',
     faq: [
-      { question: 'Will it look fake?', answer: 'Natural skin texture + authentic studio lighting. Most outputs pass for real headshots.' },
-      { question: 'Keep my own outfit?', answer: 'V1 swaps to business attire. Outfit-preserving mode is on the roadmap.' },
+      {
+        question: 'Will it look fake?',
+        answer:
+          'Natural skin texture + authentic studio lighting. Most outputs pass for real headshots.',
+      },
+      {
+        question: 'Keep my own outfit?',
+        answer: 'V1 swaps to business attire. Outfit-preserving mode is on the roadmap.',
+      },
     ],
   },
 ]

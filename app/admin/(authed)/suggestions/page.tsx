@@ -12,7 +12,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
-import { TrendSuggestionPayloadSchema, type TrendSuggestionPayload } from '@/lib/trends/suggestions/payload'
+import {
+  TrendSuggestionPayloadSchema,
+  type TrendSuggestionPayload,
+} from '@/lib/trends/suggestions/payload'
 import { approveAutoSuggestion, rejectSuggestion, runScan } from './actions'
 
 export const dynamic = 'force-dynamic'
@@ -78,21 +81,16 @@ export default async function AdminSuggestionsPage({ searchParams }: AdminSugges
 
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
             Inbox
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight">Trend suggestions</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             {suggestions.length} pending · auto-detected + community submissions.
           </p>
         </div>
         <form action={runScan}>
-          <Button
-            type="submit"
-            variant="outline"
-            size="sm"
-            className="rounded-full"
-          >
+          <Button type="submit" variant="outline" size="sm" className="rounded-full">
             <Search className="size-4" /> Scan for trends
           </Button>
         </form>
@@ -113,13 +111,13 @@ export default async function AdminSuggestionsPage({ searchParams }: AdminSugges
 
 function EmptyInbox() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/40 p-16 text-center">
-      <div className="grid size-14 place-items-center rounded-full bg-muted text-foreground">
+    <div className="border-border/60 bg-card/40 flex flex-col items-center gap-4 rounded-3xl border border-dashed p-16 text-center">
+      <div className="bg-muted text-foreground grid size-14 place-items-center rounded-full">
         <Inbox className="size-6" />
       </div>
       <div>
         <p className="text-lg font-bold">Inbox empty</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Run the detector or wait for new submissions.
         </p>
       </div>
@@ -144,14 +142,12 @@ function SuggestionCard({ suggestion }: { suggestion: ParsedSuggestion }) {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <SourceBadge source={suggestion.source} />
-            <time className="text-xs text-muted-foreground" dateTime={suggestion.created_at}>
+            <time className="text-muted-foreground text-xs" dateTime={suggestion.created_at}>
               {new Date(suggestion.created_at).toLocaleString()}
             </time>
           </div>
           {suggestion.payload?.type === 'auto' && (
-            <CardTitle className="text-lg">
-              {suggestion.payload.proposal.suggested_title}
-            </CardTitle>
+            <CardTitle className="text-lg">{suggestion.payload.proposal.suggested_title}</CardTitle>
           )}
           {suggestion.payload?.type === 'user' && (
             <CardTitle className="text-lg">{suggestion.payload.title}</CardTitle>
@@ -164,10 +160,16 @@ function SuggestionCard({ suggestion }: { suggestion: ParsedSuggestion }) {
           <>
             <CardDescription>{suggestion.payload.proposal.suggested_description}</CardDescription>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-4">
-              <Meta label="slug" value={<code>{suggestion.payload.proposal.suggested_slug}</code>} />
+              <Meta
+                label="slug"
+                value={<code>{suggestion.payload.proposal.suggested_slug}</code>}
+              />
               <Meta label="model" value={suggestion.payload.proposal.model} />
               <Meta label="confidence" value={suggestion.payload.proposal.confidence.toFixed(2)} />
-              <Meta label="momentum" value={suggestion.payload.candidate.momentum_score.toFixed(1)} />
+              <Meta
+                label="momentum"
+                value={suggestion.payload.candidate.momentum_score.toFixed(1)}
+              />
             </dl>
             <a
               href={suggestion.payload.candidate.source_url}
@@ -182,13 +184,13 @@ function SuggestionCard({ suggestion }: { suggestion: ParsedSuggestion }) {
         {suggestion.payload?.type === 'user' && (
           <>
             <CardDescription>{suggestion.payload.description}</CardDescription>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               User suggestions need manual trend creation — review then reject.
             </p>
           </>
         )}
         {!suggestion.payload && (
-          <p className="text-xs text-destructive">
+          <p className="text-destructive text-xs">
             Payload failed schema validation — admin attention required.
           </p>
         )}
@@ -226,8 +228,8 @@ function SuggestionCard({ suggestion }: { suggestion: ParsedSuggestion }) {
 function Meta({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</dt>
-      <dd className="font-mono text-xs text-foreground">{value}</dd>
+      <dt className="text-muted-foreground text-[10px] tracking-wide uppercase">{label}</dt>
+      <dd className="text-foreground font-mono text-xs">{value}</dd>
     </div>
   )
 }

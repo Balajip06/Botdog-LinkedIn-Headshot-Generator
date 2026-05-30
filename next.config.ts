@@ -57,7 +57,9 @@ const nextConfig: NextConfig = {
 }
 
 const sentryEnabled =
-  !!process.env.SENTRY_DSN && !!process.env.SENTRY_AUTH_TOKEN && process.env.NODE_ENV === 'production'
+  !!process.env.SENTRY_DSN &&
+  !!process.env.SENTRY_AUTH_TOKEN &&
+  process.env.NODE_ENV === 'production'
 
 export default sentryEnabled
   ? withSentryConfig(bundleAnalyzer(nextConfig), {

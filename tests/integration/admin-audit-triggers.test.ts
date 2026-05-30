@@ -10,7 +10,14 @@ import { createTestUser, getSql, resetTables } from './db'
  */
 describe('admin_audit_log triggers', () => {
   beforeEach(async () => {
-    await resetTables(['admin_audit_log', 'trend_eval_runs', 'trend_eval_inputs', 'trends', 'generations', 'profiles'])
+    await resetTables([
+      'admin_audit_log',
+      'trend_eval_runs',
+      'trend_eval_inputs',
+      'trends',
+      'generations',
+      'profiles',
+    ])
     const sql = getSql()
     await sql.unsafe(`delete from auth.users where email like 'int-%@test.local'`)
   })
@@ -20,7 +27,7 @@ describe('admin_audit_log triggers', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template)
-       values ('${trendId}', 'audit-create', 't', 'p')`,
+       values ('${trendId}', 'audit-create', 't', 'p')`
     )
 
     const rows = await sql<{ action: string; target_id: string }[]>`
@@ -35,17 +42,17 @@ describe('admin_audit_log triggers', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status)
-       values ('${trendId}', 'audit-active', 't', 'p', 'untested')`,
+       values ('${trendId}', 'audit-active', 't', 'p', 'untested')`
     )
     // Seed pass + transition to passed to satisfy proof trigger before activating.
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`,
+       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`
     )
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating)
-       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`,
+       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`
     )
     await sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`)
     await sql.unsafe(`update public.trends set is_active = true where id = '${trendId}'`)

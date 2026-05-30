@@ -30,9 +30,7 @@ export function ResetPasswordForm() {
           className="h-12 rounded-xl"
           autoComplete="new-password"
         />
-        {tooShort && (
-          <p className="text-xs text-destructive">Must be at least 8 characters.</p>
-        )}
+        {tooShort && <p className="text-destructive text-xs">Must be at least 8 characters.</p>}
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="confirm">Confirm password</Label>
@@ -48,9 +46,7 @@ export function ResetPasswordForm() {
           className="h-12 rounded-xl"
           autoComplete="new-password"
         />
-        {showMismatch && (
-          <p className="text-xs text-destructive">Passwords do not match.</p>
-        )}
+        {showMismatch && <p className="text-destructive text-xs">Passwords do not match.</p>}
       </div>
       <GradientButton type="submit" size="lg" className="w-full">
         <KeyRound className="size-4" />

@@ -17,11 +17,11 @@ describe('require_eval_proof_for_passed trigger', () => {
     const id = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status, is_active)
-       values ('${id}', 'h5-empty', 't', 'p', 'untested', false)`,
+       values ('${id}', 'h5-empty', 't', 'p', 'untested', false)`
     )
 
     await expect(
-      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${id}'`),
+      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${id}'`)
     ).rejects.toThrow(/eval proof missing/)
   })
 
@@ -30,21 +30,21 @@ describe('require_eval_proof_for_passed trigger', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status, is_active)
-       values ('${trendId}', 'h5-fail', 't', 'p', 'untested', false)`,
+       values ('${trendId}', 'h5-fail', 't', 'p', 'untested', false)`
     )
 
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`,
+       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`
     )
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating)
-       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'fail')`,
+       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'fail')`
     )
 
     await expect(
-      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`),
+      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`)
     ).rejects.toThrow(/eval proof missing/)
   })
 
@@ -53,27 +53,25 @@ describe('require_eval_proof_for_passed trigger', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status, is_active, version)
-       values ('${trendId}', 'h5-stale', 't', 'p1', 'untested', false, 1)`,
+       values ('${trendId}', 'h5-stale', 't', 'p1', 'untested', false, 1)`
     )
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`,
+       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`
     )
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating)
-       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`,
+       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`
     )
 
     // bump_trend_version increments version and forces eval_status back
     // to 'untested', simulating a prompt edit. The pass run from
     // version=1 should NOT count toward version=2.
-    await sql.unsafe(
-      `update public.trends set prompt_template = 'p2' where id = '${trendId}'`,
-    )
+    await sql.unsafe(`update public.trends set prompt_template = 'p2' where id = '${trendId}'`)
 
     await expect(
-      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`),
+      sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`)
     ).rejects.toThrow(/eval proof missing/)
   })
 
@@ -82,16 +80,16 @@ describe('require_eval_proof_for_passed trigger', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status, is_active)
-       values ('${trendId}', 'h5-ok', 't', 'p', 'untested', false)`,
+       values ('${trendId}', 'h5-ok', 't', 'p', 'untested', false)`
     )
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`,
+       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`
     )
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating)
-       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`,
+       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`
     )
 
     await sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`)
@@ -106,16 +104,16 @@ describe('require_eval_proof_for_passed trigger', () => {
     const trendId = randomUUID()
     await sql.unsafe(
       `insert into public.trends (id, slug, title, prompt_template, eval_status, is_active)
-       values ('${trendId}', 'h5-demote', 't', 'p', 'untested', false)`,
+       values ('${trendId}', 'h5-demote', 't', 'p', 'untested', false)`
     )
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`,
+       values ('${inputId}', '${trendId}', 'l', 'https://example.test/i.png')`
     )
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating)
-       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`,
+       values (gen_random_uuid(), '${trendId}', 1, '${inputId}', 'pass')`
     )
     await sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${trendId}'`)
     // Now demote — must not require proof.

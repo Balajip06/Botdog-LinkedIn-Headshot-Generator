@@ -284,6 +284,7 @@ try it free → trendly.app/trend/<slug>
 ```
 
 For higher engagement, fork into a 3-tweet thread:
+
 - Tweet 1: hook + before/after image (the eval's strongest output).
 - Tweet 2: one specific use case ("perfect for [holiday / season / event]").
 - Tweet 3: link + 4 hashtags.
@@ -310,6 +311,7 @@ this is wild — link in bio
 ```
 
 Video structure (proven format):
+
 - **0-2s** — hook: a clean input photo on screen, no text.
 - **2-8s** — transformation reveal: cut to the output, text overlay "this is just from a photo".
 - **8-15s** — second example, different subject (group, pet, child).

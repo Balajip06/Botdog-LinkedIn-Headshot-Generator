@@ -35,13 +35,13 @@ Send both, in this order:
 
 The Stripe payouts CSV ships ~20 columns. Most are noise. The four that matter:
 
-| Column | Description | Why buyer cares |
-|---|---|---|
-| `paid_at` | Timestamp the payout hit your bank. | Lets buyer build a monthly revenue chart. |
-| `gross_amount` | Sum of charges paid out, before Stripe fees. Decimal in account currency. | The top-line revenue number. |
-| `fee` | Stripe's processing fee for the payout. | Buyer subtracts this to get net. |
-| `net_amount` | `gross_amount − fee`. The actual deposit to your bank. | The number that matches your bank statement. |
-| `currency` | Account currency (`usd` for Trendly). | Sanity check — should always be `usd`. |
+| Column         | Description                                                               | Why buyer cares                              |
+| -------------- | ------------------------------------------------------------------------- | -------------------------------------------- |
+| `paid_at`      | Timestamp the payout hit your bank.                                       | Lets buyer build a monthly revenue chart.    |
+| `gross_amount` | Sum of charges paid out, before Stripe fees. Decimal in account currency. | The top-line revenue number.                 |
+| `fee`          | Stripe's processing fee for the payout.                                   | Buyer subtracts this to get net.             |
+| `net_amount`   | `gross_amount − fee`. The actual deposit to your bank.                    | The number that matches your bank statement. |
+| `currency`     | Account currency (`usd` for Trendly).                                     | Sanity check — should always be `usd`.       |
 
 **Other columns to keep** in the export but de-emphasize:
 
@@ -58,7 +58,7 @@ The Stripe payouts CSV ships ~20 columns. Most are noise. The four that matter:
 
 **Stripe payouts CSV does not include customer emails or names by default.** Payouts are aggregated across many charges and the export only contains the payout-level fields above. This is the "safe" CSV.
 
-If the buyer asks for **per-charge detail** (the `stripe-charges-<YYYY-MM>.csv`), that file *does* contain customer PII:
+If the buyer asks for **per-charge detail** (the `stripe-charges-<YYYY-MM>.csv`), that file _does_ contain customer PII:
 
 - `customer_email`
 - `customer_name`
@@ -82,13 +82,13 @@ Every successful Stripe `checkout.session.completed` event lands as a row in our
 
 **Mapping:**
 
-| Stripe field | `webhook_events` field |
-|---|---|
-| Event ID (`evt_...`) | `event_id` (unique constraint) |
-| Charge ID (`ch_...`) | `payload->'data'->'object'->>'id'` |
+| Stripe field           | `webhook_events` field                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| Event ID (`evt_...`)   | `event_id` (unique constraint)                                                                   |
+| Charge ID (`ch_...`)   | `payload->'data'->'object'->>'id'`                                                               |
 | `customer_email` (raw) | `payload->'data'->'object'->'customer_details'->>'email'` (redacted in admin export — see below) |
-| `amount_total` (cents) | `payload->'data'->'object'->>'amount_total'` |
-| `created` (epoch) | `created_at` (Postgres timestamptz) |
+| `amount_total` (cents) | `payload->'data'->'object'->>'amount_total'`                                                     |
+| `created` (epoch)      | `created_at` (Postgres timestamptz)                                                              |
 
 **The reconciliation:**
 

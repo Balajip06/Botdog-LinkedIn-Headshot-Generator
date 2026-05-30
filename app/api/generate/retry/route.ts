@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   } catch (err: unknown) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'invalid body' },
-      { status: 400 },
+      { status: 400 }
     )
   }
 

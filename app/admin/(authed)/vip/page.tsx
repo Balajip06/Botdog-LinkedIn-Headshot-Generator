@@ -22,9 +22,13 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
   const service = createServiceClient()
 
   // Optional: look up the target user (if an email was supplied).
-  let target = null as
-    | { id: string; email: string; is_vip: boolean; vip_reason: string | null; vip_granted_at: string | null }
-    | null
+  let target = null as {
+    id: string
+    email: string
+    is_vip: boolean
+    vip_reason: string | null
+    vip_granted_at: string | null
+  } | null
   if (targetEmail) {
     const { data: row } = await service
       .from('profiles')
@@ -54,13 +58,13 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
       />
 
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Operations
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">
           <span className="text-gradient-hero">VIP</span> grants
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Toggle unlimited-generation access for influencers, creator partners, or early-access
           users. All grants are audited.
         </p>
@@ -111,8 +115,11 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
           <CardContent className="px-6">
             {target.is_vip ? (
               <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
-                  Granted {target.vip_granted_at ? new Date(target.vip_granted_at).toLocaleString() : 'unknown'}
+                <p className="text-muted-foreground text-sm">
+                  Granted{' '}
+                  {target.vip_granted_at
+                    ? new Date(target.vip_granted_at).toLocaleString()
+                    : 'unknown'}
                   {target.vip_reason ? ` — ${target.vip_reason}` : ''}
                 </p>
                 <div>
@@ -123,8 +130,8 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
                     title="Revoke VIP status?"
                     description={
                       <>
-                        <strong>{target.email}</strong> will return to normal quota gates immediately.
-                        Past audit entries are preserved.
+                        <strong>{target.email}</strong> will return to normal quota gates
+                        immediately. Past audit entries are preserved.
                       </>
                     }
                     confirmLabel="Yes, revoke VIP"
@@ -168,17 +175,17 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
       <section className="flex flex-col gap-3">
         <header className="flex items-baseline justify-between gap-3">
           <h2 className="text-lg font-bold">Current VIPs</h2>
-          <span className="text-xs text-muted-foreground">{vips.length} active</span>
+          <span className="text-muted-foreground text-xs">{vips.length} active</span>
         </header>
 
         {vips.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border/60 bg-card/40 p-10 text-center text-sm text-muted-foreground">
+          <div className="border-border/60 bg-card/40 text-muted-foreground rounded-2xl border border-dashed p-10 text-center text-sm">
             No VIPs yet. Grant access above to comp creator partners.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-border/60">
+          <div className="border-border/60 overflow-x-auto rounded-2xl border">
             <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
+              <thead className="bg-muted/40 text-muted-foreground text-left text-xs tracking-wider uppercase">
                 <tr>
                   <th className="px-4 py-2 font-semibold">Email</th>
                   <th className="px-4 py-2 font-semibold">Reason</th>
@@ -187,10 +194,10 @@ export default async function AdminVipPage({ searchParams }: VipPageProps) {
               </thead>
               <tbody>
                 {vips.map((v) => (
-                  <tr key={v.id} className="border-t border-border/60">
+                  <tr key={v.id} className="border-border/60 border-t">
                     <td className="px-4 py-2 font-medium">{v.email}</td>
-                    <td className="px-4 py-2 text-muted-foreground">{v.vip_reason ?? '—'}</td>
-                    <td className="px-4 py-2 text-muted-foreground">
+                    <td className="text-muted-foreground px-4 py-2">{v.vip_reason ?? '—'}</td>
+                    <td className="text-muted-foreground px-4 py-2">
                       {v.vip_granted_at ? new Date(v.vip_granted_at).toLocaleString() : '—'}
                     </td>
                   </tr>

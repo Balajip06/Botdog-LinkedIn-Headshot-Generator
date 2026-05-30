@@ -6,12 +6,14 @@ Status: Accepted
 ## Context
 
 `/api/generate` ([app/api/generate/route.ts](../../app/api/generate/route.ts)) triggers a multi-step pipeline:
+
 1. Insert a row into `generations` (status: pending).
 2. A Supabase Database Webhook calls the Edge Function ([supabase/functions/generate-image/](../../supabase/functions/generate-image/)).
 3. The Edge Function calls Gemini, uploads the output PNG to Storage, updates the row to `completed`.
 4. The user's browser polls or subscribes via Supabase Realtime for status.
 
 Network flakiness on the client side — flaky mobile cell, browser tab backgrounded mid-fetch, optimistic retry on a 502 — can cause **duplicate POSTs to `/api/generate`**. Without dedup:
+
 - Two Gemini calls for one user intent = double Gemini cost.
 - Two `generations` rows = the quota trigger (ADR 2) decrements credits twice.
 - Two output images, two refund-on-failure paths, two confusion-worthy UX states.
@@ -35,11 +37,13 @@ The Stripe webhook ([app/api/stripe/webhook/route.ts](../../app/api/stripe/webho
 ## Consequences
 
 **Positive:**
+
 - Eliminates the duplicate-POST cost class. A buyer querying Gemini-spend variance sees a flat curve, not spikes from network retries.
 - The replay is server-authoritative — the client doesn't need any state to recover. Refreshing the result page works; backgrounding the tab and resuming works; airplane-mode-to-wifi works.
 - Same pattern works for both the authenticated `/api/generate` and anonymous `/api/generate-anonymous` paths.
 
 **Negative:**
+
 - Client has to generate a UUID per intent. If the client logic re-uses a stale key (a real bug in 2026-05 when the form was generating the key once on mount instead of once per submit), the second click silently returns the first result. Mitigation: client generates the key inside the submit handler, not on mount. Documented in lessons log.
 - Server has to do an extra unique-constraint round-trip on every insert. Negligible at our scale; would be a hot-path if we crossed 1000 req/sec.
 - Adds one more required header. Test fixtures + Playwright E2E specs have to set it; documented in [docs/RUNBOOK.md](../RUNBOOK.md) Test 12.

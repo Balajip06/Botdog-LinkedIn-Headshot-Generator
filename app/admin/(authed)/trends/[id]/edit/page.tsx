@@ -63,18 +63,22 @@ export default async function EditTrendPage({ params, searchParams }: EditTrendP
           { key: 'created', level: 'success', message: 'Draft created.' },
           { key: 'activated', level: 'info', message: 'Activated.' },
           { key: 'deactivated', level: 'info', message: 'Deactivated.' },
-          { key: 'cloned', level: 'success', message: 'Cloned. Edit this draft and run eval before activating.' },
+          {
+            key: 'cloned',
+            level: 'success',
+            message: 'Cloned. Edit this draft and run eval before activating.',
+          },
         ]}
       />
 
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
             Editing
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight">{trend.title}</h1>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <code className="rounded bg-muted px-1.5 py-0.5">/{trend.slug}</code>
+          <div className="text-muted-foreground mt-2 flex flex-wrap items-center gap-2 text-xs">
+            <code className="bg-muted rounded px-1.5 py-0.5">/{trend.slug}</code>
             <span>·</span>
             <span>v{trend.version}</span>
             <span>·</span>
@@ -111,8 +115,8 @@ export default async function EditTrendPage({ params, searchParams }: EditTrendP
               title="Deactivate this trend?"
               description={
                 <>
-                  Users won&apos;t see <strong>{trend.title}</strong> on the homepage anymore.
-                  You can reactivate later as long as eval still passes.
+                  Users won&apos;t see <strong>{trend.title}</strong> on the homepage anymore. You
+                  can reactivate later as long as eval still passes.
                 </>
               }
               confirmLabel="Yes, deactivate"

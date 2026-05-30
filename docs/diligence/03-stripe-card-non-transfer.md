@@ -49,13 +49,13 @@ Effect: the gap goes from "0 → new account with empty card vault" to "personal
 
 A drafted email + in-app banner campaign sits at [`docs/STRIPE_RE_AUTH_CAMPAIGN.md`](../STRIPE_RE_AUTH_CAMPAIGN.md) (shipped separately by agent C, alongside this file). The campaign is wired to fire **automatically** on the buyer's Day 1 post-close, hitting every paying customer with:
 
-| Day | Channel | Message |
-|---|---|---|
-| D0 | Email | "We've moved to a new payment processor — please re-confirm your card to continue using Trendly. Quick, 30-second action. Link to /me/settings." |
-| D3 | Email + push (if subscribed) | "Reminder: re-confirm your payment method to keep your credits." |
-| D7 | Email | "Final reminder before your saved card is fully removed." |
-| D14 | Email | "Account update — your saved card has been removed. Click here to add a new one on next purchase." |
-| D28 | Email (last-touch) | "We miss you — here's 20% off your next pack." |
+| Day | Channel                      | Message                                                                                                                                          |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| D0  | Email                        | "We've moved to a new payment processor — please re-confirm your card to continue using Trendly. Quick, 30-second action. Link to /me/settings." |
+| D3  | Email + push (if subscribed) | "Reminder: re-confirm your payment method to keep your credits."                                                                                 |
+| D7  | Email                        | "Final reminder before your saved card is fully removed."                                                                                        |
+| D14 | Email                        | "Account update — your saved card has been removed. Click here to add a new one on next purchase."                                               |
+| D28 | Email (last-touch)           | "We miss you — here's 20% off your next pack."                                                                                                   |
 
 The buyer inherits the campaign on Day 1. Their job is to swap the `RESEND_FROM_EMAIL` to their own domain and fire the campaign. They don't have to design or write anything.
 
@@ -103,12 +103,12 @@ When valuing Trendly's 12-month forward revenue, the buyer should:
 
 **Example math.** If trailing-12 revenue is $50K and the seller's pre-close monthly is ~$4K, the buyer should model:
 
-| Month post-close | Revenue assumption |
-|---|---|
-| M1 | $4K × (1 − 0.30) = $2.8K |
-| M2 | $4K × (1 − 0.10) = $3.6K |
-| M3+ | $4K (baseline) |
-| Y1 total | ~$45K vs $48K seller's trailing |
+| Month post-close | Revenue assumption              |
+| ---------------- | ------------------------------- |
+| M1               | $4K × (1 − 0.30) = $2.8K        |
+| M2               | $4K × (1 − 0.10) = $3.6K        |
+| M3+              | $4K (baseline)                  |
+| Y1 total         | ~$45K vs $48K seller's trailing |
 
 That ~7% Y1 haircut is the "Stripe transfer tax." The buyer either accepts it in valuation or negotiates an earnout structure (paid 30% at close, 70% over Y1 contingent on revenue thresholds — Acquire.com supports this structure natively).
 

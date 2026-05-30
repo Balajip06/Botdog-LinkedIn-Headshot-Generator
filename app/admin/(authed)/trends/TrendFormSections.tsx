@@ -31,14 +31,14 @@ export interface TrendFormValues {
 const selectClasses = cn(
   'h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none',
   'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30',
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30'
 )
 
 const textareaClasses = cn(
   'w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none',
   'placeholder:text-muted-foreground',
   'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-  'dark:bg-input/30',
+  'dark:bg-input/30'
 )
 
 function jsonString(value: unknown): string {
@@ -64,7 +64,13 @@ export function IdentitySection({ initial }: SectionProps) {
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2">
         <Field label="Title" htmlFor="title">
-          <Input id="title" name="title" required maxLength={200} defaultValue={initial.title ?? ''} />
+          <Input
+            id="title"
+            name="title"
+            required
+            maxLength={200}
+            defaultValue={initial.title ?? ''}
+          />
         </Field>
         <Field label="Slug" htmlFor="slug" hint="lowercase kebab-case">
           <Input
@@ -96,8 +102,9 @@ export function GenerationSection({ initial }: SectionProps) {
       <CardHeader>
         <CardTitle className="text-base">Generation</CardTitle>
         <CardDescription>
-          Prompt template uses <code className="rounded bg-muted px-1 py-0.5 text-[11px]">{`{{field_name}}`}</code>{' '}
-          for schema substitution.
+          Prompt template uses{' '}
+          <code className="bg-muted rounded px-1 py-0.5 text-[11px]">{`{{field_name}}`}</code> for
+          schema substitution.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -195,7 +202,9 @@ export function SeoSection({ initial }: SectionProps) {
     <Card className="gap-5">
       <CardHeader>
         <CardTitle className="text-base">SEO</CardTitle>
-        <CardDescription>Used by the SSR trend page, Open Graph metadata, and the Share sheet.</CardDescription>
+        <CardDescription>
+          Used by the SSR trend page, Open Graph metadata, and the Share sheet.
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2">
         <Field label="SEO title" htmlFor="seo_title">
@@ -229,11 +238,11 @@ export function SeoSection({ initial }: SectionProps) {
             placeholder="Made my {trend_title} on Trendly — {site_url}"
             className={cn(textareaClasses, 'min-h-24')}
           />
-          <p className="text-[11px] text-muted-foreground/80">
+          <p className="text-muted-foreground/80 text-[11px]">
             Pre-filled when users tap Share. Supports{' '}
-            <code className="rounded bg-muted px-1 py-0.5">{`{trend_title}`}</code> and{' '}
-            <code className="rounded bg-muted px-1 py-0.5">{`{site_url}`}</code> substitution.
-            Leave blank for default &ldquo;Made my X on Trendly&rdquo;.
+            <code className="bg-muted rounded px-1 py-0.5">{`{trend_title}`}</code> and{' '}
+            <code className="bg-muted rounded px-1 py-0.5">{`{site_url}`}</code> substitution. Leave
+            blank for default &ldquo;Made my X on Trendly&rdquo;.
           </p>
         </Field>
       </CardContent>
@@ -326,18 +335,18 @@ function CheckboxField({ id, name, label, hint, defaultChecked }: CheckboxFieldP
     <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        className="flex items-start gap-3 rounded-lg border border-input bg-transparent px-3 py-2.5 text-sm shadow-xs transition-colors hover:bg-muted/30 cursor-pointer"
+        className="border-input hover:bg-muted/30 flex cursor-pointer items-start gap-3 rounded-lg border bg-transparent px-3 py-2.5 text-sm shadow-xs transition-colors"
       >
         <input
           id={id}
           name={name}
           type="checkbox"
           defaultChecked={defaultChecked}
-          className="mt-0.5 size-4 rounded border-input accent-[var(--brand-grad-1,#ec4899)]"
+          className="border-input mt-0.5 size-4 rounded accent-[var(--brand-grad-1,#ec4899)]"
         />
         <span className="flex flex-col gap-0.5">
-          <span className="font-medium text-foreground">{label}</span>
-          {hint && <span className="text-[11px] text-muted-foreground">{hint}</span>}
+          <span className="text-foreground font-medium">{label}</span>
+          {hint && <span className="text-muted-foreground text-[11px]">{hint}</span>}
         </span>
       </label>
     </div>
@@ -350,7 +359,11 @@ export function SchemaFaqSection({ initial }: SectionProps) {
       <CardHeader>
         <CardTitle className="text-base">Schema &amp; FAQ</CardTitle>
         <CardDescription>
-          JSON only. See <code className="rounded bg-muted px-1 py-0.5 text-[11px]">lib/trends/input-schema.ts</code>.
+          JSON only. See{' '}
+          <code className="bg-muted rounded px-1 py-0.5 text-[11px]">
+            lib/trends/input-schema.ts
+          </code>
+          .
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -389,10 +402,13 @@ function Field({ label, htmlFor, hint, className, children }: FieldProps) {
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       <div className="flex items-baseline justify-between">
-        <Label htmlFor={htmlFor} className="text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Label
+          htmlFor={htmlFor}
+          className="text-muted-foreground text-[11px] tracking-wide uppercase"
+        >
           {label}
         </Label>
-        {hint && <span className="text-[11px] text-muted-foreground/70">{hint}</span>}
+        {hint && <span className="text-muted-foreground/70 text-[11px]">{hint}</span>}
       </div>
       {children}
     </div>

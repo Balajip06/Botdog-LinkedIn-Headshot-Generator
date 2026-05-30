@@ -108,7 +108,8 @@ export function ConfirmDestructiveButton({
           {requireType && (
             <div className="flex flex-col gap-2">
               <Label htmlFor="confirm-type" className="text-xs">
-                Type <code className="rounded bg-muted px-1.5 py-0.5 font-mono">{requireType}</code> to confirm
+                Type <code className="bg-muted rounded px-1.5 py-0.5 font-mono">{requireType}</code>{' '}
+                to confirm
               </Label>
               <Input
                 id="confirm-type"

@@ -43,7 +43,7 @@ describe('rate-limit helper', () => {
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
     const mod = await import('./rate-limit')
     const results = await Promise.all(
-      Array.from({ length: 100 }, (_, i) => mod.trackIpLimiter.limit(`ip:${i}`)),
+      Array.from({ length: 100 }, (_, i) => mod.trackIpLimiter.limit(`ip:${i}`))
     )
     expect(results.every((r) => r.success)).toBe(true)
   })

@@ -21,17 +21,13 @@ export function StatCard({ icon, label, value, hint }: StatCardProps) {
   return (
     <Card className="gap-2 py-5">
       <CardHeader className="px-5">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-          <span className="grid size-6 place-items-center rounded-md bg-muted">{icon}</span>
+        <div className="text-muted-foreground flex items-center gap-2 text-xs tracking-wide uppercase">
+          <span className="bg-muted grid size-6 place-items-center rounded-md">{icon}</span>
           {label}
         </div>
-        <CardTitle className="line-clamp-2 text-2xl font-bold tracking-tight">
-          {value}
-        </CardTitle>
+        <CardTitle className="line-clamp-2 text-2xl font-bold tracking-tight">{value}</CardTitle>
       </CardHeader>
-      {hint && (
-        <CardContent className="px-5 text-xs text-muted-foreground">{hint}</CardContent>
-      )}
+      {hint && <CardContent className="text-muted-foreground px-5 text-xs">{hint}</CardContent>}
     </Card>
   )
 }

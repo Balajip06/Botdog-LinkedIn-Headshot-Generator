@@ -187,7 +187,7 @@ describe('GET /admin/export/download — customers dataset', () => {
         targetTable: 'customers',
         adminId: 'admin-1',
         after: expect.objectContaining({ dataset: 'customers', row_count: 1 }),
-      }),
+      })
     )
   })
 })
@@ -256,7 +256,7 @@ describe('GET /admin/export/download — revenue dataset', () => {
     const expectedHash = createHash('sha256').update('buyer@example.com').digest('hex').slice(0, 8)
     expect(text).toContain(expectedHash)
     expect(logAdminAction).toHaveBeenCalledWith(
-      expect.objectContaining({ action: 'customer_export', targetTable: 'revenue' }),
+      expect.objectContaining({ action: 'customer_export', targetTable: 'revenue' })
     )
   })
 })

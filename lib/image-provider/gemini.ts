@@ -128,7 +128,9 @@ interface GeminiResponse {
   promptFeedback?: { blockReason?: string }
 }
 
-async function fetchAsInlineData(url: string): Promise<{ inlineData: { mimeType: string; data: string } }> {
+async function fetchAsInlineData(
+  url: string
+): Promise<{ inlineData: { mimeType: string; data: string } }> {
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Image fetch failed: ${res.status} ${url}`)
   const mimeType = res.headers.get('content-type') ?? 'image/jpeg'

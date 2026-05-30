@@ -15,12 +15,7 @@
 
 import * as Sentry from '@sentry/nextjs'
 import { createServiceClient } from '@/lib/supabase/server'
-import type {
-  Counts,
-  DailyPoint,
-  QuotaBlockedSummary,
-  TrendEventType,
-} from './event-store-types'
+import type { Counts, DailyPoint, QuotaBlockedSummary, TrendEventType } from './event-store-types'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
@@ -43,9 +38,7 @@ interface EventRow {
 export async function recordEventDb(slug: string, type: TrendEventType): Promise<void> {
   try {
     const supabase = createServiceClient()
-    const { error } = await supabase
-      .from('trend_events')
-      .insert({ trend_slug: slug, type })
+    const { error } = await supabase.from('trend_events').insert({ trend_slug: slug, type })
     if (error) {
       Sentry.captureMessage('trend_events.insert failed', {
         level: 'warning',
@@ -67,7 +60,7 @@ export async function recordEventDb(slug: string, type: TrendEventType): Promise
  */
 async function readBatch(
   slugs: readonly string[],
-  sinceIso?: string,
+  sinceIso?: string
 ): Promise<Map<string, Counts>> {
   const out = new Map<string, Counts>()
   for (const s of slugs) out.set(s, { impressions: 0, clicks: 0 })
@@ -138,7 +131,7 @@ function buildDateLabels(days: number): { date: string; label: string }[] {
 
 export async function getDailySeriesDb(
   slugs: readonly string[],
-  days: number,
+  days: number
 ): Promise<DailyPoint[]> {
   const labels = buildDateLabels(days)
   const series = labels.map((l) => ({ ...l, impressions: 0, clicks: 0 }))
@@ -201,7 +194,7 @@ function zeroedDailySeries(days: number): { date: string; label: string; count: 
  * has a stable shape.
  */
 export async function getQuotaBlockedSummaryDb(
-  windowHours: number = 24,
+  windowHours: number = 24
 ): Promise<QuotaBlockedSummary> {
   const sevenDays = zeroedDailySeries(7)
   const empty: QuotaBlockedSummary = {
@@ -268,7 +261,7 @@ export async function getQuotaBlockedSummaryDb(
 
 export async function getPeriodTotalsDb(
   slugs: readonly string[],
-  days: number,
+  days: number
 ): Promise<{ current: Counts; previous: Counts }> {
   const total = await getDailySeriesDb(slugs, days * 2)
   const half = total.slice(days)
@@ -279,7 +272,7 @@ export async function getPeriodTotalsDb(
         impressions: acc.impressions + p.impressions,
         clicks: acc.clicks + p.clicks,
       }),
-      { impressions: 0, clicks: 0 },
+      { impressions: 0, clicks: 0 }
     )
   return { current: sum(half), previous: sum(prior) }
 }

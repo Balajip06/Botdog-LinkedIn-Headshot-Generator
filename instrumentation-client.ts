@@ -29,7 +29,8 @@ if (dsn) {
     schedule(() => {
       void import('@sentry/nextjs').then((m) => {
         const client = Sentry.getClient()
-        if (client) client.addIntegration(m.replayIntegration({ maskAllText: true, blockAllMedia: true }))
+        if (client)
+          client.addIntegration(m.replayIntegration({ maskAllText: true, blockAllMedia: true }))
       })
     })
   }

@@ -22,20 +22,20 @@ Trendly turns trending visual styles on TikTok, Instagram, and Reddit into one-t
 
 ## Key numbers
 
-| Metric | Current | Target at listing |
-|---|---|---|
-| Trailing-3-month revenue | TODO — W14 | $7.5K – $12K ($2.5K – $4K/mo avg, stable) |
-| Trailing-3-month gross margin | TODO — W14 | greater-than-or-equal-to 75% |
-| Repeat-purchase rate (60-day) | TODO — W14 | greater-than-or-equal-to 20% |
-| Free-to-paid conversion (90-day) | TODO — W14 | greater-than-or-equal-to 3% |
-| Week-2 retention (paid cohort) | TODO — W14 | greater-than-or-equal-to 50% |
-| Unique paying customers | TODO — W14 | greater-than-or-equal-to 100 |
-| Monthly active users | TODO — W14 | target 3K – 5K |
-| Weekly active users | TODO — W14 | target 1K – 2K |
-| Daily active users | TODO — W14 | target 200 – 400 |
-| Organic traffic share | TODO — W14 | greater-than-or-equal-to 40% (SEO + referral) |
-| Refund rate | TODO — W14 | less-than-or-equal-to 3% |
-| Sentry error rate | TODO — W14 | less-than-or-equal-to 0.5% of requests |
+| Metric                           | Current    | Target at listing                             |
+| -------------------------------- | ---------- | --------------------------------------------- |
+| Trailing-3-month revenue         | TODO — W14 | $7.5K – $12K ($2.5K – $4K/mo avg, stable)     |
+| Trailing-3-month gross margin    | TODO — W14 | greater-than-or-equal-to 75%                  |
+| Repeat-purchase rate (60-day)    | TODO — W14 | greater-than-or-equal-to 20%                  |
+| Free-to-paid conversion (90-day) | TODO — W14 | greater-than-or-equal-to 3%                   |
+| Week-2 retention (paid cohort)   | TODO — W14 | greater-than-or-equal-to 50%                  |
+| Unique paying customers          | TODO — W14 | greater-than-or-equal-to 100                  |
+| Monthly active users             | TODO — W14 | target 3K – 5K                                |
+| Weekly active users              | TODO — W14 | target 1K – 2K                                |
+| Daily active users               | TODO — W14 | target 200 – 400                              |
+| Organic traffic share            | TODO — W14 | greater-than-or-equal-to 40% (SEO + referral) |
+| Refund rate                      | TODO — W14 | less-than-or-equal-to 3%                      |
+| Sentry error rate                | TODO — W14 | less-than-or-equal-to 0.5% of requests        |
 
 Items marked TODO are placeholders until the W14 traction window closes. Numbers in the target column are the threshold the asset needs to hit to defend the $50K – $75K listing range; sustained outperformance pushes the range up.
 

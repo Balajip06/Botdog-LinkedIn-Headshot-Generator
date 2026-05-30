@@ -14,12 +14,12 @@ Project ref used throughout: `rkvhpiienwdeawqkrdxm` (from `supabase/.temp/projec
 
 `supabase/functions/generate-image/index.ts` reads four env vars at runtime via `Deno.env.get(...)`:
 
-| Secret | Source | Auto-injected? | What breaks if missing |
-|---|---|---|---|
-| `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com/) → "Get API key" | no | `callGemini` returns `{ ok: false, reason: 'invalid', message: 'GEMINI_API_KEY missing' }`. Every generation lands on `failed_retryable`, then `failed` after 3 attempts. Quota refunded by trigger. |
-| `SUPABASE_URL` | n/a | **yes** (platform-injected) | Function cannot init the supabase client. Don't set this manually. |
-| `SUPABASE_SERVICE_ROLE_KEY` | n/a | **yes** (platform-injected) | Same — auth bearer check + DB writes fail. Don't set this manually. |
-| `SITE_URL` | Your canonical app URL (e.g. `https://trendly.app`) | no | `dispatchNotification` silently no-ops. Generations still complete, but the push / email fallback after `status='completed'` never fires. |
+| Secret                      | Source                                                              | Auto-injected?              | What breaks if missing                                                                                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GEMINI_API_KEY`            | [aistudio.google.com](https://aistudio.google.com/) → "Get API key" | no                          | `callGemini` returns `{ ok: false, reason: 'invalid', message: 'GEMINI_API_KEY missing' }`. Every generation lands on `failed_retryable`, then `failed` after 3 attempts. Quota refunded by trigger. |
+| `SUPABASE_URL`              | n/a                                                                 | **yes** (platform-injected) | Function cannot init the supabase client. Don't set this manually.                                                                                                                                   |
+| `SUPABASE_SERVICE_ROLE_KEY` | n/a                                                                 | **yes** (platform-injected) | Same — auth bearer check + DB writes fail. Don't set this manually.                                                                                                                                  |
+| `SITE_URL`                  | Your canonical app URL (e.g. `https://trendly.app`)                 | no                          | `dispatchNotification` silently no-ops. Generations still complete, but the push / email fallback after `status='completed'` never fires.                                                            |
 
 Set the two manual secrets via CLI (preferred — scriptable):
 
@@ -76,12 +76,12 @@ pnpm smoke:edge
 
 This runs `scripts/smoke-edge-function.ts`, which POSTs a synthetic `INSERT` webhook envelope (all UUIDs are zeroed) at `https://<ref>.supabase.co/functions/v1/generate-image` using `SUPABASE_SERVICE_ROLE_KEY` from `.env.local`.
 
-| Result | Meaning |
-|---|---|
-| `Smoke PASS — function reachable and envelope parsed.` (status 2xx OR 5xx with `trend not found`) | Deploy is live, auth works, function parsed the envelope, reached the DB, and correctly errored on the synthetic trend id. |
-| `status: 401 — Unauthorized — SUPABASE_SERVICE_ROLE_KEY does not match the function secret` | Either `.env.local` has the wrong service-role key OR the platform-injected secret on the function is stale. Re-paste from Supabase Dashboard → Project Settings → API. |
-| `status: 0 — network error: ...` or `timeout after 10000ms` | Function didn't deploy, project ref is wrong, or DNS is misconfigured. Re-run step 2. |
-| `status: 500 — unexpected: GEMINI_API_KEY missing` | Function ran but the Gemini key secret isn't set. Re-run step 1. Smoke catches this even before a real generation. |
+| Result                                                                                            | Meaning                                                                                                                                                                 |
+| ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Smoke PASS — function reachable and envelope parsed.` (status 2xx OR 5xx with `trend not found`) | Deploy is live, auth works, function parsed the envelope, reached the DB, and correctly errored on the synthetic trend id.                                              |
+| `status: 401 — Unauthorized — SUPABASE_SERVICE_ROLE_KEY does not match the function secret`       | Either `.env.local` has the wrong service-role key OR the platform-injected secret on the function is stale. Re-paste from Supabase Dashboard → Project Settings → API. |
+| `status: 0 — network error: ...` or `timeout after 10000ms`                                       | Function didn't deploy, project ref is wrong, or DNS is misconfigured. Re-run step 2.                                                                                   |
+| `status: 500 — unexpected: GEMINI_API_KEY missing`                                                | Function ran but the Gemini key secret isn't set. Re-run step 1. Smoke catches this even before a real generation.                                                      |
 
 Curl one-liner if you'd rather skip the script:
 
@@ -179,13 +179,13 @@ Expected (happy path): `status='completed'`, `attempts=1`, `output_image_url` is
 
 ### Top 5 failure modes + fixes
 
-| Symptom in logs | Cause | Fix |
-|---|---|---|
-| `401 Unauthorized` returned to the webhook | Webhook `Authorization` header has wrong key (or `Bearer ` prefix missing) | Dashboard → Database → Webhooks → Edit `generate-image-on-insert` → re-paste service-role key with `Bearer ` prefix |
-| `GEMINI_API_KEY missing` in function logs, row stuck at `failed_retryable` then `failed` | Function secret never set, or set on the wrong project ref | Re-run `pnpm supabase secrets set GEMINI_API_KEY=...` against the correct ref; redeploy is **not** required — secrets are picked up on next invocation |
-| `claim failed: permission denied for table generations` | Service-role injected key is stale (regenerated in Dashboard) | Project Settings → API → "Reset service_role key" → update `.env.local` + the webhook header in lockstep |
-| Function never invoked (no log lines on INSERT) | Webhook disabled, or events filter doesn't include `Insert` | Dashboard → Database → Webhooks → toggle enabled = on; verify the Events checkbox is on `Insert` |
-| `Gemini 429: ...quota exceeded...`, all generations failing | Gemini free-tier daily quota burned, or billing not enabled on the GCP project | aistudio.google.com → Settings → "Enable billing" on the linked GCP project. If unblocked, the next generation completes. |
+| Symptom in logs                                                                          | Cause                                                                          | Fix                                                                                                                                                    |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `401 Unauthorized` returned to the webhook                                               | Webhook `Authorization` header has wrong key (or `Bearer ` prefix missing)     | Dashboard → Database → Webhooks → Edit `generate-image-on-insert` → re-paste service-role key with `Bearer ` prefix                                    |
+| `GEMINI_API_KEY missing` in function logs, row stuck at `failed_retryable` then `failed` | Function secret never set, or set on the wrong project ref                     | Re-run `pnpm supabase secrets set GEMINI_API_KEY=...` against the correct ref; redeploy is **not** required — secrets are picked up on next invocation |
+| `claim failed: permission denied for table generations`                                  | Service-role injected key is stale (regenerated in Dashboard)                  | Project Settings → API → "Reset service_role key" → update `.env.local` + the webhook header in lockstep                                               |
+| Function never invoked (no log lines on INSERT)                                          | Webhook disabled, or events filter doesn't include `Insert`                    | Dashboard → Database → Webhooks → toggle enabled = on; verify the Events checkbox is on `Insert`                                                       |
+| `Gemini 429: ...quota exceeded...`, all generations failing                              | Gemini free-tier daily quota burned, or billing not enabled on the GCP project | aistudio.google.com → Settings → "Enable billing" on the linked GCP project. If unblocked, the next generation completes.                              |
 
 Adjacent: `upload terminal: ... bucket not found` means migration `20260528000002_storage_buckets.sql` didn't apply. Run `pnpm supabase db push --linked`.
 

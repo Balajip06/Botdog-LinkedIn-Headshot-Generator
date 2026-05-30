@@ -134,7 +134,7 @@ await logAdminAction({
   action: 'trend.deactivate',
   target_id: trend.id,
   diff: { is_active: { before: true, after: false } },
-});
+})
 ```
 
 The helper resolves the actor from the request context, stamps the timestamp, and writes via service-role. If you're tempted to skip it because "this admin action is internal", that's the exact action that needs audit coverage.

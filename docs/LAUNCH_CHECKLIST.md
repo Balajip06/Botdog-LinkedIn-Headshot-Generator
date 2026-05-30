@@ -6,6 +6,7 @@ live. Each item lists: where it lives, what to change it to, and what
 breaks if missed.
 
 Cross-references:
+
 - [docs/RUNBOOK.md](./RUNBOOK.md) — env-var origin + 14-test verification matrix
 - [docs/CREDENTIALS.md](./CREDENTIALS.md) — per-var origin + degradation behavior
 - [docs/acquisition/README.md](./acquisition/README.md) — W2 acquisition-channel decision matrix (Google Ads / creator DMs / referral)
@@ -30,6 +31,7 @@ referenced in `lib/utils/export.ts:85` + `docs/CREDENTIALS.md:17`
 implies that's the intended TLD but it's not registered yet.
 
 **Touch points** (every spot that hardcodes the wordmark):
+
 - `components/brand/Logo.tsx:51` — single source for header/footer glyph
 - `app/layout.tsx:19` — root `<title>` metadata
 - `app/(public)/layout.tsx:12,37` — public header `aria-label` + footer copyright
@@ -52,8 +54,10 @@ implies that's the intended TLD but it's not registered yet.
 ## Contact emails
 
 ### Support / legal email
+
 **Currently:** `support@trendly.example` + `legal@trendly.example` (explicit placeholders, `.example` is RFC 2606 reserved — safe to grep).
 **Where:**
+
 - `docs/TERMS_OF_SERVICE.md:98`
 - `docs/PRIVACY_POLICY.md:11,120`
 - `LICENSE:21`
@@ -63,18 +67,21 @@ implies that's the intended TLD but it's not registered yet.
 **Breaks if missed:** user takedown requests, billing disputes, and privacy emails bounce. Legal contact unreachable — GDPR Article 12 violation risk + DMCA notice goes unread = buyer-side IP exposure.
 
 ### GDPR privacy contact (data export)
+
 **Currently:** `privacy@trendly.app` is hardcoded in the GDPR Article 15 export payload.
 **Where:** `lib/utils/export.ts:85`
 **Change to:** real `privacy@<real-domain>` mailbox (or reuse support@).
 **Breaks if missed:** users who download their data and email the listed address get bounces. Article 15 disclosure technically becomes invalid.
 
 ### Resend FROM email
+
 **Currently:** `RESEND_FROM_EMAIL=` empty in `.env.local.example:29`.
 **Where:** `lib/email/send.ts:32-33` (early-returns `{ ok: false }` when missing).
 **Change to:** `Trendly <noreply@<real-domain>>` after Resend domain DNS records (SPF + DKIM + DMARC) verify.
 **Breaks if missed:** every result-ready email fallback short-circuits silently. Users with disabled / expired push subscriptions get no notification at all when their image finishes.
 
 ### VAPID subject
+
 **Currently:** `VAPID_SUBJECT=mailto:you@example.com` template
 default (`.env.local.example:35`). Falls back to
 `mailto:noreply@example.com` at `lib/push/send.ts:15` if unset.
@@ -82,6 +89,7 @@ default (`.env.local.example:35`). Falls back to
 **Breaks if missed:** Web Push providers (FCM, Mozilla) de-prioritize or block pushes from senders with bogus contact addresses. Push deliverability silently drops.
 
 ### Login form email placeholder
+
 **Currently:** `placeholder="you@example.com"` on the magic-link signup input.
 **Where:** `app/(auth)/login/LoginForms.tsx:53`
 **Change to:** keep as-is (UX placeholder, not a real address) — but
@@ -90,6 +98,7 @@ for brand consistency.
 **Risk:** LOW (cosmetic).
 
 ### Styleguide email placeholder
+
 **Currently:** `placeholder="you@trendly.app"` in the internal /styleguide.
 **Where:** `app/(dev)/styleguide/Sections.tsx:350`
 **Note:** `/styleguide` body is excluded from prod bundle (commit `2f59467`). Cosmetic, dev-only.
@@ -100,7 +109,9 @@ for brand consistency.
 ## Domain + URLs
 
 ### NEXT_PUBLIC_SITE_URL fallback
+
 **Currently:** falls back to `http://localhost:3000` in 9 source files when env unset:
+
 - `app/sitemap.ts:7`
 - `app/robots.ts:4`
 - `app/layout.tsx:21` (`metadataBase`)
@@ -115,11 +126,14 @@ for brand consistency.
 **Breaks if missed:** silently — every URL gets emitted as `http://localhost:3000/...`. Stripe magic-link callbacks redirect to localhost. Sitemap emits localhost URLs to Google. Open Graph cards link back to localhost. OG `metadataBase` is broken so social embeds 404.
 
 ### CI workflow env
+
 **Currently:** `NEXT_PUBLIC_SITE_URL: http://localhost:3000` (`.github/workflows/ci.yml:14`).
 **Note:** This is intentional — CI builds run in isolation. Don't change.
 
 ### Supabase URLs
+
 **Currently:**
+
 - `.env.local.example:11-13` — empty placeholders (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`)
 - `.github/workflows/ci.yml:15-17` — uses `http://localhost:54321` + the strings `ci-anon-key-placeholder` and `ci-service-role-placeholder` so the build is hermetic. Intentional.
 - `supabase/functions/generate-image/README.md:51` — `http://localhost:54321` in a curl example. Documentation, intentional.
@@ -128,6 +142,7 @@ for brand consistency.
 **Breaks if missed:** every Supabase client throws on init at startup — the entire app is dead on first request. Fail-loud, but only after deploy.
 
 ### example.com / yourdomain.com inside docs
+
 **Currently:** `docs/RUNBOOK.md` references `https://<your-domain>` at L92, L122, L413, L428 — and `mailto:you@yourdomain.com` at L176. Template strings, not config.
 **Change to:** once a real domain is registered, update the runbook in one pass so the verification scripts copy/paste-and-run.
 **Risk:** LOW (docs only).
@@ -137,6 +152,7 @@ for brand consistency.
 ## Stripe
 
 ### Price IDs (one per credit pack)
+
 **Currently:** `STRIPE_PRICE_ID_SMALL`, `STRIPE_PRICE_ID_MEDIUM`, `STRIPE_PRICE_ID_LARGE` all empty in `.env.local.example:23-25`.
 **Change to:** live-mode `price_…` ids created via the Stripe Dashboard
 flow (see `docs/CREDENTIALS.md:53-55` for the three product/price
@@ -145,6 +161,7 @@ recipes — $4.99/50, $14.99/200, $39.99/600).
 **Breaks if missed:** every checkout fails with "STRIPE_PRICE_ID_X is not set — create the Stripe product + price for …".
 
 ### Webhook secret
+
 **Currently:** `STRIPE_WEBHOOK_SECRET=` empty (`.env.local.example:20`).
 **Change to:** live-mode webhook signing secret (`whsec_…`) from
 Stripe Dashboard → Developers → Webhooks → endpoint
@@ -153,6 +170,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 **Breaks if missed:** `app/api/stripe/webhook/route.ts:18` returns 503; paid users never get credits — open ticket queue + chargebacks.
 
 ### Secret + publishable keys
+
 **Currently:** `STRIPE_SECRET_KEY=` + `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=` empty.
 **Change to:** live-mode keys.
 **Breaks if missed:** checkout endpoint throws "STRIPE_SECRET_KEY missing"; no checkout sessions can be created.
@@ -162,6 +180,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 ## Sentry
 
 ### DSN + auth token + org + project
+
 **Currently:** all five vars empty (`SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`) in `.env.local.example:46-50`.
 **Source-map upload guard:** `next.config.ts:33-46` runs `withSentryConfig` only when **all** of (`SENTRY_DSN` AND `SENTRY_AUTH_TOKEN` AND `NODE_ENV === 'production'`) are truthy. Empty `SENTRY_ORG`/`SENTRY_PROJECT` are tolerated by the guard (passed as `undefined` to the wrapper) — but the upload will silently fail to associate releases with the project.
 **Change to:** fill all five vars in Vercel production env.
@@ -172,6 +191,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 ## Push (VAPID)
 
 ### Key pair
+
 **Currently:** `NEXT_PUBLIC_VAPID_PUBLIC_KEY=` + `VAPID_PRIVATE_KEY=` empty (`.env.local.example:33-34`).
 **Change to:** generate once with `pnpm dlx web-push generate-vapid-keys --json`. Set both in Vercel prod env. **Never rotate** — every existing browser subscription would break.
 **Breaks if missed:** `lib/push/client.ts` falls into `no_vapid_key` state; service worker registers but never subscribes; users get email fallback only (and email fallback is also broken without `RESEND_FROM_EMAIL`).
@@ -181,6 +201,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 ## Anti-bot (Cloudflare Turnstile)
 
 ### Site + secret keys
+
 **Currently:** `NEXT_PUBLIC_TURNSTILE_SITE_KEY=` + `TURNSTILE_SECRET_KEY=` empty (`.env.local.example:38-39`).
 **Change to:** real Cloudflare widget keys.
 **Breaks if missed:** `lib/turnstile/verify.ts` is a no-op pass-through; signup + anonymous-trial endpoints accept any submission — abuse vector wide open. `MEDIUM-HIGH` risk for prod launch.
@@ -190,6 +211,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 ## Rate limiting + abuse budget (Upstash)
 
 ### REST URL + token
+
 **Currently:** `UPSTASH_REDIS_REST_URL=` + `UPSTASH_REDIS_REST_TOKEN=` empty (`.env.local.example:53-54`).
 **Change to:** Upstash console REST URL + token.
 **Breaks if missed:** `lib/rate-limit.ts:17` returns a no-op limiter. Per-IP rate limit + anonymous daily abuse budget both off. Anonymous trial costs uncapped.
@@ -199,6 +221,7 @@ Stripe Dashboard → Developers → Webhooks → endpoint
 ## Seed data integrity
 
 ### Trend thumbnails (15 real DB trends)
+
 **Currently:** `scripts/seed-trends.ts` + `scripts/seed-trends-more.ts` do **not** set `thumbnail_url` / `sample_after_url` / `sample_before_url` — those columns are `null` for every real trend in Supabase. Only the dev fixtures in `lib/dev/mock-data.ts:51-57` use the gradient placeholder SVGs at `public/mock/sample-{1..5}.svg`.
 
 The trend page (`app/(public)/trend/[slug]/page.tsx:154-167`) falls
@@ -211,11 +234,13 @@ output. Same fallback for the OG image at
 **Breaks if missed:** home grid + every `/trend/[slug]` page + every OG card ship with gradient placeholders. Conversion will tank — users can't tell what they're going to get.
 
 ### Trend prompts referencing named franchises
+
 **Currently:** v2 prompts reference Stranger Things, Pixar, Studio Ghibli, MAPPA, LEGO, Funko, Wes Anderson productions etc. (15 trends, `scripts/seed-trends.ts` + `scripts/seed-trends-more.ts`).
 **Status:** INTENTIONAL. `docs/TERMS_OF_SERVICE.md:43-47` declares the takedown protocol for franchise-IP holders. Personal-use clause at §3 caps liability. See `.claude/lessons.md` 2026-05-29 entry.
 **Do not change** without legal review — these are launch-strategic, not placeholder.
 
 ### supabase/seed.sql
+
 **Currently:** seeds one Ghibli trend + promotes `admin@example.com` to admin_users if present (`supabase/seed.sql:16`).
 **Status:** local-dev only, runs on `supabase db reset`. Never executes against prod. Leave alone.
 
@@ -224,8 +249,10 @@ output. Same fallback for the OG image at
 ## Dev-mode flags (must be unset OR false in prod)
 
 ### MOCK_TRENDS
+
 **Currently:** `MOCK_TRENDS=` empty in `.env.local.example:65`, but `MOCK_TRENDS=true` is documented in `.claude/session-log.md:42` as still set in the user's `.env.local`. Local `.env.local` is gitignored, but the value is what every `pnpm dev` actually reads.
 **Bypass paths when true:**
+
 - `lib/supabase/middleware.ts:9` — returns `NextResponse.next()` immediately, **skipping the entire auth + admin gate**. Anyone can reach `/admin/*`, `/me/*`, `/result/*`.
 - `lib/trends/repository.ts:63,76` — returns hardcoded fixtures instead of querying Supabase.
 - `app/(app)/me/settings/page.tsx:53`, `app/(app)/me/creations/page.tsx:32`, `app/(app)/result/[id]/page.tsx:39`, `app/api/me/export/route.ts:63` — branch into mock-fixture render paths.
@@ -236,6 +263,7 @@ output. Same fallback for the OG image at
 **Recommendation:** add an explicit `if (process.env.NODE_ENV === 'production' && process.env.MOCK_TRENDS === 'true')` startup check in `lib/env.ts` that **throws** at boot. Fail-loud is cheap insurance. (Not done in this audit — code-change-free per scope. Just flagged.)
 
 ### Mock fixtures (lib/dev/mock-data.ts)
+
 **Currently:** `demo@trendly.dev` (line 24) + 15 trend fixtures + 4 generation fixtures. Only loaded when `MOCK_TRENDS=true`.
 **Status:** dev-only, no leakage path **as long as MOCK_TRENDS is unset in prod**. Pair this audit with the MOCK_TRENDS gate above.
 
@@ -244,11 +272,13 @@ output. Same fallback for the OG image at
 ## Misc placeholders
 
 ### `next.config.ts` image remotePatterns
+
 **Currently:** allows `*.supabase.co` + `images.unsplash.com` + `cdn.imgix.net`.
 **Status:** intentional — narrowly scoped allowlist to prevent next/image from becoming an open proxy.
 **Do not change** unless adding a new CDN host (re-deploy required).
 
 ### Reddit user agent (Phase 6, post-MVP)
+
 **Currently:** default `TrendImageGenerator/0.1` at `lib/trends/sources/reddit.ts:41`.
 **Status:** post-MVP, not on launch critical path.
 
@@ -259,6 +289,7 @@ output. Same fallback for the OG image at
 Before DNS goes live, run the 14-test matrix in
 [docs/RUNBOOK.md](./RUNBOOK.md) section "Verification". All 14 tests
 must pass against the production deploy:
+
 1. RLS quota block
 2. Idempotency replay
 3. Retry + refund
@@ -282,17 +313,17 @@ Do not promote DNS until all 14 tests pass on the prod deploy.
 
 Search commands run by this audit. Re-run after every change to spot regressions:
 
-| Search | Files matched | Notes |
-|---|---|---|
-| `trendly\.example` | 3 (TERMS, PRIVACY x2) | All in docs; 0 in source. |
-| `you@example\.com` | 3 (.env template, LoginForms placeholder, CREDENTIALS doc) | LoginForms is a UX placeholder — fine. |
-| `Trendly` (across `.ts`/`.tsx`) | 14 source files | Wordmark is the centerpiece — see Brand identity above. |
-| `localhost:3000` | 9 source fallbacks + CI workflow + README + 1 doc | All 9 source hits are env-fallback strings. |
-| `localhost:54321` | CI workflow + 1 README example | Both intentional. |
-| `example\.com` (broad) | 1 source (`lib/push/send.ts:15` fallback subject), 1 env template, plus many test fixtures | Test fixtures intentional; src fallback is a placeholder that should be a real `mailto:`. |
-| `MOCK_TRENDS` | 26 hits across 17 files | Every read path traced — gated correctly **when flag is false**. Prod must unset. |
-| `support@` | 3 (all in docs) | All explicit placeholders. |
-| `trendly\.app` / `trendly\.com` / `trendly\.io` | 4 (one source: `lib/utils/export.ts:85`; one styleguide; one doc; one test) | Implies `trendly.app` is the intended TLD — not registered yet. |
-| `yourdomain\.com` / `your-domain` | 5 doc placeholders | RUNBOOK template strings. |
-| `sample-\d` | 1 source (`lib/dev/mock-data.ts`) | Mock-only. |
-| `/mock/sample` | 1 file | Same. |
+| Search                                          | Files matched                                                                              | Notes                                                                                     |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `trendly\.example`                              | 3 (TERMS, PRIVACY x2)                                                                      | All in docs; 0 in source.                                                                 |
+| `you@example\.com`                              | 3 (.env template, LoginForms placeholder, CREDENTIALS doc)                                 | LoginForms is a UX placeholder — fine.                                                    |
+| `Trendly` (across `.ts`/`.tsx`)                 | 14 source files                                                                            | Wordmark is the centerpiece — see Brand identity above.                                   |
+| `localhost:3000`                                | 9 source fallbacks + CI workflow + README + 1 doc                                          | All 9 source hits are env-fallback strings.                                               |
+| `localhost:54321`                               | CI workflow + 1 README example                                                             | Both intentional.                                                                         |
+| `example\.com` (broad)                          | 1 source (`lib/push/send.ts:15` fallback subject), 1 env template, plus many test fixtures | Test fixtures intentional; src fallback is a placeholder that should be a real `mailto:`. |
+| `MOCK_TRENDS`                                   | 26 hits across 17 files                                                                    | Every read path traced — gated correctly **when flag is false**. Prod must unset.         |
+| `support@`                                      | 3 (all in docs)                                                                            | All explicit placeholders.                                                                |
+| `trendly\.app` / `trendly\.com` / `trendly\.io` | 4 (one source: `lib/utils/export.ts:85`; one styleguide; one doc; one test)                | Implies `trendly.app` is the intended TLD — not registered yet.                           |
+| `yourdomain\.com` / `your-domain`               | 5 doc placeholders                                                                         | RUNBOOK template strings.                                                                 |
+| `sample-\d`                                     | 1 source (`lib/dev/mock-data.ts`)                                                          | Mock-only.                                                                                |
+| `/mock/sample`                                  | 1 file                                                                                     | Same.                                                                                     |

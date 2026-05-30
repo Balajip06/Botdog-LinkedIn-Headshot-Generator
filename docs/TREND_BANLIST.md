@@ -14,23 +14,23 @@ The list is not exhaustive — a name's absence does not mean it is safe. When i
 
 These names are off-limits in any prompt template — even as "in the style of" qualifiers. They appear here either because (a) they have a documented history of pursuing AI-art derivative claims, (b) they hold registered trademarks on their name in entertainment / consumer goods, or (c) general operator caution given the size of their legal teams.
 
-| Name | Added | Notes |
-|---|---|---|
-| Disney | 2026-05-29 | Pre-emptive (operator caution). Disney's IP enforcement is the industry baseline; assume zero tolerance. |
-| Pixar | 2026-05-29 | Subsidiary of Disney. Distinct visual style is heavily trademarked. |
-| Studio Ghibli | 2026-05-29 | Public anti-AI stance by Hayao Miyazaki; high public sensitivity. |
-| DreamWorks Animation | 2026-05-29 | Subsidiary of NBCUniversal. |
-| Marvel | 2026-05-29 | Disney subsidiary. Character likenesses and trade dress aggressively defended. |
-| Lucasfilm | 2026-05-29 | Disney subsidiary. Star Wars trade dress. |
-| Warner Bros. | 2026-05-29 | DC characters + LOTR + Harry Potter under same parent. |
-| Nintendo | 2026-05-29 | Most aggressive IP enforcer in gaming. Mario / Zelda / Pokemon (with TPC). |
-| Bandai Namco | 2026-05-29 | Tekken, Pac-Man, Gundam. |
-| Sega | 2026-05-29 | Sonic, Yakuza. |
-| Sony Pictures Animation | 2026-05-29 | Spider-Verse aesthetic claims. |
-| Illumination Entertainment | 2026-05-29 | Minions / Despicable Me. |
-| HBO | 2026-05-29 | Game of Thrones, etc. Trade dress. |
-| Netflix Animation | 2026-05-29 | Originals are aggressively defended. |
-| Aardman Animations | 2026-05-29 | Wallace & Gromit. Distinctive claymation style. |
+| Name                       | Added      | Notes                                                                                                    |
+| -------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| Disney                     | 2026-05-29 | Pre-emptive (operator caution). Disney's IP enforcement is the industry baseline; assume zero tolerance. |
+| Pixar                      | 2026-05-29 | Subsidiary of Disney. Distinct visual style is heavily trademarked.                                      |
+| Studio Ghibli              | 2026-05-29 | Public anti-AI stance by Hayao Miyazaki; high public sensitivity.                                        |
+| DreamWorks Animation       | 2026-05-29 | Subsidiary of NBCUniversal.                                                                              |
+| Marvel                     | 2026-05-29 | Disney subsidiary. Character likenesses and trade dress aggressively defended.                           |
+| Lucasfilm                  | 2026-05-29 | Disney subsidiary. Star Wars trade dress.                                                                |
+| Warner Bros.               | 2026-05-29 | DC characters + LOTR + Harry Potter under same parent.                                                   |
+| Nintendo                   | 2026-05-29 | Most aggressive IP enforcer in gaming. Mario / Zelda / Pokemon (with TPC).                               |
+| Bandai Namco               | 2026-05-29 | Tekken, Pac-Man, Gundam.                                                                                 |
+| Sega                       | 2026-05-29 | Sonic, Yakuza.                                                                                           |
+| Sony Pictures Animation    | 2026-05-29 | Spider-Verse aesthetic claims.                                                                           |
+| Illumination Entertainment | 2026-05-29 | Minions / Despicable Me.                                                                                 |
+| HBO                        | 2026-05-29 | Game of Thrones, etc. Trade dress.                                                                       |
+| Netflix Animation          | 2026-05-29 | Originals are aggressively defended.                                                                     |
+| Aardman Animations         | 2026-05-29 | Wallace & Gromit. Distinctive claymation style.                                                          |
 
 ---
 
@@ -38,36 +38,36 @@ These names are off-limits in any prompt template — even as "in the style of" 
 
 Title-level bans. Some overlap with the studio bans above; this list catches the case where a prompt avoids the studio name but uses the franchise name.
 
-| Title | Studio | Added |
-|---|---|---|
-| Frozen | Disney | 2026-05-29 |
-| Toy Story | Disney/Pixar | 2026-05-29 |
-| The Incredibles | Disney/Pixar | 2026-05-29 |
-| Star Wars | Lucasfilm | 2026-05-29 |
-| Indiana Jones | Lucasfilm | 2026-05-29 |
-| Avengers | Marvel | 2026-05-29 |
-| Spider-Man | Marvel/Sony | 2026-05-29 |
-| X-Men | Marvel | 2026-05-29 |
-| Harry Potter | Warner Bros. | 2026-05-29 |
-| The Lord of the Rings | Warner Bros. | 2026-05-29 |
-| DC (Batman, Superman, Wonder Woman, etc.) | Warner Bros. | 2026-05-29 |
-| Pokémon | Nintendo/TPC | 2026-05-29 |
-| Mario | Nintendo | 2026-05-29 |
-| Zelda | Nintendo | 2026-05-29 |
-| Sonic | Sega | 2026-05-29 |
-| Mickey Mouse | Disney | 2026-05-29 |
-| Naruto | Shueisha / Pierrot | 2026-05-29 |
-| Dragon Ball | Shueisha / Toei | 2026-05-29 |
-| One Piece | Shueisha / Toei | 2026-05-29 |
-| Demon Slayer | Shueisha / Ufotable | 2026-05-29 |
-| Attack on Titan | Kodansha / MAPPA | 2026-05-29 |
-| My Hero Academia | Shueisha / Bones | 2026-05-29 |
-| Spirited Away | Studio Ghibli | 2026-05-29 |
-| My Neighbor Totoro | Studio Ghibli | 2026-05-29 |
-| Stranger Things | Netflix | 2026-05-29 |
-| The Simpsons | Disney (20th TV) | 2026-05-29 |
-| Family Guy | Disney (20th TV) | 2026-05-29 |
-| SpongeBob SquarePants | Paramount/Nickelodeon | 2026-05-29 |
+| Title                                     | Studio                | Added      |
+| ----------------------------------------- | --------------------- | ---------- |
+| Frozen                                    | Disney                | 2026-05-29 |
+| Toy Story                                 | Disney/Pixar          | 2026-05-29 |
+| The Incredibles                           | Disney/Pixar          | 2026-05-29 |
+| Star Wars                                 | Lucasfilm             | 2026-05-29 |
+| Indiana Jones                             | Lucasfilm             | 2026-05-29 |
+| Avengers                                  | Marvel                | 2026-05-29 |
+| Spider-Man                                | Marvel/Sony           | 2026-05-29 |
+| X-Men                                     | Marvel                | 2026-05-29 |
+| Harry Potter                              | Warner Bros.          | 2026-05-29 |
+| The Lord of the Rings                     | Warner Bros.          | 2026-05-29 |
+| DC (Batman, Superman, Wonder Woman, etc.) | Warner Bros.          | 2026-05-29 |
+| Pokémon                                   | Nintendo/TPC          | 2026-05-29 |
+| Mario                                     | Nintendo              | 2026-05-29 |
+| Zelda                                     | Nintendo              | 2026-05-29 |
+| Sonic                                     | Sega                  | 2026-05-29 |
+| Mickey Mouse                              | Disney                | 2026-05-29 |
+| Naruto                                    | Shueisha / Pierrot    | 2026-05-29 |
+| Dragon Ball                               | Shueisha / Toei       | 2026-05-29 |
+| One Piece                                 | Shueisha / Toei       | 2026-05-29 |
+| Demon Slayer                              | Shueisha / Ufotable   | 2026-05-29 |
+| Attack on Titan                           | Kodansha / MAPPA      | 2026-05-29 |
+| My Hero Academia                          | Shueisha / Bones      | 2026-05-29 |
+| Spirited Away                             | Studio Ghibli         | 2026-05-29 |
+| My Neighbor Totoro                        | Studio Ghibli         | 2026-05-29 |
+| Stranger Things                           | Netflix               | 2026-05-29 |
+| The Simpsons                              | Disney (20th TV)      | 2026-05-29 |
+| Family Guy                                | Disney (20th TV)      | 2026-05-29 |
+| SpongeBob SquarePants                     | Paramount/Nickelodeon | 2026-05-29 |
 
 ---
 
@@ -84,28 +84,28 @@ Right of Publicity is a state-law right in the US (California is the most aggres
 
 A non-exhaustive starter list of names that must never appear in prompts. The list is selective — these are the public figures with active enforcement records or representation by aggressive PR/legal teams. Other celebrities are not implicitly safe; they're just less likely to discover the use early.
 
-| Name | Category | Added |
-|---|---|---|
-| Taylor Swift | Music | 2026-05-29 |
-| Beyoncé | Music | 2026-05-29 |
-| Drake | Music | 2026-05-29 |
-| Kanye West / Ye | Music | 2026-05-29 |
-| Rihanna | Music | 2026-05-29 |
-| Elon Musk | Tech / public figure | 2026-05-29 |
-| Mark Zuckerberg | Tech / public figure | 2026-05-29 |
-| Donald Trump | Politics | 2026-05-29 |
-| Barack Obama | Politics | 2026-05-29 |
-| Kamala Harris | Politics | 2026-05-29 |
-| Joe Biden | Politics | 2026-05-29 |
-| The British royal family (Kate Middleton, Prince William, King Charles, etc.) | Public figures | 2026-05-29 |
-| LeBron James | Sports | 2026-05-29 |
-| Cristiano Ronaldo | Sports | 2026-05-29 |
-| Lionel Messi | Sports | 2026-05-29 |
-| Tom Cruise | Film | 2026-05-29 |
-| Scarlett Johansson | Film | 2026-05-29 |
-| Keanu Reeves | Film | 2026-05-29 |
-| Ariana Grande | Music | 2026-05-29 |
-| Billie Eilish | Music | 2026-05-29 |
+| Name                                                                          | Category             | Added      |
+| ----------------------------------------------------------------------------- | -------------------- | ---------- |
+| Taylor Swift                                                                  | Music                | 2026-05-29 |
+| Beyoncé                                                                       | Music                | 2026-05-29 |
+| Drake                                                                         | Music                | 2026-05-29 |
+| Kanye West / Ye                                                               | Music                | 2026-05-29 |
+| Rihanna                                                                       | Music                | 2026-05-29 |
+| Elon Musk                                                                     | Tech / public figure | 2026-05-29 |
+| Mark Zuckerberg                                                               | Tech / public figure | 2026-05-29 |
+| Donald Trump                                                                  | Politics             | 2026-05-29 |
+| Barack Obama                                                                  | Politics             | 2026-05-29 |
+| Kamala Harris                                                                 | Politics             | 2026-05-29 |
+| Joe Biden                                                                     | Politics             | 2026-05-29 |
+| The British royal family (Kate Middleton, Prince William, King Charles, etc.) | Public figures       | 2026-05-29 |
+| LeBron James                                                                  | Sports               | 2026-05-29 |
+| Cristiano Ronaldo                                                             | Sports               | 2026-05-29 |
+| Lionel Messi                                                                  | Sports               | 2026-05-29 |
+| Tom Cruise                                                                    | Film                 | 2026-05-29 |
+| Scarlett Johansson                                                            | Film                 | 2026-05-29 |
+| Keanu Reeves                                                                  | Film                 | 2026-05-29 |
+| Ariana Grande                                                                 | Music                | 2026-05-29 |
+| Billie Eilish                                                                 | Music                | 2026-05-29 |
 
 **Deceased celebrities** also retain Right of Publicity in many jurisdictions (California: 70 years post-mortem). Marilyn Monroe, Elvis Presley, Michael Jackson, etc. are owned by estates that license aggressively. Treat them as identity-of forbidden.
 
@@ -115,17 +115,17 @@ A non-exhaustive starter list of names that must never appear in prompts. The li
 
 These appear in prompts as the literal noun being drawn. Always rewrite as a generic descriptor.
 
-| Forbidden | Replacement |
-|---|---|
-| "draw Spider-Man" | "a generic masked superhero in a red-and-blue suit with web-pattern accents" |
-| "draw Batman" | "a generic caped vigilante in a dark cowl with a utility belt" |
-| "draw Mickey Mouse" | "a generic anthropomorphic cartoon mouse with circular black ears" |
-| "draw Mario" | "a generic mustached plumber in a red cap and blue overalls" |
-| "draw a Pokémon" | "a generic cartoon creature with large expressive eyes" |
-| "Coca-Cola can" | "a generic red soda can" |
-| "Apple logo / iPhone" | "a generic modern smartphone" |
-| "Nike swoosh" | "a generic athletic apparel mark" |
-| "Lego brick" | "a generic plastic interlocking brick" |
+| Forbidden             | Replacement                                                                  |
+| --------------------- | ---------------------------------------------------------------------------- |
+| "draw Spider-Man"     | "a generic masked superhero in a red-and-blue suit with web-pattern accents" |
+| "draw Batman"         | "a generic caped vigilante in a dark cowl with a utility belt"               |
+| "draw Mickey Mouse"   | "a generic anthropomorphic cartoon mouse with circular black ears"           |
+| "draw Mario"          | "a generic mustached plumber in a red cap and blue overalls"                 |
+| "draw a Pokémon"      | "a generic cartoon creature with large expressive eyes"                      |
+| "Coca-Cola can"       | "a generic red soda can"                                                     |
+| "Apple logo / iPhone" | "a generic modern smartphone"                                                |
+| "Nike swoosh"         | "a generic athletic apparel mark"                                            |
+| "Lego brick"          | "a generic plastic interlocking brick"                                       |
 
 The replacement should evoke without identifying. If a user submits a photo wearing branded clothing, that's the user's choice — but the prompt template must not direct the model to render the brand.
 

@@ -95,7 +95,7 @@ async function main(): Promise<void> {
   if (!user) {
     if (!password) {
       console.error(
-        `No user found with email '${email}'. Sign up at localhost:3000/login first, or pass a password to create the user inline.`,
+        `No user found with email '${email}'. Sign up at localhost:3000/login first, or pass a password to create the user inline.`
       )
       process.exit(1)
     }
@@ -119,7 +119,7 @@ async function main(): Promise<void> {
   }
 
   console.log(
-    'Admin bootstrapped. Sign in at http://localhost:3000/admin/login with email + password.',
+    'Admin bootstrapped. Sign in at http://localhost:3000/admin/login with email + password.'
   )
 }
 

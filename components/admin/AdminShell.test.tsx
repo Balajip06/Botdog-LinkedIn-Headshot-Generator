@@ -44,7 +44,7 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     // The label exists in both the sidebar and the mobile header — both render
     // in jsdom because lg:hidden is CSS-only. Either match is fine.
@@ -56,7 +56,7 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     const adminHome = screen.getByRole('link', { name: 'Admin home' })
     expect(adminHome).toBeInTheDocument()
@@ -69,40 +69,28 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
-    expect(screen.getByRole('link', { name: /^Dashboard$/ })).toHaveAttribute(
-      'href',
-      '/admin',
-    )
+    expect(screen.getByRole('link', { name: /^Dashboard$/ })).toHaveAttribute('href', '/admin')
     expect(screen.getByRole('link', { name: /^Engagement$/ })).toHaveAttribute(
       'href',
-      '/admin/engagement',
+      '/admin/engagement'
     )
-    expect(screen.getByRole('link', { name: /^Margin$/ })).toHaveAttribute(
-      'href',
-      '/admin/margin',
-    )
-    expect(screen.getByRole('link', { name: /^Trends$/ })).toHaveAttribute(
-      'href',
-      '/admin/trends',
-    )
+    expect(screen.getByRole('link', { name: /^Margin$/ })).toHaveAttribute('href', '/admin/margin')
+    expect(screen.getByRole('link', { name: /^Trends$/ })).toHaveAttribute('href', '/admin/trends')
     expect(screen.getByRole('link', { name: /^Suggestions$/ })).toHaveAttribute(
       'href',
-      '/admin/suggestions',
+      '/admin/suggestions'
     )
     expect(screen.getByRole('link', { name: /^Referrals$/ })).toHaveAttribute(
       'href',
-      '/admin/referrals',
+      '/admin/referrals'
     )
     expect(screen.getByRole('link', { name: /^Refunds$/ })).toHaveAttribute(
       'href',
-      '/admin/refunds',
+      '/admin/refunds'
     )
-    expect(screen.getByRole('link', { name: /^Audit$/ })).toHaveAttribute(
-      'href',
-      '/admin/audit',
-    )
+    expect(screen.getByRole('link', { name: /^Audit$/ })).toHaveAttribute('href', '/admin/audit')
     expect(screen.getByRole('link', { name: '← App' })).toHaveAttribute('href', '/')
   })
 
@@ -110,19 +98,17 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     // ThemeToggle exposes its button with one of these aria-labels depending on theme.
-    expect(
-      screen.getByRole('button', { name: /switch to (dark|light) mode/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /switch to (dark|light) mode/i })).toBeInTheDocument()
   })
 
   it('renders children inside the <main> content region', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p data-testid="child-marker">child payload</p>
-      </AdminShell>,
+      </AdminShell>
     )
     const main = screen.getByRole('main')
     expect(main).toBeInTheDocument()
@@ -134,7 +120,7 @@ describe('AdminShell', () => {
     const { container } = render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     const header = container.querySelector('header')
     expect(header).not.toBeNull()
@@ -147,7 +133,7 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     const engagement = screen.getByRole('link', { name: /^Engagement$/ })
     expect(engagement).toHaveAttribute('aria-current', 'page')
@@ -158,7 +144,7 @@ describe('AdminShell', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>
         <p>child</p>
-      </AdminShell>,
+      </AdminShell>
     )
     const trends = screen.getByRole('link', { name: /^Trends$/ })
     expect(trends).toHaveAttribute('aria-current', 'page')
@@ -169,7 +155,7 @@ describe('AdminShell', () => {
       const { container } = render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       const hamburger = screen.getByRole('button', { name: 'Open menu' })
       expect(hamburger).toBeInTheDocument()
@@ -183,7 +169,7 @@ describe('AdminShell', () => {
       render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       const hamburger = screen.getByRole('button', { name: 'Open menu' })
       expect(hamburger).toHaveAttribute('aria-expanded', 'false')
@@ -195,12 +181,12 @@ describe('AdminShell', () => {
       render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
       expect(screen.getByRole('button', { name: 'Open menu' })).toHaveAttribute(
         'aria-expanded',
-        'true',
+        'true'
       )
       const drawer = screen.getByRole('dialog', { name: 'Admin navigation' })
       expect(drawer).toHaveAttribute('data-state', 'open')
@@ -213,13 +199,13 @@ describe('AdminShell', () => {
       render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
       fireEvent.click(screen.getByRole('button', { name: 'Close menu' }))
       expect(screen.getByRole('button', { name: 'Open menu' })).toHaveAttribute(
         'aria-expanded',
-        'false',
+        'false'
       )
       const drawer = screen.getByRole('dialog', { name: 'Admin navigation' })
       expect(drawer).toHaveAttribute('data-state', 'closed')
@@ -229,7 +215,7 @@ describe('AdminShell', () => {
       render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
       const drawer = screen.getByRole('dialog', { name: 'Admin navigation' })
@@ -244,7 +230,7 @@ describe('AdminShell', () => {
       render(
         <AdminShell {...DEFAULT_PROPS}>
           <p>child</p>
-        </AdminShell>,
+        </AdminShell>
       )
       fireEvent.click(screen.getByRole('button', { name: 'Open menu' }))
       const drawer = screen.getByRole('dialog', { name: 'Admin navigation' })

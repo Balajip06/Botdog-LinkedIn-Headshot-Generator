@@ -46,7 +46,7 @@ describe('TrendForm', () => {
           seo_title: 'Glow Up trend',
           seo_description: 'Try the viral glow-up.',
         }}
-      />,
+      />
     )
 
     expect(screen.getByLabelText('Title')).toHaveValue('Glow Up')
@@ -58,10 +58,10 @@ describe('TrendForm', () => {
     expect(screen.getByLabelText('Display order')).toHaveValue(7)
     expect(screen.getByLabelText('Thumbnail URL')).toHaveValue('https://cdn.example.com/thumb.jpg')
     expect(screen.getByLabelText('Sample before URL')).toHaveValue(
-      'https://cdn.example.com/before.jpg',
+      'https://cdn.example.com/before.jpg'
     )
     expect(screen.getByLabelText('Sample after URL')).toHaveValue(
-      'https://cdn.example.com/after.jpg',
+      'https://cdn.example.com/after.jpg'
     )
     expect(screen.getByLabelText('SEO title')).toHaveValue('Glow Up trend')
     expect(screen.getByLabelText('SEO description')).toHaveValue('Try the viral glow-up.')
@@ -87,7 +87,7 @@ describe('TrendForm', () => {
         action={noopAction}
         submitLabel="Save"
         extraActions={<button type="button">Delete</button>}
-      />,
+      />
     )
     const deleteBtn = screen.getByRole('button', { name: 'Delete' })
     const saveBtn = screen.getByRole('button', { name: 'Save' })
@@ -102,7 +102,7 @@ describe('TrendForm', () => {
         action={noopAction}
         submitLabel="Save"
         banner={<div data-testid="banner-marker">Heads up.</div>}
-      />,
+      />
     )
     const banner = screen.getByTestId('banner-marker')
     expect(banner).toBeInTheDocument()
@@ -128,24 +128,20 @@ describe('TrendForm', () => {
         submitLabel="Save"
         initial={{
           input_schema: {
-            fields: [
-              { type: 'image', name: 'user_photo', label: 'Your photo', required: true },
-            ],
+            fields: [{ type: 'image', name: 'user_photo', label: 'Your photo', required: true }],
           },
         }}
-      />,
+      />
     )
     const ta = screen.getByLabelText('Input schema') as HTMLTextAreaElement
     expect(ta.value).toBe(
       JSON.stringify(
         {
-          fields: [
-            { type: 'image', name: 'user_photo', label: 'Your photo', required: true },
-          ],
+          fields: [{ type: 'image', name: 'user_photo', label: 'Your photo', required: true }],
         },
         null,
-        2,
-      ),
+        2
+      )
     )
     // Must be valid JSON.
     expect(() => JSON.parse(ta.value)).not.toThrow()
@@ -165,7 +161,7 @@ describe('TrendForm', () => {
         action={noopAction}
         submitLabel="Save"
         initial={{ input_schema: null, faq: undefined }}
-      />,
+      />
     )
     expect(screen.getByLabelText('Input schema')).toHaveValue('')
     expect(screen.getByLabelText('FAQ')).toHaveValue('')

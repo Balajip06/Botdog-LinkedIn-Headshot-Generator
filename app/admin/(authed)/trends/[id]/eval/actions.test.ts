@@ -144,13 +144,7 @@ vi.mock('@/lib/supabase/server', () => ({
   createServiceClient: vi.fn(() => mockSupabase),
 }))
 
-import {
-  addEvalInput,
-  removeEvalInput,
-  runEval,
-  rateEvalRun,
-  markTrendEval,
-} from './actions'
+import { addEvalInput, removeEvalInput, runEval, rateEvalRun, markTrendEval } from './actions'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { generateImage } from '@/lib/image-provider'
@@ -191,9 +185,7 @@ afterEach(() => {
 
 describe('addEvalInput', () => {
   it('redirects with ?added=1 on success', async () => {
-    await expect(addEvalInput('trend-1', makeAddInputForm())).rejects.toThrow(
-      /NEXT_REDIRECT:/
-    )
+    await expect(addEvalInput('trend-1', makeAddInputForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends/trend-1/eval?added=1')
   })
 
@@ -233,18 +225,14 @@ describe('addEvalInput', () => {
       ) as unknown as typeof chain.insert
       return chain as ReturnType<typeof origFrom>
     }) as typeof mockSupabase.from
-    await expect(addEvalInput('trend-1', makeAddInputForm())).rejects.toThrow(
-      /NEXT_REDIRECT:/
-    )
+    await expect(addEvalInput('trend-1', makeAddInputForm())).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/trends\/trend-1\/eval\?error=fk%20violation/)
   })
 })
 
 describe('removeEvalInput', () => {
   it('deletes by id and redirects ?removed=1', async () => {
-    await expect(removeEvalInput('trend-1', 'input-9')).rejects.toThrow(
-      /NEXT_REDIRECT:/
-    )
+    await expect(removeEvalInput('trend-1', 'input-9')).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/admin/trends/trend-1/eval?removed=1')
     expect(revalidatePath).toHaveBeenCalledWith('/admin/trends/trend-1/eval')
   })

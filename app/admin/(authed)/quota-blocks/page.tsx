@@ -1,12 +1,6 @@
 import { ShieldX } from 'lucide-react'
 import Link from 'next/link'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -70,7 +64,11 @@ async function loadQuotaBlocks(): Promise<EnrichedRow[]> {
   }
 
   const aggregated: QuotaBlockRow[] = Array.from(bySlug.entries())
-    .map(([slug, agg]) => ({ trend_slug: slug, block_count: agg.block_count, last_block: agg.last_block }))
+    .map(([slug, agg]) => ({
+      trend_slug: slug,
+      block_count: agg.block_count,
+      last_block: agg.last_block,
+    }))
     .sort((a, b) => b.block_count - a.block_count)
     .slice(0, ROW_LIMIT)
 
@@ -79,7 +77,10 @@ async function loadQuotaBlocks(): Promise<EnrichedRow[]> {
   const { data: trendRows } = await supabase
     .from('trends')
     .select('id, slug, title')
-    .in('slug', aggregated.map((r) => r.trend_slug))
+    .in(
+      'slug',
+      aggregated.map((r) => r.trend_slug)
+    )
   const trendIndex = new Map<string, TrendBriefRow>()
   for (const t of trendRows ?? []) {
     trendIndex.set(t.slug, t)
@@ -101,17 +102,17 @@ export default async function QuotaBlocksPage() {
   return (
     <section className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Paywall outreach
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">
           Quota blocks <span className="text-gradient-hero">(paywall outreach)</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Users who hit the free-tier weekly cap. Use this list to manually nudge high-intent
-          users toward a credit pack.
+        <p className="text-muted-foreground text-sm">
+          Users who hit the free-tier weekly cap. Use this list to manually nudge high-intent users
+          toward a credit pack.
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Rolling 24-hour window · UTC · refreshed on load
         </p>
       </header>
@@ -129,17 +130,17 @@ export default async function QuotaBlocksPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <ul className="divide-y divide-border/60">
+            <ul className="divide-border/60 divide-y">
               {rows.map((row, idx) => {
                 const inner = (
                   <div className="flex items-center justify-between gap-3 px-5 py-4">
                     <div className="flex min-w-0 items-center gap-3">
-                      <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted font-mono text-xs text-muted-foreground">
+                      <span className="bg-muted text-muted-foreground grid size-7 shrink-0 place-items-center rounded-lg font-mono text-xs">
                         {idx + 1}
                       </span>
                       <div className="flex min-w-0 flex-col gap-0.5">
-                        <p className="truncate font-semibold text-foreground">{row.title}</p>
-                        <p className="truncate font-mono text-[11px] text-muted-foreground">
+                        <p className="text-foreground truncate font-semibold">{row.title}</p>
+                        <p className="text-muted-foreground truncate font-mono text-[11px]">
                           {row.trend_slug}
                         </p>
                       </div>
@@ -159,7 +160,7 @@ export default async function QuotaBlocksPage() {
                     {row.trendId ? (
                       <Link
                         href={`/admin/trends/${row.trendId}/edit`}
-                        className="block transition-colors hover:bg-muted/30"
+                        className="hover:bg-muted/30 block transition-colors"
                       >
                         {inner}
                       </Link>
@@ -174,7 +175,7 @@ export default async function QuotaBlocksPage() {
         </Card>
       )}
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Quota-block events are appended by the{' '}
         <code className="font-mono">consume_quota_on_generation_insert</code> trigger when a
         free-tier user with 5/week used + 0 credits attempts a generation.
@@ -197,17 +198,15 @@ function SchemaGapNote() {
       <p className="text-muted-foreground">
         The <code className="font-mono text-xs">trend_events</code> table does not store{' '}
         <code className="font-mono text-xs">user_id</code> on{' '}
-        <code className="font-mono text-xs">quota_blocked</code> rows. Adding a per-user
-        outreach list requires a follow-up migration that (a) adds a nullable{' '}
+        <code className="font-mono text-xs">quota_blocked</code> rows. Adding a per-user outreach
+        list requires a follow-up migration that (a) adds a nullable{' '}
         <code className="font-mono text-xs">user_id uuid</code> column to{' '}
         <code className="font-mono text-xs">trend_events</code>, and (b) updates the{' '}
-        <code className="font-mono text-xs">consume_quota_on_generation_insert</code>{' '}
-        trigger to include <code className="font-mono text-xs">new.user_id</code> in the
-        INSERT.
+        <code className="font-mono text-xs">consume_quota_on_generation_insert</code> trigger to
+        include <code className="font-mono text-xs">new.user_id</code> in the INSERT.
       </p>
-      <p className="text-xs text-muted-foreground">
-        Until then, the per-trend aggregation below is the best signal we have for paywall
-        outreach.
+      <p className="text-muted-foreground text-xs">
+        Until then, the per-trend aggregation below is the best signal we have for paywall outreach.
       </p>
     </aside>
   )
@@ -215,13 +214,13 @@ function SchemaGapNote() {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/40 p-16 text-center">
-      <div className="grid size-14 place-items-center rounded-full bg-muted text-foreground">
+    <div className="border-border/60 bg-card/40 flex flex-col items-center gap-4 rounded-3xl border border-dashed p-16 text-center">
+      <div className="bg-muted text-foreground grid size-14 place-items-center rounded-full">
         <ShieldX className="size-6" />
       </div>
       <div>
         <p className="text-lg font-bold">No quota blocks in the last 24h</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Either nobody is hitting the cap yet — or you don&apos;t have enough free-tier traffic.
         </p>
       </div>

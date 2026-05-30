@@ -32,53 +32,53 @@ Grouped by diligence workstream. Each row links to the canonical answer. If the 
 
 ### Product
 
-| # | Question | Answer source |
-|---|---|---|
-| 1 | What does Trendly actually do? | [Asset 1-pager](#asset-1-pager) above + [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) |
-| 2 | How many trends are live? Which perform? | [`docs/data-room/02-customers/top-trends.csv`](../data-room/README.md#02-customers--user-base-retention-support) (accrual-dependent post-launch) |
-| 3 | What's the user journey end-to-end? | [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) §Request flow |
-| 4 | What's the moderation / abuse story? | [`docs/sops/takedown.md`](../sops/takedown.md) + [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md) |
-| 5 | What's planned next (roadmap)? | [`docs/data-room/03-product/roadmap.md`](../data-room/README.md#03-product--architecture-roadmap-retention-proof) |
+| #   | Question                                 | Answer source                                                                                                                                    |
+| --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | What does Trendly actually do?           | [Asset 1-pager](#asset-1-pager) above + [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md)                                                             |
+| 2   | How many trends are live? Which perform? | [`docs/data-room/02-customers/top-trends.csv`](../data-room/README.md#02-customers--user-base-retention-support) (accrual-dependent post-launch) |
+| 3   | What's the user journey end-to-end?      | [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) §Request flow                                                                                       |
+| 4   | What's the moderation / abuse story?     | [`docs/sops/takedown.md`](../sops/takedown.md) + [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md)                                                  |
+| 5   | What's planned next (roadmap)?           | [`docs/data-room/03-product/roadmap.md`](../data-room/README.md#03-product--architecture-roadmap-retention-proof)                                |
 
 ### Revenue
 
-| # | Question | Answer source |
-|---|---|---|
-| 6 | Can we see a Stripe payouts export? | [01-stripe-export-runbook.md](01-stripe-export-runbook.md) |
-| 7 | What's the refund rate? | [01-stripe-export-runbook.md](01-stripe-export-runbook.md) §Refund-rate calculation |
-| 8 | Are the dashboards real or mock? | [02-mock-vs-real-explainer.md](02-mock-vs-real-explainer.md) |
-| 9 | What's gross margin per credit pack? | [`docs/data-room/01-financial/unit-economics.md`](../data-room/README.md#01-financial--revenue-costs-unit-economics) |
-| 10 | What's monthly recurring (it's not subscription)? | [`docs/data-room/01-financial/revenue-by-month.csv`](../data-room/README.md#01-financial--revenue-costs-unit-economics) + [`docs/adr/0001-credit-packs-vs-subscription.md`](../adr/0001-credit-packs-vs-subscription.md) |
-| 11 | What's the anonymous-trial cost guardrail? | `ANONYMOUS_DAILY_BUDGET_USD` env var (default $20/day, in [`lib/env.ts`](../../lib/env.ts)) |
+| #   | Question                                          | Answer source                                                                                                                                                                                                            |
+| --- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 6   | Can we see a Stripe payouts export?               | [01-stripe-export-runbook.md](01-stripe-export-runbook.md)                                                                                                                                                               |
+| 7   | What's the refund rate?                           | [01-stripe-export-runbook.md](01-stripe-export-runbook.md) §Refund-rate calculation                                                                                                                                      |
+| 8   | Are the dashboards real or mock?                  | [02-mock-vs-real-explainer.md](02-mock-vs-real-explainer.md)                                                                                                                                                             |
+| 9   | What's gross margin per credit pack?              | [`docs/data-room/01-financial/unit-economics.md`](../data-room/README.md#01-financial--revenue-costs-unit-economics)                                                                                                     |
+| 10  | What's monthly recurring (it's not subscription)? | [`docs/data-room/01-financial/revenue-by-month.csv`](../data-room/README.md#01-financial--revenue-costs-unit-economics) + [`docs/adr/0001-credit-packs-vs-subscription.md`](../adr/0001-credit-packs-vs-subscription.md) |
+| 11  | What's the anonymous-trial cost guardrail?        | `ANONYMOUS_DAILY_BUDGET_USD` env var (default $20/day, in [`lib/env.ts`](../../lib/env.ts))                                                                                                                              |
 
 ### Tech
 
-| # | Question | Answer source |
-|---|---|---|
-| 12 | How portable is the stack? | [04-tech-defensibility.md](04-tech-defensibility.md) |
-| 13 | What's the single-provider risk? | [04-tech-defensibility.md](04-tech-defensibility.md) §Gemini dependency |
-| 14 | What's RLS / quota enforcement look like? | [`docs/adr/0002-rls-quota-strategy.md`](../adr/0002-rls-quota-strategy.md) |
-| 15 | How are duplicate Stripe webhooks handled? | [`docs/adr/0005-idempotency-strategy.md`](../adr/0005-idempotency-strategy.md) |
-| 16 | Where are the secrets stored? | [`docs/CREDENTIALS.md`](../CREDENTIALS.md) |
-| 17 | What's the test coverage / quality? | [`docs/data-room/03-product/changelog.md`](../data-room/README.md#03-product--architecture-roadmap-retention-proof) (`pnpm test` → 283/283, `pnpm typecheck` + `pnpm lint` + `pnpm build` clean) |
+| #   | Question                                   | Answer source                                                                                                                                                                                    |
+| --- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 12  | How portable is the stack?                 | [04-tech-defensibility.md](04-tech-defensibility.md)                                                                                                                                             |
+| 13  | What's the single-provider risk?           | [04-tech-defensibility.md](04-tech-defensibility.md) §Gemini dependency                                                                                                                          |
+| 14  | What's RLS / quota enforcement look like?  | [`docs/adr/0002-rls-quota-strategy.md`](../adr/0002-rls-quota-strategy.md)                                                                                                                       |
+| 15  | How are duplicate Stripe webhooks handled? | [`docs/adr/0005-idempotency-strategy.md`](../adr/0005-idempotency-strategy.md)                                                                                                                   |
+| 16  | Where are the secrets stored?              | [`docs/CREDENTIALS.md`](../CREDENTIALS.md)                                                                                                                                                       |
+| 17  | What's the test coverage / quality?        | [`docs/data-room/03-product/changelog.md`](../data-room/README.md#03-product--architecture-roadmap-retention-proof) (`pnpm test` → 283/283, `pnpm typecheck` + `pnpm lint` + `pnpm build` clean) |
 
 ### Legal
 
-| # | Question | Answer source |
-|---|---|---|
-| 18 | What's the ToS say about user-generated content? | [`docs/TERMS_OF_SERVICE.md`](../TERMS_OF_SERVICE.md) §3–§4 |
-| 19 | GDPR posture? | [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) + [`docs/legal/DPA_TEMPLATE.md`](../legal/DPA_TEMPLATE.md) |
-| 20 | Sub-processor list? | [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md) |
-| 21 | IP ownership chain? | [`docs/data-room/05-ownership/ip-ownership-statement.md`](../data-room/README.md#05-ownership--ip-ownership-employment-prior-commits) |
-| 22 | DMCA history? | [`docs/data-room/06-legal/dmca-history.md`](../data-room/README.md#06-legal--tos-privacy-dpa-sub-processors-compliance) (accrual-dependent post-launch) |
+| #   | Question                                         | Answer source                                                                                                                                           |
+| --- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 18  | What's the ToS say about user-generated content? | [`docs/TERMS_OF_SERVICE.md`](../TERMS_OF_SERVICE.md) §3–§4                                                                                              |
+| 19  | GDPR posture?                                    | [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) + [`docs/legal/DPA_TEMPLATE.md`](../legal/DPA_TEMPLATE.md)                                             |
+| 20  | Sub-processor list?                              | [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md)                                                                                            |
+| 21  | IP ownership chain?                              | [`docs/data-room/05-ownership/ip-ownership-statement.md`](../data-room/README.md#05-ownership--ip-ownership-employment-prior-commits)                   |
+| 22  | DMCA history?                                    | [`docs/data-room/06-legal/dmca-history.md`](../data-room/README.md#06-legal--tos-privacy-dpa-sub-processors-compliance) (accrual-dependent post-launch) |
 
 ### Transferability
 
-| # | Question | Answer source |
-|---|---|---|
-| 23 | What does the Day 1 / Day 7 / Day 14 cutover look like? | [`docs/transferability/post-acquisition-timeline.md`](../transferability/post-acquisition-timeline.md) |
-| 24 | What's the Stripe gap and how big is the risk? | [03-stripe-card-non-transfer.md](03-stripe-card-non-transfer.md) |
-| 25 | Will the seller stay around to help? | [`docs/data-room/08-transferability/seller-availability.md`](../data-room/README.md#08-transferability--per-account-cutover-plan) (30-day advisory window) |
+| #   | Question                                                | Answer source                                                                                                                                              |
+| --- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 23  | What does the Day 1 / Day 7 / Day 14 cutover look like? | [`docs/transferability/post-acquisition-timeline.md`](../transferability/post-acquisition-timeline.md)                                                     |
+| 24  | What's the Stripe gap and how big is the risk?          | [03-stripe-card-non-transfer.md](03-stripe-card-non-transfer.md)                                                                                           |
+| 25  | Will the seller stay around to help?                    | [`docs/data-room/08-transferability/seller-availability.md`](../data-room/README.md#08-transferability--per-account-cutover-plan) (30-day advisory window) |
 
 ---
 
@@ -86,11 +86,11 @@ Grouped by diligence workstream. Each row links to the canonical answer. If the 
 
 These three folders have related but distinct purposes. Send the right one for the right question.
 
-| Folder | Audience | Use it when… |
-|---|---|---|
-| `docs/diligence/` (this folder) | Buyer's lead diligence person | They ask a frequently-anticipated question. You want a one-pager you can paste into an email or share as a link. |
-| [`docs/data-room/`](../data-room/README.md) | Buyer's finance / legal / engineering leads | They've signed NDA and want the canonical exports (revenue CSV, customer counts, IP statement). Source of truth for numbers + legal artifacts. |
-| [`docs/transferability/`](../transferability/per-account-transfer-plan.md) | Buyer's onboarding lead | They've signed the deal and want the Day-1 runbook for every account. Per-vendor mechanism + ETA + risk. |
+| Folder                                                                     | Audience                                    | Use it when…                                                                                                                                   |
+| -------------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/diligence/` (this folder)                                            | Buyer's lead diligence person               | They ask a frequently-anticipated question. You want a one-pager you can paste into an email or share as a link.                               |
+| [`docs/data-room/`](../data-room/README.md)                                | Buyer's finance / legal / engineering leads | They've signed NDA and want the canonical exports (revenue CSV, customer counts, IP statement). Source of truth for numbers + legal artifacts. |
+| [`docs/transferability/`](../transferability/per-account-transfer-plan.md) | Buyer's onboarding lead                     | They've signed the deal and want the Day-1 runbook for every account. Per-vendor mechanism + ETA + risk.                                       |
 
 **Rule of thumb.** Diligence folder = "the answer." Data-room = "the receipt." Transferability = "the handover map."
 

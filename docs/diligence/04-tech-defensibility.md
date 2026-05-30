@@ -14,12 +14,12 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 **The mitigation.** Image generation sits behind a provider abstraction at [`lib/image-provider/`](../../lib/image-provider/). The relevant files:
 
-| File | Role |
-|---|---|
-| [`lib/image-provider/index.ts`](../../lib/image-provider/index.ts) | Provider switcher — reads `IMAGE_PROVIDER` env, dispatches to `gemini` or `openai`. Default `gemini`. |
-| [`lib/image-provider/gemini.ts`](../../lib/image-provider/gemini.ts) | Production Gemini client (real). |
-| [`lib/image-provider/openai.ts`](../../lib/image-provider/openai.ts) | OpenAI Images stub — same function signature, returns `not-configured`. Designed to be filled in. |
-| [`lib/image-provider/types.ts`](../../lib/image-provider/types.ts) | Shared types: `GenerateImageArgs`, `GenerateImageResult`, `ImageProvider` union. |
+| File                                                                 | Role                                                                                                  |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [`lib/image-provider/index.ts`](../../lib/image-provider/index.ts)   | Provider switcher — reads `IMAGE_PROVIDER` env, dispatches to `gemini` or `openai`. Default `gemini`. |
+| [`lib/image-provider/gemini.ts`](../../lib/image-provider/gemini.ts) | Production Gemini client (real).                                                                      |
+| [`lib/image-provider/openai.ts`](../../lib/image-provider/openai.ts) | OpenAI Images stub — same function signature, returns `not-configured`. Designed to be filled in.     |
+| [`lib/image-provider/types.ts`](../../lib/image-provider/types.ts)   | Shared types: `GenerateImageArgs`, `GenerateImageResult`, `ImageProvider` union.                      |
 
 **What this means for the buyer.** Swapping to OpenAI Images (or Stability, Flux, Replicate, etc.) is a 1-file implementation task. The stub already exists. The router already routes. No database migration, no API contract change, no consumer-facing code edit. Estimated effort: 2–4 days of engineering work for a competent backend dev to implement `openai.ts` end-to-end against the existing types.
 
@@ -33,15 +33,15 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 **The mitigation.** Trendly's Supabase usage is **standard Postgres**, not Supabase-proprietary syntax:
 
-| Supabase feature | Underlying tech | Portable to |
-|---|---|---|
-| Postgres database | Standard Postgres 15+ | Neon, RDS, Aurora, Crunchy Bridge, self-hosted |
-| Row Level Security (RLS) | Standard Postgres feature | Any Postgres |
-| Auth (email + OAuth) | Custom Supabase JWT | Auth0, Clerk, NextAuth, Lucia |
-| Storage (image upload) | S3-compatible API | S3 directly, R2, B2 |
-| Realtime (websockets) | Phoenix Channels | Pusher, Ably, self-hosted Soketi |
-| Edge Functions | Deno on Supabase Edge | Vercel Edge Functions, Cloudflare Workers |
-| pg_cron | Standard Postgres extension | Any Postgres with `pg_cron`, or external cron + endpoint |
+| Supabase feature         | Underlying tech             | Portable to                                              |
+| ------------------------ | --------------------------- | -------------------------------------------------------- |
+| Postgres database        | Standard Postgres 15+       | Neon, RDS, Aurora, Crunchy Bridge, self-hosted           |
+| Row Level Security (RLS) | Standard Postgres feature   | Any Postgres                                             |
+| Auth (email + OAuth)     | Custom Supabase JWT         | Auth0, Clerk, NextAuth, Lucia                            |
+| Storage (image upload)   | S3-compatible API           | S3 directly, R2, B2                                      |
+| Realtime (websockets)    | Phoenix Channels            | Pusher, Ably, self-hosted Soketi                         |
+| Edge Functions           | Deno on Supabase Edge       | Vercel Edge Functions, Cloudflare Workers                |
+| pg_cron                  | Standard Postgres extension | Any Postgres with `pg_cron`, or external cron + endpoint |
 
 **The migration touchpoints.** Approximately 15 files import from `@supabase/supabase-js`:
 
@@ -64,13 +64,13 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 **The mitigation.** Next.js 16 App Router runs anywhere Node 22 runs. The Vercel-specific bits:
 
-| Vercel feature | What we use it for | Replacement |
-|---|---|---|
-| Next.js hosting | App Router + Turbopack + middleware | Self-host on any Node 22 host (Railway, Fly.io, Render, EC2). Standard `pnpm build && pnpm start`. |
-| `vercel.json` crons | Three scheduled jobs (purge soft-deleted, reset weekly quota, refresh sitemap) | Replaceable with cron-job.org calling our existing API routes, or Supabase pg_cron (already used for the weekly quota reset — `pg_cron` is the canonical home for these). |
-| Vercel Analytics | Web Vitals tracking | Replace with PostHog Web Vitals (already wired) or Plausible. |
-| Vercel Speed Insights | Same | Same. |
-| Edge Functions | None — our Edge Function lives in **Supabase**, not Vercel | n/a — already non-Vercel. |
+| Vercel feature        | What we use it for                                                             | Replacement                                                                                                                                                               |
+| --------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Next.js hosting       | App Router + Turbopack + middleware                                            | Self-host on any Node 22 host (Railway, Fly.io, Render, EC2). Standard `pnpm build && pnpm start`.                                                                        |
+| `vercel.json` crons   | Three scheduled jobs (purge soft-deleted, reset weekly quota, refresh sitemap) | Replaceable with cron-job.org calling our existing API routes, or Supabase pg_cron (already used for the weekly quota reset — `pg_cron` is the canonical home for these). |
+| Vercel Analytics      | Web Vitals tracking                                                            | Replace with PostHog Web Vitals (already wired) or Plausible.                                                                                                             |
+| Vercel Speed Insights | Same                                                                           | Same.                                                                                                                                                                     |
+| Edge Functions        | None — our Edge Function lives in **Supabase**, not Vercel                     | n/a — already non-Vercel.                                                                                                                                                 |
 
 **Migration effort.** 2–3 days to move hosting. The DNS cutover dominates the timeline (24–48h propagation). Build + deploy elsewhere is hours, not weeks.
 
@@ -118,13 +118,13 @@ A buyer's technical reviewer can verify this in 10 minutes by reading the four f
 
 ## Defensibility summary table
 
-| Dependency | Lock-in level | Migration effort | Recommended? |
-|---|---|---|---|
-| Gemini | Low — abstracted | 2–4 days | Yes if pricing changes |
-| Supabase | Medium — standard Postgres + custom Auth | 1–2 weeks | Post-close only, buyer's choice |
-| Vercel | Low — standard Next.js | 2–3 days | Post-close only, buyer's choice |
-| Stripe | **High — customer-data lock-in** | ~4 weeks + 60–80% churn | **No** — accept the constraint, ship the re-auth campaign |
-| Vitest + Playwright | None — open-source | n/a | n/a |
+| Dependency          | Lock-in level                            | Migration effort        | Recommended?                                              |
+| ------------------- | ---------------------------------------- | ----------------------- | --------------------------------------------------------- |
+| Gemini              | Low — abstracted                         | 2–4 days                | Yes if pricing changes                                    |
+| Supabase            | Medium — standard Postgres + custom Auth | 1–2 weeks               | Post-close only, buyer's choice                           |
+| Vercel              | Low — standard Next.js                   | 2–3 days                | Post-close only, buyer's choice                           |
+| Stripe              | **High — customer-data lock-in**         | ~4 weeks + 60–80% churn | **No** — accept the constraint, ship the re-auth campaign |
+| Vitest + Playwright | None — open-source                       | n/a                     | n/a                                                       |
 
 ---
 

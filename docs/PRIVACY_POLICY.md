@@ -50,16 +50,16 @@ We do **not** use your photos or generation outputs to train any model. Inputs a
 
 ## 4. How long we keep it
 
-| Data | Free tier retention | Pro tier retention |
-|---|---|---|
-| Uploaded photo | 24 hours, then deleted | 24 hours, then deleted |
-| Generated output image | 30 days, then auto-purged | While account is active |
-| Generation history rows | While account is active | While account is active |
-| Profile + quota counters | While account is active | While account is active |
-| Anonymous-trial fingerprint hash | 24 hours, then auto-purged | n/a |
-| Stripe webhook event log | 30 days (idempotency) | 30 days |
-| Sentry error logs | 30 days | 30 days |
-| PostHog events | 365 days | 365 days |
+| Data                             | Free tier retention        | Pro tier retention      |
+| -------------------------------- | -------------------------- | ----------------------- |
+| Uploaded photo                   | 24 hours, then deleted     | 24 hours, then deleted  |
+| Generated output image           | 30 days, then auto-purged  | While account is active |
+| Generation history rows          | While account is active    | While account is active |
+| Profile + quota counters         | While account is active    | While account is active |
+| Anonymous-trial fingerprint hash | 24 hours, then auto-purged | n/a                     |
+| Stripe webhook event log         | 30 days (idempotency)      | 30 days                 |
+| Sentry error logs                | 30 days                    | 30 days                 |
+| PostHog events                   | 365 days                   | 365 days                |
 
 After you delete your account (Settings → Danger zone → Delete my account):
 

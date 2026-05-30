@@ -38,7 +38,7 @@ export function useConsentState(): ConsentState {
   return useSyncExternalStore(
     subscribe,
     () => readConsent(),
-    () => 'unknown' as const,
+    () => 'unknown' as const
   )
 }
 
@@ -71,11 +71,12 @@ export function CookieBanner() {
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 z-40 rounded-2xl border border-border/60 bg-card p-4 shadow-pop sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-md"
+      className="border-border/60 bg-card shadow-pop fixed right-4 bottom-4 left-4 z-40 rounded-2xl border p-4 sm:right-6 sm:bottom-6 sm:left-auto sm:max-w-md"
     >
       <p className="text-sm font-semibold">Cookies</p>
-      <p className="mt-1 text-sm text-muted-foreground">
-        We use cookies and PostHog to understand product use. No third-party advertising, no data sale.
+      <p className="text-muted-foreground mt-1 text-sm">
+        We use cookies and PostHog to understand product use. No third-party advertising, no data
+        sale.
       </p>
       <div className="mt-3 flex items-center gap-2">
         <GradientButton size="sm" onClick={accept}>
@@ -87,7 +88,7 @@ export function CookieBanner() {
       </div>
       <Link
         href="/privacy"
-        className="mt-2 inline-block text-xs text-muted-foreground underline-offset-4 hover:underline"
+        className="text-muted-foreground mt-2 inline-block text-xs underline-offset-4 hover:underline"
       >
         Privacy policy
       </Link>

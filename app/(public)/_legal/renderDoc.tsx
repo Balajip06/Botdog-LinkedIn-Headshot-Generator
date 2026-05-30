@@ -41,19 +41,19 @@ export function LegalArticle({ markdown, className }: LegalArticleProps) {
         '[&_h1]:mb-6 [&_h1]:text-4xl [&_h1]:font-extrabold [&_h1]:tracking-tight',
         '[&_h2]:mt-10 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-tight',
         '[&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-bold',
-        '[&_p]:my-3 [&_p]:text-foreground/85 [&_p]:leading-relaxed',
-        '[&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ul]:text-foreground/85',
-        '[&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-6 [&_ol]:text-foreground/85',
+        '[&_p]:text-foreground/85 [&_p]:my-3 [&_p]:leading-relaxed',
+        '[&_ul]:text-foreground/85 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6',
+        '[&_ol]:text-foreground/85 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-6',
         '[&_li]:leading-relaxed',
-        '[&_strong]:font-semibold [&_strong]:text-foreground',
+        '[&_strong]:text-foreground [&_strong]:font-semibold',
         '[&_em]:italic',
         '[&_a]:font-medium [&_a]:text-[var(--brand-grad-1)] [&_a]:underline-offset-2 hover:[&_a]:underline',
-        '[&_code]:rounded [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.9em]',
-        '[&_hr]:my-10 [&_hr]:border-border',
+        '[&_code]:bg-muted [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.9em]',
+        '[&_hr]:border-border [&_hr]:my-10',
         '[&_table]:my-6 [&_table]:w-full [&_table]:border-collapse',
-        '[&_th]:border-b [&_th]:border-border [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:uppercase [&_th]:tracking-wide [&_th]:text-muted-foreground',
-        '[&_td]:border-b [&_td]:border-border/60 [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm',
-        className,
+        '[&_th]:border-border [&_th]:text-muted-foreground [&_th]:border-b [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:tracking-wide [&_th]:uppercase',
+        '[&_td]:border-border/60 [&_td]:border-b [&_td]:px-3 [&_td]:py-2 [&_td]:text-sm',
+        className
       )}
     >
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>

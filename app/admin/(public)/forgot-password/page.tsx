@@ -22,9 +22,9 @@ export default async function AdminForgotPasswordPage({
         <h1 className="text-3xl font-extrabold tracking-tight">
           Reset <span className="text-gradient-hero">password</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Enter the email associated with your admin account. We&apos;ll send a reset
-          link if a matching account exists.
+        <p className="text-muted-foreground text-sm">
+          Enter the email associated with your admin account. We&apos;ll send a reset link if a
+          matching account exists.
         </p>
       </header>
 
@@ -37,14 +37,14 @@ export default async function AdminForgotPasswordPage({
         </div>
       )}
       {errorMessage && (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-2xl border px-4 py-3 text-sm">
           {errorMessage}
         </div>
       )}
 
       <ForgotPasswordForm />
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-center text-xs">
         <Link href="/admin/login" className="font-medium underline-offset-2 hover:underline">
           Back to admin sign in
         </Link>

@@ -85,16 +85,17 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         <h1 className="text-4xl font-extrabold tracking-tight">
           <span className="text-gradient-hero">Settings</span>
         </h1>
-        {profile && <p className="text-sm text-muted-foreground">Signed in as {profile.email}</p>}
+        {profile && <p className="text-muted-foreground text-sm">Signed in as {profile.email}</p>}
       </header>
 
       {purchase === 'success' && (
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
-          Purchase complete{pack ? ` — ${pack} pack credited` : ''}. Credits should appear in a moment.
+          Purchase complete{pack ? ` — ${pack} pack credited` : ''}. Credits should appear in a
+          moment.
         </div>
       )}
       {purchase === 'cancelled' && (
-        <div className="rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
+        <div className="border-border bg-muted text-muted-foreground rounded-2xl border px-4 py-3 text-sm">
           Checkout cancelled — no charge made.
         </div>
       )}
@@ -102,7 +103,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
       {profile && (
         <>
           {/* Quota dashboard */}
-          <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+          <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
             <h2 className="text-2xl font-extrabold tracking-tight">Your quota</h2>
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
               <QuotaMeter
@@ -128,15 +129,16 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           </div>
 
           {/* Buy credits */}
-          <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+          <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
             <div className="flex items-baseline justify-between">
               <h2 className="text-2xl font-extrabold tracking-tight">Buy credits</h2>
               <Badge variant="outline" className="rounded-full text-xs">
                 <Sparkles className="size-3" /> No watermark on Pro
               </Badge>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Credits never expire. While you have credits: no watermark, generations saved forever, premium support.
+            <p className="text-muted-foreground mt-1 text-sm">
+              Credits never expire. While you have credits: no watermark, generations saved forever,
+              premium support.
             </p>
             <div className="mt-6">
               <CreditPacksClient packs={packs} />
@@ -145,15 +147,16 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
           {/* Referral */}
           {referralUrl && (
-            <div className="rounded-3xl border border-border/60 bg-gradient-spotlight/20 p-6 sm:p-8">
+            <div className="border-border/60 bg-gradient-spotlight/20 rounded-3xl border p-6 sm:p-8">
               <div className="flex items-center gap-2">
                 <Gift className="size-5 text-[var(--brand-grad-1)]" />
                 <h2 className="text-2xl font-extrabold tracking-tight">Invite friends</h2>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                +10 credits per friend that finishes their first generation. Max {BONUS_CAP} bonus credits.
+              <p className="text-muted-foreground mt-1 text-sm">
+                +10 credits per friend that finishes their first generation. Max {BONUS_CAP} bonus
+                credits.
               </p>
-              <div className="mt-5 flex items-center gap-2 rounded-2xl border border-border bg-card p-2">
+              <div className="border-border bg-card mt-5 flex items-center gap-2 rounded-2xl border p-2">
                 <code className="flex-1 truncate px-3 py-2 font-mono text-xs">{referralUrl}</code>
                 <ReferralCopyButton url={referralUrl} />
               </div>
@@ -163,13 +166,14 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
       )}
 
       {/* Your data — GDPR Article 15 right-of-access */}
-      <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+      <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
         <div className="flex items-center gap-2">
           <FileDown className="size-5 text-[var(--brand-grad-2)]" />
           <h2 className="text-2xl font-extrabold tracking-tight">Your data</h2>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Download everything we store about you — profile + generation history + signed URLs valid for 1 hour (GDPR Article 15).
+        <p className="text-muted-foreground mt-1 text-sm">
+          Download everything we store about you — profile + generation history + signed URLs valid
+          for 1 hour (GDPR Article 15).
         </p>
         <div className="mt-5">
           <DataExportButton />
@@ -177,21 +181,17 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
       </div>
 
       {/* Danger zone */}
-      <div className="rounded-3xl border border-destructive/30 bg-destructive/5 p-6 sm:p-8">
+      <div className="border-destructive/30 bg-destructive/5 rounded-3xl border p-6 sm:p-8">
         <div className="flex items-center gap-2">
-          <Trash2 className="size-5 text-destructive" />
-          <h2 className="text-xl font-extrabold tracking-tight text-destructive">Danger zone</h2>
+          <Trash2 className="text-destructive size-5" />
+          <h2 className="text-destructive text-xl font-extrabold tracking-tight">Danger zone</h2>
         </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Soft-deletes your account. Profile marked deleted immediately and purged after 30 days (GDPR).
+        <p className="text-muted-foreground mt-2 text-sm">
+          Soft-deletes your account. Profile marked deleted immediately and purged after 30 days
+          (GDPR).
         </p>
         <form action={softDeleteAccount} className="mt-4">
-          <Button
-            type="submit"
-            variant="destructive"
-            size="lg"
-            className="rounded-full"
-          >
+          <Button type="submit" variant="destructive" size="lg" className="rounded-full">
             Delete my account
           </Button>
         </form>
@@ -240,16 +240,20 @@ function QuotaMeter({ label, used, cap, accent, showAsBalance }: QuotaMeterProps
           />
         </svg>
         <div className="absolute flex flex-col items-center text-center">
-          <span className="text-xl font-extrabold leading-none">{used}</span>
-          {!showAsBalance && <span className="text-[10px] uppercase tracking-wider text-muted-foreground">of {cap}</span>}
+          <span className="text-xl leading-none font-extrabold">{used}</span>
+          {!showAsBalance && (
+            <span className="text-muted-foreground text-[10px] tracking-wider uppercase">
+              of {cap}
+            </span>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold">{label}</p>
         {showAsBalance ? (
-          <p className="text-xs text-muted-foreground">credits in wallet</p>
+          <p className="text-muted-foreground text-xs">credits in wallet</p>
         ) : (
-          <p className="text-xs text-muted-foreground">{cap - used} remaining</p>
+          <p className="text-muted-foreground text-xs">{cap - used} remaining</p>
         )}
       </div>
     </div>

@@ -15,17 +15,39 @@
     },
     {
       "matchUpdateTypes": ["minor"],
-      "matchPackagePatterns": ["^@radix-ui/", "^lucide-react", "^tailwind", "^@tailwindcss/", "^next-themes", "^sonner"],
+      "matchPackagePatterns": [
+        "^@radix-ui/",
+        "^lucide-react",
+        "^tailwind",
+        "^@tailwindcss/",
+        "^next-themes",
+        "^sonner"
+      ],
       "groupName": "ui & styling minors"
     },
     {
       "matchUpdateTypes": ["minor"],
-      "matchPackagePatterns": ["^@supabase/", "^@sentry/", "^posthog-", "^resend", "^stripe", "^web-push", "^@upstash/"],
+      "matchPackagePatterns": [
+        "^@supabase/",
+        "^@sentry/",
+        "^posthog-",
+        "^resend",
+        "^stripe",
+        "^web-push",
+        "^@upstash/"
+      ],
       "groupName": "infra & vendor minors"
     },
     {
       "matchUpdateTypes": ["minor"],
-      "matchPackagePatterns": ["^@testing-library/", "^@vitejs/", "^@vitest/", "vitest", "^@playwright/", "^playwright"],
+      "matchPackagePatterns": [
+        "^@testing-library/",
+        "^@vitejs/",
+        "^@vitest/",
+        "vitest",
+        "^@playwright/",
+        "^playwright"
+      ],
       "groupName": "test stack minors",
       "automerge": true
     },

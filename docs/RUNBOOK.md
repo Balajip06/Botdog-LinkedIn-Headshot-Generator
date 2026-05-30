@@ -95,7 +95,11 @@ One-time setup in Supabase Dashboard → Authentication → Email Templates:
 ```html
 <h2>Sign in to Trendly</h2>
 <p>Tap the button below to sign in. The link is one-time and expires in 1 hour.</p>
-<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/me/studio">Sign in</a></p>
+<p>
+  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/me/studio"
+    >Sign in</a
+  >
+</p>
 ```
 
 Optional: update **Confirm signup** template to the same URL shape for consistency.
@@ -366,6 +370,7 @@ select count(*) from public.generations
 Simulate a transient Gemini fault by temporarily rejecting the first attempt. Easiest path: invoke the Edge Function manually against a generations row, with the Gemini key briefly unset; restore the key and let the Database Webhook re-fire (or click the retry button on `/result/[id]`).
 
 **Expected behaviour:**
+
 - First Edge Function run sets status `failed_retryable`, `attempts = 1`, `error_message` populated. Source: `supabase/functions/generate-image/index.ts`.
 - Retry (manual or webhook-driven) succeeds, sets status `completed`, no quota refund. RetryUI at `app/(app)/result/[id]/ResultView.tsx`.
 
@@ -400,6 +405,7 @@ SELECT slug, input_schema from public.trends where is_active = true limit 3;
 ```
 
 For each: visit `/trend/<slug>` and confirm the form matches the schema:
+
 - `type: 'image'` → file input with min/max count enforced client-side.
 - `type: 'text'` → text input.
 - `type: 'select'` → dropdown populated from `options`.
@@ -420,6 +426,7 @@ update public.trends set is_active = true where slug = 'ghibli-portrait';
 ### Test 8 — Push + email fallback
 
 Sub-case A (push works):
+
 ```
 - Sign in on Chrome → generate → "completed" → grant push permission.
 - Generate again.
@@ -427,10 +434,12 @@ Sub-case A (push works):
 ```
 
 Sub-case B (push expired → email):
+
 ```sql
 -- Force an expired subscription:
 update public.profiles set push_subscription = null where id = '<uid>';
 ```
+
 - Generate again.
 - Expected: no push, **but** within 30s an email arrives from `RESEND_FROM_EMAIL`. Email built at `lib/email/send.ts` `buildResultReadyEmail`. Dispatch path: `app/api/push/dispatch/route.ts` returns `{ delivered: 'email' }` in Edge Function logs.
 
@@ -495,6 +504,7 @@ select credits_balance, bonus_credits_earned from public.profiles where id = '<u
 ```
 
 Sub-case: self-referral (should be rejected by the auth-callback application code at `app/auth/callback/route.ts`):
+
 ```sql
 insert into public.referrals (referrer_id, referred_id, status)
 values ('<uid-A>', '<uid-A>', 'pending');
@@ -502,6 +512,7 @@ values ('<uid-A>', '<uid-A>', 'pending');
 ```
 
 Sub-case: legitimate redemption:
+
 - B completes their first generation (status → `completed`).
 - Reward trigger at `supabase/migrations/20260527000004_ancillary.sql:39` fires.
 
@@ -521,6 +532,7 @@ stripe events resend <event_id>
 ```
 
 **Expected:**
+
 ```sql
 select count(*) from public.webhook_events where event_id = '<event_id>';
 -- → 1 (UNIQUE (source, event_id) blocks the second insert)
@@ -557,11 +569,13 @@ select count(*) from public.generations where user_id = '<test-uid>';
 ### Test 14 — PostHog funnel
 
 In PostHog → Insights → Funnels, create:
+
 ```
 SIGNUP_COMPLETED → UPLOAD_STARTED → GENERATE_CLICKED → GENERATE_COMPLETED → SHARE_CLICKED
 ```
 
 Walk through the funnel manually as a brand-new user:
+
 - Sign up via Google OAuth (fires `SIGNUP_COMPLETED` server-side at `app/auth/callback/route.ts`).
 - Open any trend, upload a photo (`UPLOAD_STARTED`).
 - Submit (`GENERATE_CLICKED`).
@@ -589,6 +603,7 @@ vercel --prod    # or: gh workflow run deploy.yml
 ```
 
 Post-deploy smoke:
+
 - Visit `/`, `/trend/<slug>`, `/login`.
 - Tail Sentry → Issues for 24h. Zero new critical issues = green.
 - Watch PostHog → Live events for the first 10 real signups.

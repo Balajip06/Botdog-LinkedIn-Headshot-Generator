@@ -1,11 +1,6 @@
 import { describe, expect, it, expectTypeOf } from 'vitest'
 import type { Json, TablesInsert, TablesUpdate } from './database.types'
-import {
-  DEFAULT_TREND_INPUT,
-  faqToJson,
-  trendInputToJson,
-  type FAQ,
-} from '../trends/input-schema'
+import { DEFAULT_TREND_INPUT, faqToJson, trendInputToJson, type FAQ } from '../trends/input-schema'
 import { suggestionPayloadToJson, type TrendSuggestionPayload } from '../trends/suggestions/payload'
 
 /**
@@ -54,9 +49,7 @@ describe('Database types smoke', () => {
   })
 
   it('admin_audit_log insert requires action + target_table', () => {
-    expectTypeOf<TablesInsert<'admin_audit_log'>>()
-      .toHaveProperty('action')
-      .toEqualTypeOf<string>()
+    expectTypeOf<TablesInsert<'admin_audit_log'>>().toHaveProperty('action').toEqualTypeOf<string>()
     expectTypeOf<TablesInsert<'admin_audit_log'>>()
       .toHaveProperty('target_table')
       .toEqualTypeOf<string>()

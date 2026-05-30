@@ -40,7 +40,7 @@ function pointsToPath(
   data: readonly ChartPoint[],
   width: number,
   height: number,
-  max: number,
+  max: number
 ): string {
   if (data.length === 0) return ''
   if (max <= 0) {
@@ -57,13 +57,7 @@ function pointsToPath(
     .join(' ')
 }
 
-export function Sparkline({
-  data,
-  className,
-  compare,
-  ariaLabel,
-  height = 64,
-}: SparklineProps) {
+export function Sparkline({ data, className, compare, ariaLabel, height = 64 }: SparklineProps) {
   const width = 320
   const max = maxValue(data, compare ?? [])
   const path = pointsToPath(data, width, height, max)
@@ -235,7 +229,7 @@ export function BarChart({
           )
         })}
       </svg>
-      <div className="flex items-center gap-4 px-1 text-[11px] text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-4 px-1 text-[11px]">
         <span className={cn('inline-flex items-center gap-1.5', primaryClassName)}>
           <span className="inline-block size-2 rounded-sm bg-current" />
           <span className="text-muted-foreground">{primaryLabel}</span>
@@ -275,12 +269,7 @@ export function DonutChart({ data, ariaLabel, centerValue, centerLabel }: DonutC
 
   return (
     <div className="flex items-center gap-5">
-      <svg
-        role="img"
-        aria-label={ariaLabel}
-        viewBox={`0 0 ${size} ${size}`}
-        className="size-40"
-      >
+      <svg role="img" aria-label={ariaLabel} viewBox={`0 0 ${size} ${size}`} className="size-40">
         <circle
           cx={size / 2}
           cy={size / 2}
@@ -340,7 +329,7 @@ export function DonutChart({ data, ariaLabel, centerValue, centerLabel }: DonutC
         {data.map((d) => (
           <li key={d.label} className="flex items-center gap-2">
             <span className={cn('inline-block size-2.5 rounded-sm bg-current', d.className)} />
-            <span className="font-mono tabular-nums text-foreground">
+            <span className="text-foreground font-mono tabular-nums">
               {Math.round(d.value).toLocaleString('en-US')}
             </span>
             <span className="text-muted-foreground">{d.label}</span>

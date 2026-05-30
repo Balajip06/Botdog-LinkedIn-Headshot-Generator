@@ -215,7 +215,7 @@ function mockCohortRetention(): CohortRetentionRow[] {
 
 async function fetchGenerationsSince(
   supabase: SupabaseClient,
-  sinceIso: string,
+  sinceIso: string
 ): Promise<GenRow[]> {
   try {
     const { data, error } = await supabase
@@ -241,7 +241,7 @@ async function fetchGenerationsSince(
 
 async function fetchProfilesSince(
   supabase: SupabaseClient,
-  sinceIso: string,
+  sinceIso: string
 ): Promise<ProfileRow[]> {
   try {
     const { data, error } = await supabase
@@ -267,7 +267,7 @@ async function fetchProfilesSince(
 
 async function fetchStripeWebhooksSince(
   supabase: SupabaseClient,
-  sinceIso: string,
+  sinceIso: string
 ): Promise<WebhookRow[]> {
   try {
     const { data, error } = await supabase
@@ -301,9 +301,7 @@ function distinctUsersSince(rows: readonly GenRow[], sinceMs: number): number {
   return set.size
 }
 
-export async function getActiveUserCounts(
-  supabase: SupabaseClient,
-): Promise<ActiveUserCounts> {
+export async function getActiveUserCounts(supabase: SupabaseClient): Promise<ActiveUserCounts> {
   const now = Date.now()
   // Pull 60 days so we can compute prior-period in one round-trip.
   const since60 = new Date(now - 60 * DAY_MS).toISOString()
@@ -336,7 +334,7 @@ function countDistinctInRange(rows: readonly GenRow[], fromMs: number, toMs: num
 
 export async function getDailyActiveSeries(
   supabase: SupabaseClient,
-  days: number,
+  days: number
 ): Promise<DailyActiveSeries[]> {
   const since = new Date(Date.now() - days * DAY_MS).toISOString()
   const rows = await fetchGenerationsSince(supabase, since)
@@ -375,7 +373,7 @@ export async function getDailyActiveSeries(
 
 export async function getSignupSources(
   supabase: SupabaseClient,
-  days = 30,
+  days = 30
 ): Promise<SignupSourceRow[]> {
   const since = new Date(Date.now() - days * DAY_MS).toISOString()
   const profiles = await fetchProfilesSince(supabase, since)
@@ -402,10 +400,7 @@ export async function getSignupSources(
     .sort((a, b) => b.count - a.count)
 }
 
-export async function getFunnel(
-  supabase: SupabaseClient,
-  days: number,
-): Promise<FunnelStep[]> {
+export async function getFunnel(supabase: SupabaseClient, days: number): Promise<FunnelStep[]> {
   const since = new Date(Date.now() - days * DAY_MS).toISOString()
 
   const [profiles, gens, webhooks] = await Promise.all([
@@ -455,7 +450,7 @@ export async function getFunnel(
 
 export async function getCohortRetention(
   supabase: SupabaseClient,
-  weeks = 8,
+  weeks = 8
 ): Promise<CohortRetentionRow[]> {
   const now = Date.now()
   // Pull profiles back `weeks + 8` (latest cohort still wants 8w of follow-up)
@@ -552,9 +547,7 @@ export async function getCohortRetention(
   }
 
   // Most-recent cohort first; cap to `weeks` rows.
-  return rows
-    .sort((a, b) => (a.cohortWeek < b.cohortWeek ? 1 : -1))
-    .slice(0, weeks)
+  return rows.sort((a, b) => (a.cohortWeek < b.cohortWeek ? 1 : -1)).slice(0, weeks)
 }
 
 // -----------------------------------------------------------------------------
@@ -569,7 +562,7 @@ interface MarketingSpendRow {
 
 async function fetchMarketingSpendSince(
   supabase: SupabaseClient,
-  sinceIso: string,
+  sinceIso: string
 ): Promise<MarketingSpendRow[]> {
   try {
     const sinceDate = sinceIso.slice(0, 10) // week_start is a date column
@@ -610,7 +603,7 @@ async function fetchMarketingSpendSince(
  */
 export async function getCacByChannel(
   supabase: SupabaseClient,
-  days = 30,
+  days = 30
 ): Promise<Map<string, CacRow>> {
   const since = new Date(Date.now() - days * DAY_MS).toISOString()
 
@@ -653,10 +646,7 @@ export async function getCacByChannel(
   // Union of channels seen in either spend or signups — every signup channel
   // gets an entry too so the page can render `$0` (organic) cleanly without
   // a second lookup.
-  const allChannels = new Set<string>([
-    ...spendByChannel.keys(),
-    ...signupsByChannel.keys(),
-  ])
+  const allChannels = new Set<string>([...spendByChannel.keys(), ...signupsByChannel.keys()])
 
   const out = new Map<string, CacRow>()
   for (const channel of allChannels) {

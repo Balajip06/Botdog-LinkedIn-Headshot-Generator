@@ -15,13 +15,7 @@ import Link from 'next/link'
 import { BarChart, Delta } from '@/components/admin/Charts'
 import { KpiCard } from '@/components/admin/KpiCard'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getActiveUserCounts,
@@ -94,14 +88,13 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Users
         </p>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-extrabold tracking-tight">
-              Active users +{' '}
-              <span className="text-gradient-hero">funnel + retention</span>
+              Active users + <span className="text-gradient-hero">funnel + retention</span>
             </h1>
             {isDemo && (
               <Badge
@@ -112,15 +105,15 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
               </Badge>
             )}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Rolling windows · UTC · Cohort week starts Monday
           </p>
         </div>
-        <p className="text-sm text-muted-foreground">
-          DAU/WAU/MAU, signup-source attribution, free→paid funnel, and weekly
-          cohort retention. Switches to live numbers once profiles + generations +
-          Stripe webhooks all have flow; until then it runs on deterministic demo
-          data so the layout reads meaningfully in diligence.
+        <p className="text-muted-foreground text-sm">
+          DAU/WAU/MAU, signup-source attribution, free→paid funnel, and weekly cohort retention.
+          Switches to live numbers once profiles + generations + Stripe webhooks all have flow;
+          until then it runs on deterministic demo data so the layout reads meaningfully in
+          diligence.
         </p>
       </header>
 
@@ -166,7 +159,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
 
           <Card className="gap-3 py-5">
             <CardHeader className="px-5">
-              <CardDescription className="text-xs uppercase tracking-[0.18em]">
+              <CardDescription className="text-xs tracking-[0.18em] uppercase">
                 Daily active · 30 days
               </CardDescription>
               <CardTitle className="text-xl font-bold">
@@ -183,11 +176,10 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
             </CardContent>
           </Card>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             &quot;Active&quot; = at least one row in <code className="font-mono">generations</code>{' '}
-            in the window — a tighter signal than raw signups. Stickiness (DAU/MAU)
-            ratio:{' '}
-            <span className="font-semibold text-foreground">
+            in the window — a tighter signal than raw signups. Stickiness (DAU/MAU) ratio:{' '}
+            <span className="text-foreground font-semibold">
               {counts.mau === 0 ? '—' : formatPct((counts.dau / counts.mau) * 100)}
             </span>
             .
@@ -199,13 +191,13 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div className="flex flex-col gap-1">
               <h2 className="text-xl font-bold tracking-tight">Signup attribution</h2>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Window: last {range} days · grouped by{' '}
                 <code className="font-mono">acquisition_source.utm_source</code>
               </p>
             </div>
             <div
-              className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-muted/40 p-1"
+              className="border-border/60 bg-muted/40 inline-flex items-center gap-1 rounded-lg border p-1"
               aria-label="Range selector"
             >
               {VALID_RANGES.map((opt) => {
@@ -218,7 +210,7 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
                       'rounded-md px-2.5 py-1 text-xs font-semibold transition-colors',
                       active
                         ? 'bg-background text-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground',
+                        : 'text-muted-foreground hover:text-foreground'
                     )}
                     aria-current={active ? 'page' : undefined}
                   >
@@ -231,11 +223,10 @@ export default async function AdminUsersPage({ searchParams }: UsersPageProps) {
 
           <SignupSourcesSection sources={sources} cacByChannel={cacByChannel} />
 
-          <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">Direct</span> = no
-            <code className="font-mono"> utm_source</code> on the profile. Cookie-
-            banner gating may suppress UTM capture for declined-consent users, so
-            direct can be inflated.
+          <p className="text-muted-foreground text-xs">
+            <span className="text-foreground font-semibold">Direct</span> = no
+            <code className="font-mono"> utm_source</code> on the profile. Cookie- banner gating may
+            suppress UTM capture for declined-consent users, so direct can be inflated.
           </p>
         </TabsContent>
 
@@ -285,7 +276,7 @@ function SignupSourcesSection({
 
   if (sources.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-border/60 bg-card/40 p-12 text-center text-sm text-muted-foreground">
+      <div className="border-border/60 bg-card/40 text-muted-foreground flex flex-col items-center gap-2 rounded-3xl border border-dashed p-12 text-center text-sm">
         <UserPlus className="size-6" />
         <p>No signups in the window yet.</p>
       </div>
@@ -304,7 +295,7 @@ function SignupSourcesSection({
             {formatNumber(total)} attributed signups · ranked by volume
           </CardDescription>
         </CardHeader>
-        <ul className="divide-y divide-border/60">
+        <ul className="divide-border/60 divide-y">
           {top10.map((row, idx) => {
             const pct = max === 0 ? 0 : (row.count / max) * 100
             const sharePct = total === 0 ? 0 : (row.count / total) * 100
@@ -313,10 +304,10 @@ function SignupSourcesSection({
               <li key={row.source} className="flex flex-col gap-2 px-5 py-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted font-mono text-xs text-muted-foreground">
+                    <span className="bg-muted text-muted-foreground grid size-7 shrink-0 place-items-center rounded-lg font-mono text-xs">
                       {idx + 1}
                     </span>
-                    <p className="truncate font-semibold capitalize text-foreground">
+                    <p className="text-foreground truncate font-semibold capitalize">
                       {row.source}
                     </p>
                   </div>
@@ -331,15 +322,11 @@ function SignupSourcesSection({
                     >
                       CAC {formatCac(cac)}
                     </span>
-                    <span className="text-muted-foreground">
-                      {formatPct(sharePct, 0)} share
-                    </span>
-                    <span className="font-semibold text-foreground">
-                      {formatNumber(row.count)}
-                    </span>
+                    <span className="text-muted-foreground">{formatPct(sharePct, 0)} share</span>
+                    <span className="text-foreground font-semibold">{formatNumber(row.count)}</span>
                   </div>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-[var(--brand-grad-1)] to-[var(--brand-grad-2)]"
                     style={{ width: `${Math.max(2, pct)}%` }}
@@ -354,7 +341,7 @@ function SignupSourcesSection({
 
       <Card className="gap-3 py-5">
         <CardHeader className="px-5">
-          <CardDescription className="text-xs uppercase tracking-[0.18em]">
+          <CardDescription className="text-xs tracking-[0.18em] uppercase">
             CAC hint
           </CardDescription>
           <CardTitle className="text-lg font-bold">Best source</CardTitle>
@@ -364,28 +351,26 @@ function SignupSourcesSection({
             <>
               <div className="flex items-baseline gap-2">
                 <Crown className="size-4 text-amber-500" />
-                <span className="text-xl font-extrabold capitalize tracking-tight">
+                <span className="text-xl font-extrabold tracking-tight capitalize">
                   {best.source}
                 </span>
               </div>
               <p className="text-muted-foreground">
-                <span className="font-semibold text-foreground">
-                  {formatNumber(best.count)}
-                </span>{' '}
+                <span className="text-foreground font-semibold">{formatNumber(best.count)}</span>{' '}
                 signups in the window.
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 CAC{' '}
-                <span className="font-semibold text-foreground">
+                <span className="text-foreground font-semibold">
                   {formatCac(cacByChannel.get(best.source))}
                 </span>
                 {hasSpendData ? (
-                  <> · spend ÷ signups across the same {' '}window.</>
+                  <> · spend ÷ signups across the same window.</>
                 ) : (
                   <>
-                    {' '}— record spend at{' '}
-                    <code className="font-mono">/admin/marketing-spend</code> to wire
-                    CAC.
+                    {' '}
+                    — record spend at <code className="font-mono">/admin/marketing-spend</code> to
+                    wire CAC.
                   </>
                 )}
               </p>
@@ -434,10 +419,10 @@ function FunnelSection({ funnel }: { funnel: FunnelStep[] }) {
               <li key={step.label} className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="grid size-7 place-items-center rounded-lg bg-muted text-muted-foreground">
+                    <span className="bg-muted text-muted-foreground grid size-7 place-items-center rounded-lg">
                       <Icon className="size-4" />
                     </span>
-                    <span className="font-semibold text-foreground">{step.label}</span>
+                    <span className="text-foreground font-semibold">{step.label}</span>
                   </div>
                   <div className="flex items-baseline gap-3 font-mono text-xs tabular-nums">
                     {idx > 0 && (
@@ -445,12 +430,12 @@ function FunnelSection({ funnel }: { funnel: FunnelStep[] }) {
                         {formatPct(step.conversion)} from prior
                       </span>
                     )}
-                    <span className="text-lg font-extrabold text-foreground">
+                    <span className="text-foreground text-lg font-extrabold">
                       {formatNumber(step.count)}
                     </span>
                   </div>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-muted">
+                <div className="bg-muted h-3 overflow-hidden rounded-full">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-[var(--brand-grad-1)] to-[var(--brand-grad-2)]"
                     style={{ width: `${Math.max(3, pct)}%` }}
@@ -493,12 +478,11 @@ function FunnelSection({ funnel }: { funnel: FunnelStep[] }) {
         />
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        <span className="font-semibold text-foreground">Note:</span> &quot;First
-        gen&quot; counts distinct users who generated in the window — it includes
-        pre-existing users who happened to generate again. This is intentional
-        (window engagement, not strict signup cohort). For cohort-strict
-        retention, see the Cohort retention tab.
+      <p className="text-muted-foreground text-xs">
+        <span className="text-foreground font-semibold">Note:</span> &quot;First gen&quot; counts
+        distinct users who generated in the window — it includes pre-existing users who happened to
+        generate again. This is intentional (window engagement, not strict signup cohort). For
+        cohort-strict retention, see the Cohort retention tab.
       </p>
     </>
   )
@@ -509,7 +493,8 @@ function FunnelSection({ funnel }: { funnel: FunnelStep[] }) {
 function retentionTone(pct: number): string {
   // Brand-grad-1 saturation scaled by retention %. Bands: 0, 1-9, 10-19, 20-34, 35+.
   if (pct === 0) return 'bg-muted/40 text-muted-foreground'
-  if (pct < 10) return 'bg-[color-mix(in_oklab,var(--brand-grad-1)_12%,transparent)] text-foreground'
+  if (pct < 10)
+    return 'bg-[color-mix(in_oklab,var(--brand-grad-1)_12%,transparent)] text-foreground'
   if (pct < 20)
     return 'bg-[color-mix(in_oklab,var(--brand-grad-1)_28%,transparent)] text-foreground'
   if (pct < 35)
@@ -520,7 +505,7 @@ function retentionTone(pct: number): string {
 function CohortRetentionSection({ cohorts }: { cohorts: CohortRetentionRow[] }) {
   if (cohorts.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-border/60 bg-card/40 p-12 text-center text-sm text-muted-foreground">
+      <div className="border-border/60 bg-card/40 text-muted-foreground flex flex-col items-center gap-2 rounded-3xl border border-dashed p-12 text-center text-sm">
         <CalendarRange className="size-6" />
         <p>No cohorts large enough to show yet (≥5 signups required).</p>
       </div>
@@ -542,7 +527,7 @@ function CohortRetentionSection({ cohorts }: { cohorts: CohortRetentionRow[] }) 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+              <tr className="border-border/60 bg-muted/30 text-muted-foreground border-b text-left text-[10px] tracking-wider uppercase">
                 <th className="px-5 py-2.5 font-semibold">Signup week</th>
                 <th className="px-3 py-2.5 text-right font-semibold">Size</th>
                 <th className="px-3 py-2.5 text-center font-semibold">Week 1</th>
@@ -555,12 +540,10 @@ function CohortRetentionSection({ cohorts }: { cohorts: CohortRetentionRow[] }) 
               {cohorts.map((row) => (
                 <tr
                   key={row.cohortWeek}
-                  className="border-b border-border/40 transition-colors hover:bg-muted/30"
+                  className="border-border/40 hover:bg-muted/30 border-b transition-colors"
                 >
-                  <td className="px-5 py-3 align-middle font-mono text-xs">
-                    {row.cohortWeek}
-                  </td>
-                  <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                  <td className="px-5 py-3 align-middle font-mono text-xs">{row.cohortWeek}</td>
+                  <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                     {formatNumber(row.cohortSize)}
                   </td>
                   {(['w1', 'w2', 'w4', 'w8'] as const).map((key) => {
@@ -571,7 +554,7 @@ function CohortRetentionSection({ cohorts }: { cohorts: CohortRetentionRow[] }) 
                         <span
                           className={cn(
                             'inline-flex h-7 min-w-[3rem] items-center justify-center rounded-md px-2 font-mono text-xs font-semibold tabular-nums',
-                            retentionTone(pct),
+                            retentionTone(pct)
                           )}
                           title={`${formatPct(pct)} retention`}
                         >
@@ -587,17 +570,15 @@ function CohortRetentionSection({ cohorts }: { cohorts: CohortRetentionRow[] }) 
         </div>
       </Card>
 
-      <p className="text-xs text-muted-foreground">
-        A user is &quot;retained&quot; if they made any generation in the labeled
-        week after signup. Cohorts smaller than{' '}
-        <span className="font-semibold text-foreground">5 users</span> are hidden
-        as noisy.
+      <p className="text-muted-foreground text-xs">
+        A user is &quot;retained&quot; if they made any generation in the labeled week after signup.
+        Cohorts smaller than <span className="text-foreground font-semibold">5 users</span> are
+        hidden as noisy.
       </p>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         <TrendingUp className="mr-1 inline size-3" />
-        Most-recent cohorts will show &quot;—&quot; for later weeks until enough
-        time has passed.
+        Most-recent cohorts will show &quot;—&quot; for later weeks until enough time has passed.
       </p>
     </>
   )

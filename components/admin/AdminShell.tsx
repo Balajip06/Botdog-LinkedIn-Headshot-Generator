@@ -48,9 +48,7 @@ interface NavGroup {
 const NAV_GROUPS: readonly NavGroup[] = [
   {
     title: 'Overview',
-    items: [
-      { href: '/admin', label: 'Dashboard', icon: <Gauge className="size-4" /> },
-    ],
+    items: [{ href: '/admin', label: 'Dashboard', icon: <Gauge className="size-4" /> }],
   },
   {
     title: 'Growth',
@@ -148,7 +146,7 @@ function Sidebar({
         href="/admin"
         aria-label="Admin home"
         onClick={onNavigate}
-        className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+        className="hover:bg-muted/60 focus-visible:ring-ring/60 flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
         <Logo wordmark={false} size="sm" />
         <div className="flex flex-col leading-tight">
@@ -165,7 +163,7 @@ function Sidebar({
       <nav className="flex flex-1 flex-col gap-5 overflow-y-auto" aria-label="Admin sections">
         {NAV_GROUPS.map((group) => (
           <div key={group.title} className="flex flex-col gap-1">
-            <p className="px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/80">
+            <p className="text-muted-foreground/80 px-2 text-[10px] font-semibold tracking-[0.18em] uppercase">
               {group.title}
             </p>
             <ul className="flex flex-col gap-0.5">
@@ -178,10 +176,10 @@ function Sidebar({
                       onClick={onNavigate}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        'flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60',
+                        'focus-visible:ring-ring/60 flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none',
                         active
-                          ? 'bg-muted font-semibold text-foreground'
-                          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+                          ? 'bg-muted text-foreground font-semibold'
+                          : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                       )}
                     >
                       <span
@@ -189,7 +187,7 @@ function Sidebar({
                           'grid size-7 place-items-center rounded-lg border border-transparent',
                           active
                             ? 'border-border bg-background text-foreground shadow-sm'
-                            : 'bg-muted/60 text-muted-foreground',
+                            : 'bg-muted/60 text-muted-foreground'
                         )}
                       >
                         {item.icon}
@@ -204,14 +202,14 @@ function Sidebar({
         ))}
       </nav>
 
-      <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/40 p-3">
+      <div className="border-border/60 bg-muted/40 flex flex-col gap-2 rounded-xl border p-3">
         {email && (
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/80">
+              <p className="text-muted-foreground/80 text-[10px] font-semibold tracking-[0.18em] uppercase">
                 Signed in
               </p>
-              <p className="truncate text-xs font-semibold text-foreground" title={email}>
+              <p className="text-foreground truncate text-xs font-semibold" title={email}>
                 {email}
               </p>
             </div>
@@ -219,7 +217,7 @@ function Sidebar({
               <button
                 type="submit"
                 aria-label="Sign out"
-                className="grid size-7 place-items-center rounded-lg border border-border/60 bg-background text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                className="border-border/60 bg-background text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:ring-ring/60 grid size-7 place-items-center rounded-lg border transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 <LogOut className="size-3.5" aria-hidden="true" />
               </button>
@@ -230,7 +228,7 @@ function Sidebar({
           <Link
             href="/"
             onClick={onNavigate}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/60 inline-flex items-center gap-1.5 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
             aria-label="← App"
           >
             <ArrowLeftRight className="size-3.5" aria-hidden="true" />← App
@@ -284,28 +282,28 @@ export function AdminShell({ children, email, signOutAction }: AdminShellProps) 
   }, [mobileOpen])
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
-      <aside className="hidden w-64 shrink-0 border-r border-border/60 bg-card/40 md:block">
+    <div className="bg-background text-foreground flex min-h-screen">
+      <aside className="border-border/60 bg-card/40 hidden w-64 shrink-0 border-r md:block">
         <div className="sticky top-0 h-screen">
           <Sidebar pathname={pathname} email={email} signOutAction={signOutAction} />
         </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-border/60 bg-background/85 px-4 py-3 backdrop-blur-md md:hidden">
+        <header className="border-border/60 bg-background/85 sticky top-0 z-30 flex items-center justify-between gap-3 border-b px-4 py-3 backdrop-blur-md md:hidden">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
             aria-expanded={mobileOpen}
             aria-controls="admin-mobile-drawer"
-            className="grid size-9 place-items-center rounded-xl border border-border/60 bg-background text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+            className="border-border/60 bg-background text-foreground hover:bg-muted focus-visible:ring-ring/60 grid size-9 place-items-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:outline-none"
           >
             <Menu className="size-4" aria-hidden="true" />
           </button>
           <Link
             href="/admin"
-            className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 rounded-md"
+            className="focus-visible:ring-ring/60 flex items-center gap-2 rounded-md focus-visible:ring-2 focus-visible:outline-none"
           >
             <Logo wordmark={false} size="sm" />
             <span className="text-sm font-semibold tracking-tight">Admin console</span>
@@ -325,21 +323,21 @@ export function AdminShell({ children, email, signOutAction }: AdminShellProps) 
           data-state={mobileOpen ? 'open' : 'closed'}
           className={cn(
             'fixed inset-0 z-40 md:hidden',
-            mobileOpen ? 'pointer-events-auto' : 'pointer-events-none',
+            mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'
           )}
         >
           <div
             className={cn(
-              'absolute inset-0 bg-background/70 backdrop-blur-sm transition-opacity duration-200',
-              mobileOpen ? 'opacity-100' : 'opacity-0',
+              'bg-background/70 absolute inset-0 backdrop-blur-sm transition-opacity duration-200',
+              mobileOpen ? 'opacity-100' : 'opacity-0'
             )}
             onClick={close}
             aria-hidden="true"
           />
           <div
             className={cn(
-              'relative flex h-full w-72 flex-col border-r border-border/60 bg-card shadow-2xl transition-transform duration-200 ease-out',
-              mobileOpen ? 'translate-x-0' : '-translate-x-full',
+              'border-border/60 bg-card relative flex h-full w-72 flex-col border-r shadow-2xl transition-transform duration-200 ease-out',
+              mobileOpen ? 'translate-x-0' : '-translate-x-full'
             )}
           >
             <div className="flex items-center justify-end px-3 py-3">
@@ -348,7 +346,7 @@ export function AdminShell({ children, email, signOutAction }: AdminShellProps) 
                 type="button"
                 onClick={close}
                 aria-label="Close menu"
-                className="grid size-9 place-items-center rounded-xl border border-border/60 bg-background text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+                className="border-border/60 bg-background text-foreground hover:bg-muted focus-visible:ring-ring/60 grid size-9 place-items-center rounded-xl border transition-colors focus-visible:ring-2 focus-visible:outline-none"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>

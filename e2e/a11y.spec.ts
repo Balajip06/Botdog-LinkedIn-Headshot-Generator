@@ -34,10 +34,9 @@ for (const route of ROUTES) {
         `${route} — critical violations:\n` +
           critical
             .map(
-              (v) =>
-                `  - ${v.id} (${v.help})\n    nodes: ${v.nodes.length}\n    rule: ${v.helpUrl}`,
+              (v) => `  - ${v.id} (${v.help})\n    nodes: ${v.nodes.length}\n    rule: ${v.helpUrl}`
             )
-            .join('\n'),
+            .join('\n')
       )
     }
     expect(critical, `${route} should have zero critical a11y violations`).toEqual([])

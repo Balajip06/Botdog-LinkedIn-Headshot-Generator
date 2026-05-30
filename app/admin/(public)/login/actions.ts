@@ -17,7 +17,9 @@ import { createClient } from '@/lib/supabase/server'
  *   "wrong email").
  */
 export async function signInWithPassword(formData: FormData): Promise<void> {
-  const email = String(formData.get('email') ?? '').trim().toLowerCase()
+  const email = String(formData.get('email') ?? '')
+    .trim()
+    .toLowerCase()
   const password = String(formData.get('password') ?? '')
   const next = safeNextPath(String(formData.get('next') ?? '/admin'))
 

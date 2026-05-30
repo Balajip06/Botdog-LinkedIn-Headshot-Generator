@@ -47,7 +47,7 @@ function parseJsonField<T>(
   raw: string | null,
   schema: z.ZodSchema<T>,
   fieldName: string,
-  fallback: T,
+  fallback: T
 ): T {
   // Empty/whitespace form fields fall back to the supplied default — the
   // schema itself isn't required to have a `.default()`, so this keeps the
@@ -104,7 +104,12 @@ function readTrendForm(formData: FormData): z.infer<typeof TrendUpsertSchema> {
   const inputSchemaRaw = (formData.get('input_schema') as string | null) ?? null
   const faqRaw = (formData.get('faq') as string | null) ?? null
 
-  const input_schema = parseJsonField(inputSchemaRaw, TrendInputSchema, 'input_schema', DEFAULT_TREND_INPUT)
+  const input_schema = parseJsonField(
+    inputSchemaRaw,
+    TrendInputSchema,
+    'input_schema',
+    DEFAULT_TREND_INPUT
+  )
   const faq = parseJsonField(faqRaw, FAQSchema, 'faq', [])
 
   const parsed = TrendUpsertSchema.safeParse({
@@ -272,10 +277,7 @@ export async function cloneTrend(formData: FormData): Promise<void> {
   // set. `slug` is unique-indexed so this scan is bounded by the number
   // of prior clones of this title — in practice 1.
   const base = slugify(`${source.title}-copy`) || 'trend-copy'
-  const { data: collisions } = await supabase
-    .from('trends')
-    .select('slug')
-    .like('slug', `${base}%`)
+  const { data: collisions } = await supabase.from('trends').select('slug').like('slug', `${base}%`)
   const taken = new Set((collisions ?? []).map((r) => (r as { slug: string }).slug))
   let candidate = base
   if (taken.has(base)) {
@@ -356,10 +358,7 @@ export async function toggleFeatured(formData: FormData): Promise<void> {
   const nextValue = featured === '1'
 
   const supabase = await createClient()
-  const { error } = await supabase
-    .from('trends')
-    .update({ is_featured: nextValue })
-    .eq('id', id)
+  const { error } = await supabase.from('trends').update({ is_featured: nextValue }).eq('id', id)
   if (error) {
     redirect(`/admin/trends?error=${encodeURIComponent(error.message)}`)
   }

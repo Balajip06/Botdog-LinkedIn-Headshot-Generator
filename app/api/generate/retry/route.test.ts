@@ -14,8 +14,13 @@ import type { NextRequest } from 'next/server'
  */
 
 let authUser: { id: string } | null = { id: 'user-1' }
-let genRow: { id: string; user_id: string; status: string; trend_id: string; attempts: number } | null =
-  null
+let genRow: {
+  id: string
+  user_id: string
+  status: string
+  trend_id: string
+  attempts: number
+} | null = null
 let updateResult: { error: { message: string } | null } = { error: null }
 
 const calls: {
@@ -119,7 +124,13 @@ describe('POST /api/generate/retry', () => {
   })
 
   it('200 + service-role flips to pending and increments attempts', async () => {
-    genRow = { id: VALID_GEN, user_id: 'user-1', status: 'failed_retryable', trend_id: 't', attempts: 2 }
+    genRow = {
+      id: VALID_GEN,
+      user_id: 'user-1',
+      status: 'failed_retryable',
+      trend_id: 't',
+      attempts: 2,
+    }
     const { POST } = await loadRoute()
     const res = await POST(makeReq({ generation_id: VALID_GEN }))
     expect(res.status).toBe(200)

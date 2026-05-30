@@ -90,7 +90,7 @@ describe('POST /api/admin/run-trend-discovery — cron auth path', () => {
         targetTable: 'trend_suggestions',
         adminId: null,
         after: expect.objectContaining({ triggered_by: 'cron' }),
-      }),
+      })
     )
   })
 
@@ -134,7 +134,7 @@ describe('POST /api/admin/run-trend-discovery — admin auth path', () => {
         action: 'trend_discovery_run',
         adminId: 'admin-1',
         after: expect.objectContaining({ triggered_by: 'admin' }),
-      }),
+      })
     )
   })
 
@@ -150,7 +150,7 @@ describe('POST /api/admin/run-trend-discovery — admin auth path', () => {
           error_count: 3,
           errors: ['reddit: timeout', 'tiktok: 401', 'instagram: blocked'],
         }),
-      }),
+      })
     )
   })
 })

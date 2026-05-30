@@ -26,7 +26,8 @@ function normalizeNextPath(raw: string | undefined): string {
   // Strip Git-Bash MSYS path conversion artifact: `/me/creations` on Windows
   // bash gets rewritten to `C:/Program Files/Git/me/creations`. Detect by
   // looking for a drive prefix + recover the trailing slash-prefixed path.
-  const winPathPrefix = /^[A-Za-z]:[\\/].*?[\\/](me|admin|result|login|trend|pricing|status|about)[\\/]?/i
+  const winPathPrefix =
+    /^[A-Za-z]:[\\/].*?[\\/](me|admin|result|login|trend|pricing|status|about)[\\/]?/i
   const match = winPathPrefix.exec(raw)
   if (match) {
     const idx = raw.toLowerCase().lastIndexOf('/' + match[1].toLowerCase())

@@ -26,8 +26,15 @@ const HIGHLIGHT_PACK: PackId = 'medium'
 function nextSundayUtcLabel(): string {
   const now = new Date()
   const daysUntilSunday = (7 - now.getUTCDay()) % 7 || 7
-  const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSunday))
-  return next.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'UTC' })
+  const next = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSunday)
+  )
+  return next.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
 }
 
 function formatPrice(cents: number): string {
@@ -39,13 +46,14 @@ export function QuotaUpsellModal({ open, onOpenChange, freeUsedThisWeek }: Quota
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-3xl border border-border/60 bg-card sm:max-w-md">
+      <DialogContent className="border-border/60 bg-card rounded-3xl border sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold leading-tight">
+          <DialogTitle className="text-xl leading-tight font-semibold">
             You&apos;ve used your <span className="text-gradient-hero">free tries</span> this week
           </DialogTitle>
           <DialogDescription>
-            Don&apos;t lose your momentum — your weekly {Math.max(freeUsedThisWeek, 5)}-free refills on {refillDate}.
+            Don&apos;t lose your momentum — your weekly {Math.max(freeUsedThisWeek, 5)}-free refills
+            on {refillDate}.
           </DialogDescription>
         </DialogHeader>
 
@@ -55,7 +63,7 @@ export function QuotaUpsellModal({ open, onOpenChange, freeUsedThisWeek }: Quota
             return (
               <div
                 key={pack.id}
-                className="relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-border/60 bg-background/60 p-3"
+                className="border-border/60 bg-background/60 relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border p-3"
               >
                 {highlighted && (
                   <span
@@ -65,7 +73,7 @@ export function QuotaUpsellModal({ open, onOpenChange, freeUsedThisWeek }: Quota
                 )}
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">{pack.label}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {pack.credits} credits · {formatPrice(pack.priceCents)}
                   </p>
                 </div>
@@ -85,7 +93,7 @@ export function QuotaUpsellModal({ open, onOpenChange, freeUsedThisWeek }: Quota
 
         <Link
           href="/pricing"
-          className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+          className="text-muted-foreground text-center text-xs underline-offset-4 hover:underline"
         >
           See full pricing →
         </Link>

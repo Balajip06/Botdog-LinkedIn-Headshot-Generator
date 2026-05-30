@@ -15,10 +15,7 @@ export default function Loading() {
       {/* KPI tile row — 4 tiles */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-sm"
-          >
+          <div key={i} className="bg-card flex flex-col gap-3 rounded-xl border p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <Skeleton className="size-5 rounded-md" />
               <Skeleton className="h-3 w-24" />
@@ -32,7 +29,7 @@ export default function Loading() {
 
       {/* Quota blocks KPI row */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col gap-3 rounded-xl border bg-card p-5 shadow-sm lg:col-span-2">
+        <div className="bg-card flex flex-col gap-3 rounded-xl border p-5 shadow-sm lg:col-span-2">
           <div className="flex items-center gap-2">
             <Skeleton className="size-5 rounded-md" />
             <Skeleton className="h-3 w-28" />
@@ -45,7 +42,7 @@ export default function Loading() {
 
       {/* Charts row — 2 charts side-by-side */}
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border bg-card py-5 shadow-sm lg:col-span-2">
+        <div className="bg-card rounded-xl border py-5 shadow-sm lg:col-span-2">
           <div className="px-5">
             <Skeleton className="h-3 w-28" />
             <Skeleton className="mt-2 h-6 w-64" />
@@ -54,7 +51,7 @@ export default function Loading() {
             <Skeleton className="h-56 w-full rounded-md" />
           </div>
         </div>
-        <div className="rounded-xl border bg-card py-5 shadow-sm">
+        <div className="bg-card rounded-xl border py-5 shadow-sm">
           <div className="px-5">
             <Skeleton className="h-3 w-28" />
             <Skeleton className="mt-2 h-6 w-40" />
@@ -66,7 +63,7 @@ export default function Loading() {
       </div>
 
       {/* Revenue chart */}
-      <div className="rounded-xl border bg-card py-5 shadow-sm">
+      <div className="bg-card rounded-xl border py-5 shadow-sm">
         <div className="px-5">
           <Skeleton className="h-3 w-28" />
           <Skeleton className="mt-2 h-6 w-56" />
@@ -79,10 +76,7 @@ export default function Loading() {
       {/* StatCard row */}
       <div className="grid gap-4 sm:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex flex-col gap-2 rounded-xl border bg-card p-5 shadow-sm"
-          >
+          <div key={i} className="bg-card flex flex-col gap-2 rounded-xl border p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <Skeleton className="size-5 rounded-md" />
               <Skeleton className="h-3 w-24" />

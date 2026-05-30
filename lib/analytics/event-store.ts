@@ -24,19 +24,9 @@ import {
   getQuotaBlockedSummaryDb,
   recordEventDb,
 } from './event-store-db'
-import type {
-  Counts,
-  DailyPoint,
-  QuotaBlockedSummary,
-  TrendEventType,
-} from './event-store-types'
+import type { Counts, DailyPoint, QuotaBlockedSummary, TrendEventType } from './event-store-types'
 
-export type {
-  Counts,
-  DailyPoint,
-  QuotaBlockedSummary,
-  TrendEventType,
-} from './event-store-types'
+export type { Counts, DailyPoint, QuotaBlockedSummary, TrendEventType } from './event-store-types'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
@@ -121,7 +111,10 @@ function startOfUtcDay(d: Date): Date {
  * Used only by the memory backend — the Supabase backend aggregates by
  * `occurred_at` for real numbers.
  */
-function splitDailyForSlug(slug: string, days: number): { impressions: number[]; clicks: number[] } {
+function splitDailyForSlug(
+  slug: string,
+  days: number
+): { impressions: number[]; clicks: number[] } {
   const counts = readMemory(slug)
   const baseSeed = djb2(slug)
   const impressionsOut = new Array<number>(days).fill(0)
@@ -189,7 +182,7 @@ function getDailySeriesMemory(slugs: readonly string[], days: number): DailyPoin
 
 function getPeriodTotalsMemory(
   slugs: readonly string[],
-  days: number,
+  days: number
 ): { current: Counts; previous: Counts } {
   const total = getDailySeriesMemory(slugs, days * 2)
   const half = total.slice(days)
@@ -200,7 +193,7 @@ function getPeriodTotalsMemory(
         impressions: acc.impressions + p.impressions,
         clicks: acc.clicks + p.clicks,
       }),
-      { impressions: 0, clicks: 0 },
+      { impressions: 0, clicks: 0 }
     )
   return { current: sum(half), previous: sum(prior) }
 }
@@ -230,17 +223,14 @@ export async function getOverall(slugs: readonly string[]): Promise<Counts> {
   return getOverallMemory(slugs)
 }
 
-export async function getDailySeries(
-  slugs: readonly string[],
-  days = 7,
-): Promise<DailyPoint[]> {
+export async function getDailySeries(slugs: readonly string[], days = 7): Promise<DailyPoint[]> {
   if (supabaseBackendActive()) return getDailySeriesDb(slugs, days)
   return getDailySeriesMemory(slugs, days)
 }
 
 export async function getPeriodTotals(
   slugs: readonly string[],
-  days: number,
+  days: number
 ): Promise<{ current: Counts; previous: Counts }> {
   if (supabaseBackendActive()) return getPeriodTotalsDb(slugs, days)
   return getPeriodTotalsMemory(slugs, days)
@@ -266,7 +256,7 @@ function zeroedQuotaSeries(): { date: string; label: string; count: number }[] {
  * not the /api/track route), so the memory branch returns a zeroed shape.
  */
 export async function getQuotaBlockedSummary(
-  windowHours: number = 24,
+  windowHours: number = 24
 ): Promise<QuotaBlockedSummary> {
   if (supabaseBackendActive()) return getQuotaBlockedSummaryDb(windowHours)
   return {

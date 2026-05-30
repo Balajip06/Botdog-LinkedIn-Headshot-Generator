@@ -22,11 +22,11 @@ export function AdminTile({ href, icon, title, description, accent, badge }: Adm
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 transition-all hover:-translate-y-0.5 hover:shadow-soft"
+      className="group border-border/60 bg-card hover:shadow-soft relative overflow-hidden rounded-2xl border p-5 transition-all hover:-translate-y-0.5"
     >
       <div className={`absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r ${accent}`} />
       <div className="flex items-start justify-between gap-3">
-        <div className="grid size-10 place-items-center rounded-xl bg-muted text-foreground">
+        <div className="bg-muted text-foreground grid size-10 place-items-center rounded-xl">
           {icon}
         </div>
         {badge && (
@@ -36,8 +36,8 @@ export function AdminTile({ href, icon, title, description, accent, badge }: Adm
         )}
       </div>
       <h2 className="mt-4 text-base font-bold tracking-tight">{title}</h2>
-      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-      <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-foreground/80 transition-transform group-hover:translate-x-0.5">
+      <p className="text-muted-foreground mt-1 text-xs">{description}</p>
+      <div className="text-foreground/80 mt-3 inline-flex items-center gap-1 text-xs font-semibold transition-transform group-hover:translate-x-0.5">
         Open <ArrowRight className="size-3.5" />
       </div>
     </Link>

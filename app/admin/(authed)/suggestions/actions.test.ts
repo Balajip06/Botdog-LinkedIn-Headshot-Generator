@@ -71,8 +71,10 @@ function makeMockSupabase(overrides: ChainOverrides = {}) {
           status: 'pending',
         }
       : overrides.suggestionRow
-  const trendInsertResult =
-    overrides.trendInsertResult ?? { data: { id: 'new-trend-id' }, error: null }
+  const trendInsertResult = overrides.trendInsertResult ?? {
+    data: { id: 'new-trend-id' },
+    error: null,
+  }
   const updateResult = overrides.updateResult ?? { error: null }
 
   let lastTable: string | null = null
@@ -106,8 +108,7 @@ function makeMockSupabase(overrides: ChainOverrides = {}) {
         }
         // select chain — return chainable thenable
         const thenable = {
-          then: (resolve: (v: unknown) => void) =>
-            resolve({ data: null, error: null }),
+          then: (resolve: (v: unknown) => void) => resolve({ data: null, error: null }),
           maybeSingle: chain.maybeSingle,
           eq: chain.eq,
         }

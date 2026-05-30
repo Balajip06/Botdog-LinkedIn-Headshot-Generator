@@ -42,10 +42,7 @@ export function trackServer<E extends EventName>(
   })
 }
 
-export function identifyServer(
-  distinctId: string,
-  properties?: Record<string, unknown>
-): void {
+export function identifyServer(distinctId: string, properties?: Record<string, unknown>): void {
   const client = getClient()
   if (!client) return
   client.identify({ distinctId, properties })

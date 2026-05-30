@@ -12,6 +12,7 @@ Trendly operates a curated trend catalog. Most takedown emails will target eithe
 ## Operating principle
 
 Good-faith takedown without admission of liability. Trendly's TOS §4 commits to:
+
 1. Remove the affected trend within 24 hours.
 2. Re-prompt the trend to drop the named reference.
 3. Notify users who generated under that trend.
@@ -67,13 +68,13 @@ Cast a wide net — the rights holder may use a colloquial name for the trend th
 
 Decide which branch applies. The same takedown can sometimes touch both — handle as 3a **and** 3b.
 
-| Claim shape | Branch |
-|---|---|
-| "This specific user generation infringes." (e.g., a screenshot with a specific user's face + a copyrighted character) | **3a — User generation** |
-| "Your trend concept itself infringes." (e.g., "the 'Ghibli-style' trend is an unauthorized derivative work") | **3b — Trend concept** |
-| "Both" (the trend produces infringing outputs at scale, and here are examples) | **3a + 3b** |
-| "Right of publicity" — a specific person (often a celebrity) claims their likeness is being used | **3b** (deactivate any trend that names them) + **3a** (delete any user-gen of that person) |
-| DMCA notice with full statutory elements | Treat as **3a** + **3b**, follow safe-harbor process below |
+| Claim shape                                                                                                           | Branch                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| "This specific user generation infringes." (e.g., a screenshot with a specific user's face + a copyrighted character) | **3a — User generation**                                                                    |
+| "Your trend concept itself infringes." (e.g., "the 'Ghibli-style' trend is an unauthorized derivative work")          | **3b — Trend concept**                                                                      |
+| "Both" (the trend produces infringing outputs at scale, and here are examples)                                        | **3a + 3b**                                                                                 |
+| "Right of publicity" — a specific person (often a celebrity) claims their likeness is being used                      | **3b** (deactivate any trend that names them) + **3a** (delete any user-gen of that person) |
+| DMCA notice with full statutory elements                                                                              | Treat as **3a** + **3b**, follow safe-harbor process below                                  |
 
 ---
 
@@ -115,6 +116,7 @@ If the URL is publicly cached anywhere (CDN, archive.org, screenshotted on Twitt
 ## Step 3b — Trend concept takedown
 
 Deactivate the trend at the catalog level. Use `/admin/trends/[id]/edit` to flip `is_active = false`. This:
+
 - Removes the trend from the public catalog (RLS policy `trends_public_read` requires `is_active = true`).
 - Removes the SSR `/trend/<slug>` page from the sitemap (`app/(public)/sitemap.ts` reads only active trends).
 - Stops new generations against this trend (the `/api/generate` route validates the trend is active before queuing).
@@ -139,7 +141,8 @@ update public.generations
 
 Add the offending name (the studio, franchise, or celebrity) to [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md). Future trends must not reference that name.
 
-If you want to keep the trend's *aesthetic* (which is often what made it popular) — re-prompt it to drop the named reference. Per TOS §4 point 2, this is the committed remediation. Example: a Ghibli-styled trend gets re-prompted to "soft hand-drawn 1990s animation aesthetic with pastel skies." Open `/admin/trends/[id]/edit`, edit `prompt_template`, save. The `bump_trend_version` trigger (migration `20260527000002_trends.sql`) will:
+If you want to keep the trend's _aesthetic_ (which is often what made it popular) — re-prompt it to drop the named reference. Per TOS §4 point 2, this is the committed remediation. Example: a Ghibli-styled trend gets re-prompted to "soft hand-drawn 1990s animation aesthetic with pastel skies." Open `/admin/trends/[id]/edit`, edit `prompt_template`, save. The `bump_trend_version` trigger (migration `20260527000002_trends.sql`) will:
+
 - Bump `version`.
 - Append the old prompt to `prompt_template_history`.
 - Flip `eval_status = 'untested'` + `is_active = false` (the eval gate).
@@ -194,11 +197,13 @@ This log is the artifact that survives an acquisition. A holdco buyer will ask "
 Trendly does not adjudicate disputes between rights holders and users. Per TOS §4, the takedown is final from Trendly's side — Trendly's role ends after good-faith removal.
 
 If the affected user disputes the takedown:
+
 1. Direct them to escalate via legal channels (their own counsel) directly to the rights holder.
 2. Do **not** restore the content unilaterally based on user assertion.
 3. Restore only if the rights holder retracts in writing, **or** if a court order directs restoration.
 
 For DMCA-specific notices, the safe-harbor process is more structured:
+
 - A valid DMCA notice includes: identification of the work, identification of the infringing material, contact info, good-faith statement, accuracy statement under penalty of perjury, physical/electronic signature.
 - If a notice lacks any element, you may request the missing elements before acting (but err on the side of acting in good faith — incomplete notices still trigger removal, just not safe harbor).
 - A DMCA counter-notice (from the user, with the same statutory elements) triggers a 10-14 business day waiting period before restoration. If the rights holder files suit during that window, content stays down indefinitely.
@@ -303,12 +308,14 @@ Pre-acquisition, your "counsel" is whoever you've retained for the asset sale. T
 ## DMCA safe-harbor logic (US, summary)
 
 Trendly is a "service provider" under 17 U.S.C. §512 if all of these hold:
+
 - We don't have actual knowledge of infringement.
 - We don't financially benefit directly from infringement (gray area — we sell credits; the trend catalog is curated by us).
 - We respond expeditiously to takedown notices.
 - We designate an agent for receipt of notices.
 
 To preserve safe harbor:
+
 - Designate a DMCA agent via the [USCO online portal](https://dmca.copyright.gov/) ($6/3-year filing). Listed agent email is `legal@<domain>`. **TODO — file before public launch.**
 - Publish the agent's contact info on the site (footer link to a `/dmca` page).
 - Implement a repeat-infringer policy: users with 3+ valid takedowns get suspended.

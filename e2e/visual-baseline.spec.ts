@@ -40,7 +40,7 @@ async function captureRoute(
   page: import('@playwright/test').Page,
   testInfo: import('@playwright/test').TestInfo,
   routeName: string,
-  routePath: string,
+  routePath: string
 ): Promise<void> {
   const response = await page.goto(routePath, { waitUntil: 'networkidle' })
   expect(response, `${routePath} navigation`).not.toBeNull()
@@ -71,7 +71,10 @@ test.describe('visual baseline', () => {
       const ctx = await browser.newContext()
       const page = await ctx.newPage()
       await page.goto('/admin/trends', { waitUntil: 'networkidle' })
-      const href = await page.locator('a[href*="/admin/trends/"][href*="/edit"]').first().getAttribute('href')
+      const href = await page
+        .locator('a[href*="/admin/trends/"][href*="/edit"]')
+        .first()
+        .getAttribute('href')
       const match = href?.match(/\/admin\/trends\/([^/]+)\/edit/)
       trendId = match?.[1] ?? null
       await ctx.close()

@@ -4,7 +4,7 @@ A curated viral-trend image generator. Pick a trend, upload your photo, ship the
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-black) ![React 19](https://img.shields.io/badge/React-19-149eca) ![TypeScript 5](https://img.shields.io/badge/TypeScript-5-3178c6) ![Tailwind v4](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests 404 passing](https://img.shields.io/badge/tests-404%20passing-22c55e) ![Routes 50](https://img.shields.io/badge/routes-50-8b5cf6) ![License Proprietary](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
-> Stack: Next.js 16 · React 19 · TypeScript 5 · Tailwind v4  ·  Backend: Supabase (Auth · DB · Storage · Edge Functions · pg_cron)  ·  Tests: 404 passing across 43 files  ·  Routes: 50 built  ·  License: Proprietary
+> Stack: Next.js 16 · React 19 · TypeScript 5 · Tailwind v4 · Backend: Supabase (Auth · DB · Storage · Edge Functions · pg_cron) · Tests: 404 passing across 43 files · Routes: 50 built · License: Proprietary
 
 Trendly turns a phone photo into a viral-trend image (Ghibli portrait, plushie maker, Pixar-style, etc.) by calling Google Gemini's Nano Banana / Pro image model through a provider-agnostic shim. Admins curate the trend catalogue with a JSONB-schema-driven editor + an eval gate; consumers upload, watch the result render, and share — anonymous trial, free weekly quota, and Stripe credit-packs cover the conversion funnel. The codebase is the asset: 50 routes, 404 tests, full admin dashboard suite, 7 ADRs, 5 SOPs, complete diligence data-room.
 
@@ -27,18 +27,18 @@ Open <http://localhost:3000>.
 
 ## Scripts
 
-| Command | Purpose |
-|---|---|
-| `pnpm dev` | Next.js dev server (Turbopack default) on `:3000` |
-| `pnpm build` | Production build — emits the 50-route table |
-| `pnpm test` | Vitest unit + component tests (404 across 43 files) |
-| `pnpm test:e2e` | Playwright E2E (chromium / webkit / mobile-chrome / mobile-safari) |
-| `pnpm typecheck` | `tsc --noEmit` — strict TypeScript, zero `any` permitted |
-| `pnpm lint` | ESLint 9 flat config |
-| `pnpm format` | Prettier 3 + tailwind plugin (`format:check` for CI mode) |
-| `pnpm supabase:reset` | Re-apply all migrations + seed against the local Supabase stack |
-| `pnpm supabase:types` | Regenerate `lib/supabase/database.types.ts` from live schema |
-| `pnpm analyze` | `cross-env ANALYZE=true next build` — emits bundle analyzer report |
+| Command               | Purpose                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| `pnpm dev`            | Next.js dev server (Turbopack default) on `:3000`                  |
+| `pnpm build`          | Production build — emits the 50-route table                        |
+| `pnpm test`           | Vitest unit + component tests (404 across 43 files)                |
+| `pnpm test:e2e`       | Playwright E2E (chromium / webkit / mobile-chrome / mobile-safari) |
+| `pnpm typecheck`      | `tsc --noEmit` — strict TypeScript, zero `any` permitted           |
+| `pnpm lint`           | ESLint 9 flat config                                               |
+| `pnpm format`         | Prettier 3 + tailwind plugin (`format:check` for CI mode)          |
+| `pnpm supabase:reset` | Re-apply all migrations + seed against the local Supabase stack    |
+| `pnpm supabase:types` | Regenerate `lib/supabase/database.types.ts` from live schema       |
+| `pnpm analyze`        | `cross-env ANALYZE=true next build` — emits bundle analyzer report |
 
 Full script list in [`package.json`](./package.json).
 
@@ -85,22 +85,22 @@ docs/                   ADRs, SOPs, runbooks, architecture, legal templates, pre
 
 ## Documentation
 
-| Doc | Purpose |
-|---|---|
-| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | System diagram, sequence diagrams, data model, RLS posture, infra cost shape |
-| [`docs/RUNBOOK.md`](./docs/RUNBOOK.md) | Cred-arrival to ship sequence + 14-test verification matrix |
-| [`docs/CREDENTIALS.md`](./docs/CREDENTIALS.md) | Per-env-var reference — where to source, what breaks if missing |
-| [`docs/LAUNCH_CHECKLIST.md`](./docs/LAUNCH_CHECKLIST.md) | Placeholder-string + dev-flag audit; brand swap targets; final pre-DNS gate |
-| [`docs/adr/`](./docs/adr/) | 7 Architecture Decision Records — credit packs vs subscription, RLS quota strategy, schema-driven inputs, eval gate, idempotency, soft-delete, anonymous trial |
-| [`docs/sops/`](./docs/sops/) | 5 Standard Operating Procedures — daily ops, incident response, refund handling, weekly new-trend workflow, takedown handling |
-| [`docs/legal/`](./docs/legal/) | DPA template + sub-processor list (GDPR Article 28 compliant) |
-| [`docs/transferability/`](./docs/transferability/) | Per-account transfer plan + post-acquisition timeline |
-| [`docs/data-room/`](./docs/data-room/) | Buyer-facing diligence package (financial / customer / product / infrastructure / ownership / legal / runbooks) |
-| [`docs/press-kit/`](./docs/press-kit/) | Sell sheet, launch thread templates, founder bio |
-| [`CLAUDE.md`](./CLAUDE.md) | Project conventions, non-negotiables, active skills (AI-agent oriented) |
-| [`CHANGELOG.md`](./CHANGELOG.md) | Keep-a-Changelog history of releases |
-| [`CONTRIBUTING.md`](./CONTRIBUTING.md) | Branch + commit + migration discipline; reviewer checklist |
-| [`SECURITY.md`](./SECURITY.md) | Vulnerability disclosure policy |
+| Doc                                                      | Purpose                                                                                                                                                        |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)         | System diagram, sequence diagrams, data model, RLS posture, infra cost shape                                                                                   |
+| [`docs/RUNBOOK.md`](./docs/RUNBOOK.md)                   | Cred-arrival to ship sequence + 14-test verification matrix                                                                                                    |
+| [`docs/CREDENTIALS.md`](./docs/CREDENTIALS.md)           | Per-env-var reference — where to source, what breaks if missing                                                                                                |
+| [`docs/LAUNCH_CHECKLIST.md`](./docs/LAUNCH_CHECKLIST.md) | Placeholder-string + dev-flag audit; brand swap targets; final pre-DNS gate                                                                                    |
+| [`docs/adr/`](./docs/adr/)                               | 7 Architecture Decision Records — credit packs vs subscription, RLS quota strategy, schema-driven inputs, eval gate, idempotency, soft-delete, anonymous trial |
+| [`docs/sops/`](./docs/sops/)                             | 5 Standard Operating Procedures — daily ops, incident response, refund handling, weekly new-trend workflow, takedown handling                                  |
+| [`docs/legal/`](./docs/legal/)                           | DPA template + sub-processor list (GDPR Article 28 compliant)                                                                                                  |
+| [`docs/transferability/`](./docs/transferability/)       | Per-account transfer plan + post-acquisition timeline                                                                                                          |
+| [`docs/data-room/`](./docs/data-room/)                   | Buyer-facing diligence package (financial / customer / product / infrastructure / ownership / legal / runbooks)                                                |
+| [`docs/press-kit/`](./docs/press-kit/)                   | Sell sheet, launch thread templates, founder bio                                                                                                               |
+| [`CLAUDE.md`](./CLAUDE.md)                               | Project conventions, non-negotiables, active skills (AI-agent oriented)                                                                                        |
+| [`CHANGELOG.md`](./CHANGELOG.md)                         | Keep-a-Changelog history of releases                                                                                                                           |
+| [`CONTRIBUTING.md`](./CONTRIBUTING.md)                   | Branch + commit + migration discipline; reviewer checklist                                                                                                     |
+| [`SECURITY.md`](./SECURITY.md)                           | Vulnerability disclosure policy                                                                                                                                |
 
 ---
 

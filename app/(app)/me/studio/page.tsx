@@ -41,13 +41,13 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Studio
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">
           Pick a <span className="text-gradient-hero">trend</span> and go
         </h1>
-        <p className="max-w-2xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-2xl text-sm">
           Every active trend is here. Tap one, drop a photo, get a result in seconds.
         </p>
       </header>
@@ -58,14 +58,14 @@ export default async function StudioPage({ searchParams }: StudioPageProps) {
         <section
           id="upload"
           aria-labelledby="upload-heading"
-          className="flex scroll-mt-20 flex-col gap-4 rounded-3xl border border-border/60 bg-card p-6 shadow-soft sm:p-8"
+          className="border-border/60 bg-card shadow-soft flex scroll-mt-20 flex-col gap-4 rounded-3xl border p-6 sm:p-8"
         >
           <header className="flex flex-col gap-1.5">
             <h2 id="upload-heading" className="text-2xl font-extrabold tracking-tight">
               {selectedTrend.title}
             </h2>
             {selectedTrend.description && (
-              <p className="text-sm text-muted-foreground">{selectedTrend.description}</p>
+              <p className="text-muted-foreground text-sm">{selectedTrend.description}</p>
             )}
           </header>
           <TrendRunner trend={selectedTrend} />

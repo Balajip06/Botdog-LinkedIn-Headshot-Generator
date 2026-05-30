@@ -18,7 +18,13 @@ interface TrendFormProps {
   extraActions?: ReactNode
 }
 
-export function TrendForm({ action, initial = {}, submitLabel, banner, extraActions }: TrendFormProps) {
+export function TrendForm({
+  action,
+  initial = {},
+  submitLabel,
+  banner,
+  extraActions,
+}: TrendFormProps) {
   return (
     <form action={action} className="flex flex-col gap-6">
       {banner}
@@ -30,7 +36,7 @@ export function TrendForm({ action, initial = {}, submitLabel, banner, extraActi
       <SeoSection initial={initial} />
       <SchemaFaqSection initial={initial} />
 
-      <div className="sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-2xl border border-border/60 bg-card/95 px-4 py-3 shadow-soft backdrop-blur">
+      <div className="border-border/60 bg-card/95 shadow-soft sticky bottom-4 z-10 flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3 backdrop-blur">
         <Button type="submit" size="lg">
           {submitLabel}
         </Button>

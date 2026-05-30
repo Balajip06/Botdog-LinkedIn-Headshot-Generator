@@ -12,25 +12,25 @@ Pair this with [`docs/transferability/post-acquisition-timeline.md`](./post-acqu
 
 ## Summary table
 
-| Account | Transfer mechanism | ETA (calendar days) | Risk |
-|---|---|---|---|
-| GitHub repo | Transfer Ownership / Add Buyer as Owner | < 1 day | LOW |
-| Vercel project | Add buyer to team / transfer project | 1-2 days | LOW |
-| Supabase project | Transfer Ownership (org or project) | 1-3 days | LOW |
-| Google Gemini (API key) | Rotate to buyer's GCP project | 1-2 days | LOW (key rotation) |
-| Stripe account | Account Transfer Form (KYC required) | 4-7 days | MEDIUM (KYC + gap window) |
-| Resend account | Add buyer + transfer ownership | 1-2 days | LOW (DKIM re-verify) |
-| VAPID keys | Hand off existing keypair | < 1 day | LOW (do not rotate) |
-| Cloudflare Turnstile | Create new keys in buyer account | < 1 day | LOW (env-swap) |
-| Cloudflare DNS | EPP / domain transfer | 5-7 days | MEDIUM (auth-code) |
-| PostHog | Add buyer + transfer | 1-2 days | LOW |
-| Sentry | Add buyer as owner | < 1 day | LOW |
-| Upstash | Add buyer + transfer database | < 1 day | LOW |
-| Domain registrar | EPP transfer between registrars (or stay) | 5-7 days | MEDIUM (auth-code, ICANN 60-day lock) |
-| X / Twitter handle | Email transfer (founder-to-founder) | 1-3 days | MEDIUM (squatter risk) |
-| Instagram handle | Email change + business account transfer | 1-3 days | MEDIUM (squatter risk) |
-| TikTok handle | Email change | 1-3 days | MEDIUM (squatter risk) |
-| Threads handle | Tied to Instagram | with IG | tied to IG |
+| Account                 | Transfer mechanism                        | ETA (calendar days) | Risk                                  |
+| ----------------------- | ----------------------------------------- | ------------------- | ------------------------------------- |
+| GitHub repo             | Transfer Ownership / Add Buyer as Owner   | < 1 day             | LOW                                   |
+| Vercel project          | Add buyer to team / transfer project      | 1-2 days            | LOW                                   |
+| Supabase project        | Transfer Ownership (org or project)       | 1-3 days            | LOW                                   |
+| Google Gemini (API key) | Rotate to buyer's GCP project             | 1-2 days            | LOW (key rotation)                    |
+| Stripe account          | Account Transfer Form (KYC required)      | 4-7 days            | MEDIUM (KYC + gap window)             |
+| Resend account          | Add buyer + transfer ownership            | 1-2 days            | LOW (DKIM re-verify)                  |
+| VAPID keys              | Hand off existing keypair                 | < 1 day             | LOW (do not rotate)                   |
+| Cloudflare Turnstile    | Create new keys in buyer account          | < 1 day             | LOW (env-swap)                        |
+| Cloudflare DNS          | EPP / domain transfer                     | 5-7 days            | MEDIUM (auth-code)                    |
+| PostHog                 | Add buyer + transfer                      | 1-2 days            | LOW                                   |
+| Sentry                  | Add buyer as owner                        | < 1 day             | LOW                                   |
+| Upstash                 | Add buyer + transfer database             | < 1 day             | LOW                                   |
+| Domain registrar        | EPP transfer between registrars (or stay) | 5-7 days            | MEDIUM (auth-code, ICANN 60-day lock) |
+| X / Twitter handle      | Email transfer (founder-to-founder)       | 1-3 days            | MEDIUM (squatter risk)                |
+| Instagram handle        | Email change + business account transfer  | 1-3 days            | MEDIUM (squatter risk)                |
+| TikTok handle           | Email change                              | 1-3 days            | MEDIUM (squatter risk)                |
+| Threads handle          | Tied to Instagram                         | with IG             | tied to IG                            |
 
 ---
 

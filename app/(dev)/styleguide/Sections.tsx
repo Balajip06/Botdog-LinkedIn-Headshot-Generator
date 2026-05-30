@@ -107,39 +107,31 @@ function Swatch({ spec }: { spec: SwatchSpec }) {
     <div className="flex flex-col gap-2">
       <div
         ref={ref}
-        className="size-24 rounded-md border border-border/60"
+        className="border-border/60 size-24 rounded-md border"
         style={{ background: `var(--${spec.cssVar})` }}
       />
       <div className="flex flex-col text-xs">
         <span className="font-medium">{spec.name}</span>
-        <span className="font-mono text-muted-foreground">--{spec.cssVar}</span>
-        <span className="font-mono text-muted-foreground">{resolved}</span>
+        <span className="text-muted-foreground font-mono">--{spec.cssVar}</span>
+        <span className="text-muted-foreground font-mono">{resolved}</span>
       </div>
     </div>
   )
 }
 
 /** Forces a child subtree to render in light or dark regardless of the page theme. */
-function ThemeScope({
-  mode,
-  children,
-}: {
-  mode: 'light' | 'dark'
-  children: React.ReactNode
-}) {
+function ThemeScope({ mode, children }: { mode: 'light' | 'dark'; children: React.ReactNode }) {
   return (
     <div
       className={mode === 'dark' ? 'dark' : ''}
       // Apply the surface so the swatches read against the correct base.
       style={{ background: 'var(--background)', color: 'var(--foreground)' }}
     >
-      <div className="rounded-md border border-border/60 p-4">
-        <div className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <div className="border-border/60 rounded-md border p-4">
+        <div className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
           {mode}
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {children}
-        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">{children}</div>
       </div>
     </div>
   )
@@ -189,14 +181,12 @@ export function RadiusSection() {
       {RADII.map((r) => (
         <div key={r.cssVar} className="flex flex-col gap-2">
           <div
-            className="grid h-24 place-items-center border bg-muted text-xs text-muted-foreground"
+            className="bg-muted text-muted-foreground grid h-24 place-items-center border text-xs"
             style={{ borderRadius: `var(--${r.cssVar})` }}
           >
             {r.size}
           </div>
-          <span className="font-mono text-xs text-muted-foreground">
-            --{r.cssVar}
-          </span>
+          <span className="text-muted-foreground font-mono text-xs">--{r.cssVar}</span>
         </div>
       ))}
     </div>
@@ -212,16 +202,13 @@ export function TypographySection() {
       <h2 className="text-3xl font-extrabold tracking-tight">H2 — Section</h2>
       <h3 className="text-xl font-semibold">H3 — Subsection</h3>
       <p className="text-base">
-        Body text. Pick a viral trend. Upload your photo. Make the moment everyone
-        is making.
+        Body text. Pick a viral trend. Upload your photo. Make the moment everyone is making.
       </p>
-      <p className="text-sm text-muted-foreground">
-        Muted text — meta, captions, helper copy.
-      </p>
-      <code className="rounded bg-muted px-2 py-1 font-mono text-sm">
+      <p className="text-muted-foreground text-sm">Muted text — meta, captions, helper copy.</p>
+      <code className="bg-muted rounded px-2 py-1 font-mono text-sm">
         const example = &quot;font-mono code sample&quot;
       </code>
-      <p className="text-4xl font-extrabold tracking-tight text-gradient-hero">
+      <p className="text-gradient-hero text-4xl font-extrabold tracking-tight">
         Gradient hero text
       </p>
     </div>
@@ -234,7 +221,7 @@ export function BrandLayerSection() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-muted-foreground">Logo</h3>
+        <h3 className="text-muted-foreground mb-3 text-sm font-semibold">Logo</h3>
         <div className="flex flex-wrap items-center gap-6">
           <Logo size="sm" />
           <Logo size="md" />
@@ -246,9 +233,7 @@ export function BrandLayerSection() {
       </div>
       <Separator />
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-          GradientButton
-        </h3>
+        <h3 className="text-muted-foreground mb-3 text-sm font-semibold">GradientButton</h3>
         <div className="flex flex-wrap items-center gap-4">
           <GradientButton size="sm">Small</GradientButton>
           <GradientButton size="md">Medium</GradientButton>
@@ -272,14 +257,7 @@ export function BrandLayerSection() {
 
 // ---------- Buttons ----------
 
-const BUTTON_VARIANTS = [
-  'default',
-  'destructive',
-  'outline',
-  'secondary',
-  'ghost',
-  'link',
-] as const
+const BUTTON_VARIANTS = ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'] as const
 
 const BUTTON_SIZES = ['xs', 'sm', 'default', 'lg'] as const
 
@@ -288,7 +266,7 @@ export function ButtonsSection() {
     <div className="flex flex-col gap-6">
       {BUTTON_VARIANTS.map((variant) => (
         <div key={variant}>
-          <div className="mb-2 text-xs font-mono text-muted-foreground">
+          <div className="text-muted-foreground mb-2 font-mono text-xs">
             variant=&quot;{variant}&quot;
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -309,14 +287,7 @@ export function ButtonsSection() {
 
 // ---------- Badges ----------
 
-const BADGE_VARIANTS = [
-  'default',
-  'secondary',
-  'destructive',
-  'outline',
-  'ghost',
-  'link',
-] as const
+const BADGE_VARIANTS = ['default', 'secondary', 'destructive', 'outline', 'ghost', 'link'] as const
 
 export function BadgesSection() {
   return (
@@ -395,9 +366,7 @@ export function CardSection() {
       <CardContent>
         <p className="text-sm">
           Cards combine header, content, and footer slots. They consume
-          <code className="ml-1 rounded bg-muted px-1 py-0.5 font-mono text-xs">
-            --card
-          </code>
+          <code className="bg-muted ml-1 rounded px-1 py-0.5 font-mono text-xs">--card</code>
           and have a soft shadow by default.
         </p>
       </CardContent>
@@ -420,16 +389,14 @@ export function DialogSection() {
         <DialogHeader>
           <DialogTitle>Dialog title</DialogTitle>
           <DialogDescription>
-            Dialogs render in a portal — the overlay dims everything behind. Use
-            for destructive confirms or focus-trapped flows.
+            Dialogs render in a portal — the overlay dims everything behind. Use for destructive
+            confirms or focus-trapped flows.
           </DialogDescription>
         </DialogHeader>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           Body content goes here. The dialog is rendered with{' '}
-          <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-            defaultOpen
-          </code>{' '}
-          so the visual baseline can shoot it.
+          <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">defaultOpen</code> so the
+          visual baseline can shoot it.
         </div>
         <DialogFooter>
           <DialogClose asChild>
@@ -455,15 +422,11 @@ export function AccordionSection() {
       </AccordionItem>
       <AccordionItem value="item-2">
         <AccordionTrigger>Can I remove the watermark?</AccordionTrigger>
-        <AccordionContent>
-          Yes — Pro removes watermarks from downloads.
-        </AccordionContent>
+        <AccordionContent>Yes — Pro removes watermarks from downloads.</AccordionContent>
       </AccordionItem>
       <AccordionItem value="item-3">
         <AccordionTrigger>What happens to my creations?</AccordionTrigger>
-        <AccordionContent>
-          Free: 30-day storage. Pro: stored forever.
-        </AccordionContent>
+        <AccordionContent>Free: 30-day storage. Pro: stored forever.</AccordionContent>
       </AccordionItem>
     </Accordion>
   )
@@ -479,13 +442,13 @@ export function TabsSection() {
         <TabsTrigger value="eval">Eval</TabsTrigger>
         <TabsTrigger value="audit">Audit</TabsTrigger>
       </TabsList>
-      <TabsContent value="trends" className="pt-4 text-sm text-muted-foreground">
+      <TabsContent value="trends" className="text-muted-foreground pt-4 text-sm">
         Trends tab — schema-driven admin CRUD.
       </TabsContent>
-      <TabsContent value="eval" className="pt-4 text-sm text-muted-foreground">
+      <TabsContent value="eval" className="text-muted-foreground pt-4 text-sm">
         Eval tab — gates is_active=true on eval_status=passed.
       </TabsContent>
-      <TabsContent value="audit" className="pt-4 text-sm text-muted-foreground">
+      <TabsContent value="audit" className="text-muted-foreground pt-4 text-sm">
         Audit tab — admin_audit_log viewer.
       </TabsContent>
     </Tabs>
@@ -507,11 +470,7 @@ export function SwitchSection() {
         <Label htmlFor="sg-switch-checked">On</Label>
       </div>
       <div className="flex items-center gap-2">
-        <Switch
-          checked={false}
-          id="sg-switch-unchecked"
-          onCheckedChange={() => undefined}
-        />
+        <Switch checked={false} id="sg-switch-unchecked" onCheckedChange={() => undefined} />
         <Label htmlFor="sg-switch-unchecked">Off</Label>
       </div>
     </div>
@@ -548,22 +507,13 @@ export function ToasterSection() {
   return (
     <div className="flex flex-wrap gap-2">
       <Button onClick={() => toast('Default toast')}>Default</Button>
-      <Button
-        variant="secondary"
-        onClick={() => toast.success('Generation complete')}
-      >
+      <Button variant="secondary" onClick={() => toast.success('Generation complete')}>
         Success
       </Button>
-      <Button
-        variant="outline"
-        onClick={() => toast.info('Pro tip: upload portrait photos')}
-      >
+      <Button variant="outline" onClick={() => toast.info('Pro tip: upload portrait photos')}>
         Info
       </Button>
-      <Button
-        variant="outline"
-        onClick={() => toast.warning('Quota almost spent')}
-      >
+      <Button variant="outline" onClick={() => toast.warning('Quota almost spent')}>
         Warning
       </Button>
       <Button
@@ -587,9 +537,7 @@ const MOTION_UTILITIES = [
 ] as const
 
 export function MotionSection() {
-  const [active, setActive] = React.useState<(typeof MOTION_UTILITIES)[number] | null>(
-    null,
-  )
+  const [active, setActive] = React.useState<(typeof MOTION_UTILITIES)[number] | null>(null)
   // Bump the key so React remounts the sample element each toggle — the
   // one-shot animations (fade-up, pop-in) won't replay otherwise.
   const [key, setKey] = React.useState(0)
@@ -616,17 +564,12 @@ export function MotionSection() {
           Reset
         </Button>
       </div>
-      <div className="grid h-48 place-items-center rounded-lg border bg-muted/30">
-        <div
-          key={key}
-          className={`size-20 rounded-xl brand-grad ${active ?? ''}`}
-        />
+      <div className="bg-muted/30 grid h-48 place-items-center rounded-lg border">
+        <div key={key} className={`brand-grad size-20 rounded-xl ${active ?? ''}`} />
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Active class:{' '}
-        <code className="rounded bg-muted px-1 py-0.5 font-mono">
-          {active ?? '(none)'}
-        </code>
+        <code className="bg-muted rounded px-1 py-0.5 font-mono">{active ?? '(none)'}</code>
       </p>
     </div>
   )
@@ -637,23 +580,19 @@ export function MotionSection() {
 export function BrandSurfacesSection() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid h-60 place-items-center rounded-xl bg-gradient-hero text-white shadow-glow-pink">
+      <div className="bg-gradient-hero shadow-glow-pink grid h-60 place-items-center rounded-xl text-white">
         <div className="text-center">
-          <div className="text-xs uppercase tracking-widest opacity-80">
-            bg-gradient-hero
-          </div>
+          <div className="text-xs tracking-widest uppercase opacity-80">bg-gradient-hero</div>
           <div className="mt-2 text-2xl font-extrabold">Make the trend</div>
         </div>
       </div>
-      <div className="grid h-32 place-items-center rounded-xl bg-gradient-cool text-white shadow-glow-cyan">
-        <span className="text-sm font-medium uppercase tracking-widest">
-          bg-gradient-cool
-        </span>
+      <div className="bg-gradient-cool shadow-glow-cyan grid h-32 place-items-center rounded-xl text-white">
+        <span className="text-sm font-medium tracking-widest uppercase">bg-gradient-cool</span>
       </div>
       <div className="relative h-40 overflow-hidden rounded-xl border">
-        <div className="absolute inset-0 bg-gradient-spotlight opacity-50 blur-3xl" />
+        <div className="bg-gradient-spotlight absolute inset-0 opacity-50 blur-3xl" />
         <div className="relative grid h-full place-items-center">
-          <span className="text-sm font-medium uppercase tracking-widest text-foreground/70">
+          <span className="text-foreground/70 text-sm font-medium tracking-widest uppercase">
             bg-gradient-spotlight + blur-3xl
           </span>
         </div>
@@ -661,13 +600,10 @@ export function BrandSurfacesSection() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {(['shadow-glow-pink', 'shadow-glow-cyan', 'shadow-soft', 'shadow-pop'] as const).map(
           (s) => (
-            <div
-              key={s}
-              className={`grid h-28 place-items-center rounded-xl border bg-card ${s}`}
-            >
-              <span className="font-mono text-xs text-muted-foreground">{s}</span>
+            <div key={s} className={`bg-card grid h-28 place-items-center rounded-xl border ${s}`}>
+              <span className="text-muted-foreground font-mono text-xs">{s}</span>
             </div>
-          ),
+          )
         )}
       </div>
     </div>

@@ -47,7 +47,7 @@ export function AdminLoginForm({ next }: AdminLoginFormProps) {
         </GradientButton>
       </form>
 
-      <div className="flex flex-col gap-2 text-center text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex flex-col gap-2 text-center text-xs">
         <Link
           href="/admin/forgot-password"
           className="font-medium underline-offset-2 hover:underline"

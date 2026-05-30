@@ -41,9 +41,7 @@ export async function updateSession(request: NextRequest) {
   // without an admin session — the whole point is letting admins establish
   // one. The gate below skips them so the redirect loop can't form.
   const ADMIN_PUBLIC = ['/admin/login', '/admin/forgot-password', '/admin/reset-password']
-  const isAdminPublic = ADMIN_PUBLIC.some(
-    (p) => pathname === p || pathname.startsWith(`${p}/`)
-  )
+  const isAdminPublic = ADMIN_PUBLIC.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 
   // Admin gate
   if (pathname.startsWith('/admin') && !isAdminPublic) {

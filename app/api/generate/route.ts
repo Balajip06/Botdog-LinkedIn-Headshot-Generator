@@ -3,7 +3,11 @@ import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { parseIdempotencyKey } from '@/lib/idempotency'
 import { generationIpLimiter } from '@/lib/rate-limit'
-import { interpolatePrompt, collectImageInputs, type TrendInputValues } from '@/lib/trends/interpolate'
+import {
+  interpolatePrompt,
+  collectImageInputs,
+  type TrendInputValues,
+} from '@/lib/trends/interpolate'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 
@@ -12,10 +16,7 @@ export const runtime = 'nodejs'
 // Per-value caps are tight on purpose. Signed Supabase URLs run ~500 chars
 // today; 5000 leaves headroom for query params and future signature schemes.
 // max(8) on arrays mirrors the image-field cap in TrendInputSchema.
-const ValueSchema = z.union([
-  z.string().max(5000),
-  z.array(z.string().max(5000)).max(8),
-])
+const ValueSchema = z.union([z.string().max(5000), z.array(z.string().max(5000)).max(8)])
 
 const MAX_FIELDS = 20
 const BodySchema = z.object({

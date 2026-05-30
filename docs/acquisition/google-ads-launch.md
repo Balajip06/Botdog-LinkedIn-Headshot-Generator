@@ -125,24 +125,24 @@ Add to a shared negative keyword list: `Tools → Shared library → Negative ke
 
 Routes that don't exist yet (`/vs-midjourney`, `/free-ghibli-effect-maker`) are W2 build tasks — see [.claude/todo.md](../../.claude/todo.md). Until they ship, all queries route to `/` and the homepage takes the hit.
 
-| Query bucket | Landing page | Why |
-|---|---|---|
-| Ad group A ("ai image generator") | `/` | Highest-intent homepage; conversion CTA above the fold |
-| Ad group B Ghibli/anime variants | `/free-ghibli-effect-maker` (when shipped) → fallback `/trend/<ghibli-slug>` | Match keyword to trend page for tightest message |
-| Ad group B "midjourney alternative" | `/vs-midjourney` (when shipped) → fallback `/` | Comparison page converts skeptical Midjourney users at 2-3x homepage rate |
-| Ad group C "free" qualifier intent | `/` (free-tier CTA prominent) | Don't waste on `/pricing` — these users haven't decided to pay yet |
-| Performance Max | `/`, `/pricing`, `/trend/<top-3-slugs>` | Let Google rotate assets across the 4 best converting pages |
+| Query bucket                        | Landing page                                                                 | Why                                                                       |
+| ----------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Ad group A ("ai image generator")   | `/`                                                                          | Highest-intent homepage; conversion CTA above the fold                    |
+| Ad group B Ghibli/anime variants    | `/free-ghibli-effect-maker` (when shipped) → fallback `/trend/<ghibli-slug>` | Match keyword to trend page for tightest message                          |
+| Ad group B "midjourney alternative" | `/vs-midjourney` (when shipped) → fallback `/`                               | Comparison page converts skeptical Midjourney users at 2-3x homepage rate |
+| Ad group C "free" qualifier intent  | `/` (free-tier CTA prominent)                                                | Don't waste on `/pricing` — these users haven't decided to pay yet        |
+| Performance Max                     | `/`, `/pricing`, `/trend/<top-3-slugs>`                                      | Let Google rotate assets across the 4 best converting pages               |
 
 ---
 
 ## Budget ramp
 
-| Week | Daily budget | Total spend (running) | Decision point |
-|---|---|---|---|
-| 1 | $20/day | $140 | Observe — no changes; bid learning needs 7+ days |
-| 2 | $25/day | $315 | Pause keywords with > $30 spend + 0 conversions |
-| 3 | $25/day | $490 | Evaluate CAC vs $10 target — kill, hold, or scale |
-| 4 | Variable | — | Scale to $40/day (if CAC < $8) or kill (if CAC > $15) |
+| Week | Daily budget | Total spend (running) | Decision point                                        |
+| ---- | ------------ | --------------------- | ----------------------------------------------------- |
+| 1    | $20/day      | $140                  | Observe — no changes; bid learning needs 7+ days      |
+| 2    | $25/day      | $315                  | Pause keywords with > $30 spend + 0 conversions       |
+| 3    | $25/day      | $490                  | Evaluate CAC vs $10 target — kill, hold, or scale     |
+| 4    | Variable     | —                     | Scale to $40/day (if CAC < $8) or kill (if CAC > $15) |
 
 Don't change bids mid-week. Bid changes reset Google's learning phase — every adjustment costs you ~3 days of conversion signal.
 

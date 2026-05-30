@@ -5,13 +5,7 @@ import { z } from 'zod'
 import { grantCredits } from '@/lib/payments/credits'
 import { createServiceClient } from '@/lib/supabase/server'
 
-const ReasonCategoryEnum = z.enum([
-  'support',
-  'goodwill',
-  'error_correction',
-  'vip_grant',
-  'other',
-])
+const ReasonCategoryEnum = z.enum(['support', 'goodwill', 'error_correction', 'vip_grant', 'other'])
 
 export type ReasonCategory = z.infer<typeof ReasonCategoryEnum>
 

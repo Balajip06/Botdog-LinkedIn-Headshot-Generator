@@ -56,12 +56,12 @@ Pricing math: 20% off a $14.99 pack = $11.99 paid. Stripe takes ~$0.65 + 2.9%, G
 
 All four templates live in `lib/email/templates/` (W2 build task — not shipped). Each is a function returning `{ subject, html, text }` from a `react-email` component.
 
-| Trigger | Recipient | Template name | When it fires |
-|---|---|---|---|
-| Referee signs up via `?ref=` | Referrer | `referralJoined` | Immediate (within 60s of `auth.users` insert) |
-| First successful invite | Referrer | `firstInviteRewarded` | When `referrals.status` flips to `'rewarded'` for the first time |
-| 1 invite away from free pack | Referrer | `nearPackUnlock` | When referrer has 2 of 3 rewarded referrals for the next pack tier |
-| Pack unlocked | Referrer | `packUnlocked` | Immediately after the 3rd referral triggers a pack grant |
+| Trigger                      | Recipient | Template name         | When it fires                                                      |
+| ---------------------------- | --------- | --------------------- | ------------------------------------------------------------------ |
+| Referee signs up via `?ref=` | Referrer  | `referralJoined`      | Immediate (within 60s of `auth.users` insert)                      |
+| First successful invite      | Referrer  | `firstInviteRewarded` | When `referrals.status` flips to `'rewarded'` for the first time   |
+| 1 invite away from free pack | Referrer  | `nearPackUnlock`      | When referrer has 2 of 3 rewarded referrals for the next pack tier |
+| Pack unlocked                | Referrer  | `packUnlocked`        | Immediately after the 3rd referral triggers a pack grant           |
 
 Each template MUST:
 
@@ -97,7 +97,7 @@ In human terms:
 - **Fingerprint dedup** — referees whose browser fingerprint matches an existing `profiles.id` are blocked at signup (they're a duplicate account, not a new referral)
 - **Signup velocity threshold** — > 3 signups attributed to one `referrer_id` in any 10-minute window auto-pauses the referrer's code (sets `profiles.referral_code = null`); admin unblocks via `/admin/audit` review
 - **Bonus credits cap** — hard ceiling of 50 bonus credits ever credited to one referrer via the trigger path. Bypassing requires admin manual grant (audit-logged)
-- **First-completed-generation gate** — the trigger only rewards on the referee's *first* completed generation. Repeated generations by the same referee don't multi-reward
+- **First-completed-generation gate** — the trigger only rewards on the referee's _first_ completed generation. Repeated generations by the same referee don't multi-reward
 
 Once `lib/referrals/farming-guard.ts` exists as a dedicated module (W3 task), this section links to it directly.
 
@@ -105,12 +105,12 @@ Once `lib/referrals/farming-guard.ts` exists as a dedicated module (W3 task), th
 
 ## KPI gates
 
-| Metric | Target by W6 | Where to check |
-|---|---|---|
-| % new signups with `referred_by` populated | ≥ 30% | `select 100.0 * count(*) filter (where referred_by is not null) / count(*) from public.profiles where created_at >= now() - interval '30 days'` |
-| Viral coefficient k | ≥ 0.3 | `(rewarded referrals last 30d) / (active users 30d ago)` — k=0.3 means every 10 users bring 3 new ones |
-| Referee → paying conversion rate | ≥ 12% | Higher than the 6-8% baseline because the 20% discount converts on-the-fence users |
-| Bonus packs granted | 5-15 per 100 active users by W6 | `admin_audit_log` entries with `after->>source='referral_pack'` |
+| Metric                                     | Target by W6                    | Where to check                                                                                                                                  |
+| ------------------------------------------ | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| % new signups with `referred_by` populated | ≥ 30%                           | `select 100.0 * count(*) filter (where referred_by is not null) / count(*) from public.profiles where created_at >= now() - interval '30 days'` |
+| Viral coefficient k                        | ≥ 0.3                           | `(rewarded referrals last 30d) / (active users 30d ago)` — k=0.3 means every 10 users bring 3 new ones                                          |
+| Referee → paying conversion rate           | ≥ 12%                           | Higher than the 6-8% baseline because the 20% discount converts on-the-fence users                                                              |
+| Bonus packs granted                        | 5-15 per 100 active users by W6 | `admin_audit_log` entries with `after->>source='referral_pack'`                                                                                 |
 
 ---
 

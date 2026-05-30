@@ -80,7 +80,7 @@ export function getProposer(): Proposer {
     warnedAboutMockFallback = true
     Sentry.captureMessage(
       'trend-proposer: GEMINI_API_KEY present but real proposer not yet implemented — returning mockProposer',
-      'warning',
+      'warning'
     )
   }
   return mockProposer

@@ -29,9 +29,7 @@ export async function GET() {
     const supabase = createServiceClient()
     // HEAD count against a small table — cheapest possible round-trip that
     // proves the DB is reachable and credentials are valid.
-    const { error } = await supabase
-      .from('trends')
-      .select('id', { count: 'exact', head: true })
+    const { error } = await supabase.from('trends').select('id', { count: 'exact', head: true })
     dbOk = !error
     dbLatency = Date.now() - started
   } catch {

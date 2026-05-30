@@ -2,13 +2,7 @@ import { Download } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -93,9 +87,7 @@ export default async function AdminExportPage() {
 
   const recent = (auditRows as ExportAuditRow[] | null) ?? []
 
-  const adminIds = Array.from(
-    new Set(recent.map((r) => r.admin_id).filter(Boolean) as string[]),
-  )
+  const adminIds = Array.from(new Set(recent.map((r) => r.admin_id).filter(Boolean) as string[]))
   const emailById = new Map<string, string>()
   if (adminIds.length > 0) {
     const { data: profileRows } = await service
@@ -110,13 +102,13 @@ export default async function AdminExportPage() {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Diligence
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">
           Customer + revenue <span className="text-gradient-hero">export</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Streams a CSV of everything a buyer asks for in diligence. Audit-logged.
         </p>
       </header>
@@ -126,7 +118,7 @@ export default async function AdminExportPage() {
           <Card key={card.dataset} className="flex flex-col gap-4 py-6">
             <CardHeader className="px-6 pb-0">
               <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                <Download className="size-4 text-muted-foreground" />
+                <Download className="text-muted-foreground size-4" />
                 {card.title}
               </CardTitle>
               <CardDescription className="text-xs">{card.helper}</CardDescription>
@@ -135,20 +127,14 @@ export default async function AdminExportPage() {
               <ul className="flex flex-wrap gap-1.5">
                 {card.columns.map((col) => (
                   <li key={col}>
-                    <Badge
-                      variant="outline"
-                      className="rounded-full font-mono text-[10px]"
-                    >
+                    <Badge variant="outline" className="rounded-full font-mono text-[10px]">
                       {col}
                     </Badge>
                   </li>
                 ))}
               </ul>
               <Button asChild size="sm" className="mt-auto w-fit">
-                <a
-                  href={`/admin/export/download?dataset=${card.dataset}`}
-                  rel="nofollow"
-                >
+                <a href={`/admin/export/download?dataset=${card.dataset}`} rel="nofollow">
                   Download {card.dataset}.csv
                 </a>
               </Button>
@@ -167,11 +153,11 @@ export default async function AdminExportPage() {
         </CardHeader>
         <CardContent className="px-6">
           {recent.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No exports yet.</p>
+            <p className="text-muted-foreground text-sm">No exports yet.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <thead className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   <tr>
                     <th className="py-2 pr-3">When</th>
                     <th className="py-2 pr-3">Dataset</th>
@@ -181,12 +167,10 @@ export default async function AdminExportPage() {
                 </thead>
                 <tbody>
                   {recent.map((row) => {
-                    const adminEmail = row.admin_id
-                      ? (emailById.get(row.admin_id) ?? null)
-                      : null
+                    const adminEmail = row.admin_id ? (emailById.get(row.admin_id) ?? null) : null
                     return (
-                      <tr key={row.id} className="border-t border-border/40">
-                        <td className="py-2 pr-3 text-xs text-muted-foreground">
+                      <tr key={row.id} className="border-border/40 border-t">
+                        <td className="text-muted-foreground py-2 pr-3 text-xs">
                           {new Date(row.created_at).toLocaleString()}
                         </td>
                         <td className="py-2 pr-3 font-mono text-xs">
@@ -197,7 +181,7 @@ export default async function AdminExportPage() {
                         </td>
                         <td className="py-2 pr-3 text-xs">
                           {adminEmail ?? (
-                            <span className="font-mono text-muted-foreground">
+                            <span className="text-muted-foreground font-mono">
                               {row.admin_id?.slice(0, 8) ?? 'system'}
                             </span>
                           )}
@@ -212,10 +196,10 @@ export default async function AdminExportPage() {
         </CardContent>
       </Card>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Exports are audit-logged; only admins listed in{' '}
         <code className="font-mono">admin_users</code> can access this route. See{' '}
-        <Link href="/admin/audit" className="font-semibold text-foreground hover:underline">
+        <Link href="/admin/audit" className="text-foreground font-semibold hover:underline">
           Audit log →
         </Link>
       </p>

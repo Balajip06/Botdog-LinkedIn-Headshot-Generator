@@ -19,7 +19,7 @@ describe('IdentitySection', () => {
     render(
       <IdentitySection
         initial={{ slug: 'glow-up', title: 'Glow Up', description: 'Warm filmic grade' }}
-      />,
+      />
     )
 
     // Assert
@@ -58,7 +58,7 @@ describe('GenerationSection', () => {
           aspect_ratio: '9:16',
           display_order: 12,
         }}
-      />,
+      />
     )
     expect(screen.getByLabelText('Prompt template')).toHaveValue('Render {{user_photo}}')
     expect(screen.getByLabelText('Model')).toHaveValue('nano-banana')
@@ -95,7 +95,7 @@ describe('MediaSection', () => {
           sample_before_url: 'https://cdn.example.com/b.jpg',
           sample_after_url: 'https://cdn.example.com/a.jpg',
         }}
-      />,
+      />
     )
     expect(screen.getByLabelText('Thumbnail URL')).toHaveValue('https://cdn.example.com/t.jpg')
     expect(screen.getByLabelText('Sample before URL')).toHaveValue('https://cdn.example.com/b.jpg')
@@ -119,7 +119,7 @@ describe('SeoSection', () => {
     render(
       <SeoSection
         initial={{ seo_title: 'Glow Up trend', seo_description: 'Try the viral glow-up.' }}
-      />,
+      />
     )
     expect(screen.getByLabelText('SEO title')).toHaveValue('Glow Up trend')
     expect(screen.getByLabelText('SEO description')).toHaveValue('Try the viral glow-up.')

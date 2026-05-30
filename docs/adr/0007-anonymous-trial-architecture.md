@@ -5,7 +5,7 @@ Status: Accepted
 
 ## Context
 
-Conversion data on consumer image-gen products shows a ~10x lift in trial→signup conversion when users can see a generation *before* being asked to authenticate. The "try one before you sign up" anonymous trial is therefore central to the funnel.
+Conversion data on consumer image-gen products shows a ~10x lift in trial→signup conversion when users can see a generation _before_ being asked to authenticate. The "try one before you sign up" anonymous trial is therefore central to the funnel.
 
 But anonymous = no auth.uid = the standard quota mechanism (ADR 2) doesn't apply. The risk classes:
 
@@ -14,6 +14,7 @@ But anonymous = no auth.uid = the standard quota mechanism (ADR 2) doesn't apply
 3. **Account dodging**: legitimate users repeatedly using the anonymous flow instead of converting.
 
 The constraints from the amended plan:
+
 - One free try per device, lifetime (not per day, not per week).
 - Daily global spend cap on the anonymous flow as a circuit breaker.
 - Turnstile CAPTCHA before any work happens.
@@ -45,19 +46,21 @@ The `UNIQUE (fingerprint_hash, ip_hash)` constraint is the lifetime gate. A retu
 
 **Daily abuse budget**: before any insert, the route sums `anonymous_attempts.cost_usd` over the last 24h and compares to `ANONYMOUS_DAILY_BUDGET_USD` (default $20). If exceeded, returns 503. Auto-resets at the 24h sliding window — no operator action needed.
 
-**Turnstile** runs *before* the budget check so that bots burning Turnstile tokens don't even consume the budget query.
+**Turnstile** runs _before_ the budget check so that bots burning Turnstile tokens don't even consume the budget query.
 
 **24-hour expiry**: `expires_at = now() + interval '24 hours'`. The result page ([app/anonymous/[id]/page.tsx](../../app/anonymous/[id]/page.tsx)) checks expiry and surfaces a clean "trial expired, sign up to keep your future results" state. The Storage object is purged by the daily pg_cron job ([supabase/migrations/20260527000005_pg_cron.sql](../../supabase/migrations/20260527000005_pg_cron.sql)).
 
 ## Consequences
 
 **Positive:**
+
 - Cost is hard-bounded at $20/day across the entire anonymous surface. Worst-case attack burns one day of budget then auto-disables until tomorrow.
-- One fingerprint+IP = one lifetime attempt. Account dodging requires *both* clearing the browser fingerprint *and* changing IP — significant effort per attempt.
+- One fingerprint+IP = one lifetime attempt. Account dodging requires _both_ clearing the browser fingerprint _and_ changing IP — significant effort per attempt.
 - The fingerprint is computed client-side and SHA-256'd before transmission. We never see raw fingerprint data on the server, which keeps the privacy story clean for the listing pitch.
 - The 24h expiry + auto-purge limits the long-term Storage cost of anonymous results.
 
 **Negative:**
+
 - Fingerprint+IP both matching is rare across NAT'd networks; a coffee shop where two people each try one trial will both succeed (different fingerprints, same IP), but a single user switching from coffee-shop wifi to home wifi (same fingerprint, different IP) can attempt twice. This is intentional — punishes intentional evasion but doesn't break legitimate dual-use. Acceptable tradeoff.
 - FingerprintJS commercial license costs apply if open-source-FP isn't sufficient. Currently using the OSS version; would need to revisit if attack volume crosses what OSS-FP catches.
 - The 24h expiry is a UX cliff. Users who don't sign up within 24h lose their result. Mitigated by an in-page "save it forever" CTA + the expiring badge.

@@ -17,13 +17,13 @@ explained.
 
 ## Campaign cadence
 
-| Day  | Step          | Channel | Discount        | Goal                                       |
-|------|---------------|---------|-----------------|--------------------------------------------|
-| D0   | Announce      | Email   | none            | Transparent heads-up, single CTA          |
-| D3   | Reminder      | Email   | 20% off next pack | Add a small carrot for the on-the-fencers |
-| D7   | Last call     | Email   | 30% off next pack | Bigger carrot for the wait-and-seers      |
-| D14  | Final notice  | Email   | 30% + manual offer | Personal-touch reach-out for high-LTV     |
-| D28  | Mark inactive | CRM     | n/a             | Stop emailing, move to "lapsed" segment    |
+| Day | Step          | Channel | Discount           | Goal                                      |
+| --- | ------------- | ------- | ------------------ | ----------------------------------------- |
+| D0  | Announce      | Email   | none               | Transparent heads-up, single CTA          |
+| D3  | Reminder      | Email   | 20% off next pack  | Add a small carrot for the on-the-fencers |
+| D7  | Last call     | Email   | 30% off next pack  | Bigger carrot for the wait-and-seers      |
+| D14 | Final notice  | Email   | 30% + manual offer | Personal-touch reach-out for high-LTV     |
+| D28 | Mark inactive | CRM     | n/a                | Stop emailing, move to "lapsed" segment   |
 
 Discount codes (`TRANSITION20`, `TRANSITION30`) are one-time-use per customer,
 expire D60, and apply only to credit packs (no recurring product on Trendly).
@@ -33,6 +33,7 @@ expire D60, and apply only to credit packs (no recurring product on Trendly).
 ## Email templates
 
 All emails:
+
 - From: the buyer's voice (signed by the new owner), not "Team Trendly"
 - Plain-text-first; HTML version optional
 - Single primary CTA button (re-auth link)
@@ -182,6 +183,7 @@ captures `utm_*` automatically on the page-view event; build a funnel from
   cadence for top-decile customers and double the D14–D28 discount window.
 
 **Secondary:**
+
 - Click-through rate per cadence step (expect D0 > D7 > D3 ≈ D14)
 - Reply rate on D14 (manual-outreach signal — high reply rate → buyer should
   spend a week personally on inbox)
@@ -213,7 +215,7 @@ campaign sourcing). Use Stripe's own customer export to seed the audience.
 4. **Schedule the broadcast cadence.** Resend → Broadcasts → New → select the
    audience → paste each template (D0, D3, D7, D14) as a separate broadcast,
    schedule at the cadence dates relative to `{{close_date}} 09:00 customer
-   local time` (use Resend's per-recipient timezone field if available, else
+local time` (use Resend's per-recipient timezone field if available, else
    fall back to 09:00 UTC). Confirm UTM parameters are embedded in every CTA
    before sending the test.
 
@@ -225,10 +227,10 @@ Before the buyer fires D0:
 
 - [ ] `{{new_owner_name}}`, `{{close_date}}`, `{{new_owner_email}}` filled in
 - [ ] `{{re_auth_url}}` resolves to a Stripe Customer Portal session (or fresh
-  Checkout if the customer has no existing subscription) on the new account
+      Checkout if the customer has no existing subscription) on the new account
 - [ ] `TRANSITION20` and `TRANSITION30` promo codes exist in Stripe with
-  D60 expiry, single-use per customer, credit-pack price-IDs only
+      D60 expiry, single-use per customer, credit-pack price-IDs only
 - [ ] Resend audience `trendly-transition-d0` populated and verified
 - [ ] PostHog funnel `re_auth_email_clicked → checkout_completed` saved with
-  `utm_campaign=stripe_migration` filter
+      `utm_campaign=stripe_migration` filter
 - [ ] D28 CRM rule active: move non-re-authed customers to `lapsed_post_acquisition`

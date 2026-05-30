@@ -55,7 +55,11 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
       <FlashToasts
         flashes={[
           { key: 'error', level: 'error' },
-          { key: 'cloned', level: 'success', message: 'Trend cloned. Re-run eval before activating.' },
+          {
+            key: 'cloned',
+            level: 'success',
+            message: 'Trend cloned. Re-run eval before activating.',
+          },
           { key: 'featured', level: 'success', message: 'Featured.' },
           { key: 'unfeatured', level: 'info', message: 'Unfeatured.' },
         ]}
@@ -63,11 +67,11 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
 
       <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
             Catalogue
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight">Trends</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             {trends.length} total · {trends.filter((t) => t.is_active).length} live
           </p>
         </div>
@@ -84,7 +88,7 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
         <Card className="gap-0 overflow-hidden py-0">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50 text-[11px] uppercase tracking-wide text-muted-foreground">
+              <thead className="bg-muted/50 text-muted-foreground text-[11px] tracking-wide uppercase">
                 <tr>
                   <th className="px-4 py-3 font-semibold">#</th>
                   <th className="px-4 py-3 font-semibold">Trend</th>
@@ -109,19 +113,19 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
                   return (
                     <tr
                       key={t.id}
-                      className="border-t border-border/60 transition-colors hover:bg-muted/30"
+                      className="border-border/60 hover:bg-muted/30 border-t transition-colors"
                     >
-                      <td className="px-4 py-3 text-xs font-mono text-muted-foreground">
+                      <td className="text-muted-foreground px-4 py-3 font-mono text-xs">
                         {t.display_order}
                       </td>
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/trends/${t.id}/edit`}
-                          className="font-semibold text-foreground hover:underline"
+                          className="text-foreground font-semibold hover:underline"
                         >
                           {t.title}
                         </Link>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-1.5 text-xs">
                           <span>
                             /{t.slug} · v{t.version}
                           </span>
@@ -139,33 +143,33 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
                       <td className="px-2 py-3 text-center">
                         <form action={toggleFeatured} className="inline-flex">
                           <input type="hidden" name="id" value={t.id} />
-                          <input
-                            type="hidden"
-                            name="featured"
-                            value={t.is_featured ? '0' : '1'}
-                          />
+                          <input type="hidden" name="featured" value={t.is_featured ? '0' : '1'} />
                           <Button
                             type="submit"
                             variant="ghost"
                             size="icon"
                             aria-label={t.is_featured ? 'Unfeature trend' : 'Feature trend'}
-                            title={t.is_featured ? 'Unfeature' : 'Feature (floats to top, exempt from auto-cull)'}
+                            title={
+                              t.is_featured
+                                ? 'Unfeature'
+                                : 'Feature (floats to top, exempt from auto-cull)'
+                            }
                             className="size-7"
                           >
                             <Star
                               className={
                                 t.is_featured
                                   ? 'size-4 fill-[var(--brand-grad-1,#ec4899)] text-[var(--brand-grad-1,#ec4899)]'
-                                  : 'size-4 text-muted-foreground'
+                                  : 'text-muted-foreground size-4'
                               }
                             />
                           </Button>
                         </form>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                      <td className="text-muted-foreground px-4 py-3 text-xs">
                         {formatSchedule(t.goes_live_at)}
                       </td>
-                      <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
+                      <td className="text-muted-foreground px-4 py-3 font-mono text-[11px]">
                         {t.model}
                       </td>
                       <td className="px-4 py-3">
@@ -180,10 +184,10 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
                       <td className="px-4 py-3 text-right font-mono text-xs tabular-nums">
                         {fmt(m.clicks)}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                      <td className="text-muted-foreground px-4 py-3 text-right font-mono text-xs tabular-nums">
                         {ctrPct(m.impressions, m.clicks)}
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
+                      <td className="text-muted-foreground px-4 py-3 text-xs">
                         {new Date(t.updated_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">
@@ -250,13 +254,13 @@ export default async function AdminTrendsList({ searchParams }: AdminTrendsListP
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/40 p-16 text-center">
-      <div className="grid size-14 place-items-center rounded-full bg-muted text-foreground">
+    <div className="border-border/60 bg-card/40 flex flex-col items-center gap-4 rounded-3xl border border-dashed p-16 text-center">
+      <div className="bg-muted text-foreground grid size-14 place-items-center rounded-full">
         <Sparkles className="size-6" />
       </div>
       <div>
         <p className="text-lg font-bold">No trends yet</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Create one to get started. Drafts stay inactive until eval passes.
         </p>
       </div>

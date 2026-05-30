@@ -126,7 +126,7 @@ export default function PricingPage() {
     <div className="relative">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-spotlight opacity-30 blur-3xl"
+        className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-30 blur-3xl"
       />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-20 px-6 pt-16 pb-24">
@@ -134,14 +134,14 @@ export default function PricingPage() {
         <section className="flex flex-col items-center gap-5 text-center">
           <Badge
             variant="secondary"
-            className="rounded-full bg-foreground/5 px-3 py-1 text-xs font-medium uppercase tracking-wide text-foreground/70"
+            className="bg-foreground/5 text-foreground/70 rounded-full px-3 py-1 text-xs font-medium tracking-wide uppercase"
           >
             One-time credit packs
           </Badge>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
             <span className="text-gradient-hero">Simple credit-pack pricing</span>
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">
+          <p className="text-muted-foreground max-w-2xl text-lg">
             Pay once, never expire. No subscription.
           </p>
         </section>
@@ -156,8 +156,8 @@ export default function PricingPage() {
                 key={pack.id}
                 className={
                   isHighlight
-                    ? 'relative flex flex-col gap-5 rounded-3xl border-2 border-[var(--brand-grad-1)] bg-card p-6 shadow-pop sm:p-8'
-                    : 'relative flex flex-col gap-5 rounded-3xl border border-border/60 bg-card p-6 sm:p-8'
+                    ? 'bg-card shadow-pop relative flex flex-col gap-5 rounded-3xl border-2 border-[var(--brand-grad-1)] p-6 sm:p-8'
+                    : 'border-border/60 bg-card relative flex flex-col gap-5 rounded-3xl border p-6 sm:p-8'
                 }
               >
                 {isHighlight && (
@@ -170,13 +170,13 @@ export default function PricingPage() {
                 )}
                 <header className="flex flex-col gap-1">
                   <h2 className="text-lg font-bold tracking-tight">{pack.label.split(' — ')[0]}</h2>
-                  <p className="text-sm text-muted-foreground">{copy.bestFor}</p>
+                  <p className="text-muted-foreground text-sm">{copy.bestFor}</p>
                 </header>
                 <div className="flex flex-col gap-1">
                   <p className="text-4xl font-extrabold tracking-tight">
                     {formatUsd(pack.priceCents)}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {pack.credits} credits · {formatPerCredit(pack.perCreditCents)}
                   </p>
                 </div>
@@ -202,7 +202,7 @@ export default function PricingPage() {
                   ) : (
                     <Link
                       href={`/me/settings?pack=${pack.id}`}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:bg-muted"
+                      className="border-border hover:bg-muted inline-flex w-full items-center justify-center rounded-full border px-6 py-3 text-sm font-semibold transition-colors"
                     >
                       Buy {pack.credits} credits
                     </Link>
@@ -220,14 +220,14 @@ export default function PricingPage() {
             {VALUE_ROWS.map((row) => (
               <li
                 key={row.title}
-                className="flex gap-3 rounded-2xl border border-border/60 bg-card/60 p-5"
+                className="border-border/60 bg-card/60 flex gap-3 rounded-2xl border p-5"
               >
                 <div className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-emerald-500">
                   <Check className="size-4" />
                 </div>
                 <div>
                   <h3 className="text-base font-semibold">{row.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{row.body}</p>
+                  <p className="text-muted-foreground mt-1 text-sm">{row.body}</p>
                 </div>
               </li>
             ))}
@@ -235,12 +235,12 @@ export default function PricingPage() {
         </section>
 
         {/* Trust signals */}
-        <section className="rounded-3xl border border-border/60 bg-card/60 p-8 backdrop-blur">
+        <section className="border-border/60 bg-card/60 rounded-3xl border p-8 backdrop-blur">
           <ul className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {TRUST_TILES.map((tile) => (
               <li key={tile.label} className="flex flex-col items-center text-center">
-                <p className="text-3xl font-extrabold text-gradient-hero">{tile.stat}</p>
-                <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
+                <p className="text-gradient-hero text-3xl font-extrabold">{tile.stat}</p>
+                <p className="text-muted-foreground mt-1 text-xs tracking-wide uppercase">
                   {tile.label}
                 </p>
               </li>
@@ -251,11 +251,15 @@ export default function PricingPage() {
         {/* FAQ */}
         <section className="flex flex-col gap-6">
           <h2 className="text-2xl font-bold tracking-tight">Frequently asked</h2>
-          <Accordion type="single" collapsible className="rounded-2xl border border-border/60 bg-card/40 px-5">
+          <Accordion
+            type="single"
+            collapsible
+            className="border-border/60 bg-card/40 rounded-2xl border px-5"
+          >
             {FAQ.map((item, idx) => (
               <AccordionItem key={item.q} value={`faq-${idx}`}>
                 <AccordionTrigger className="text-base">{item.q}</AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   {item.a}
                 </AccordionContent>
               </AccordionItem>
@@ -264,11 +268,11 @@ export default function PricingPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="flex flex-col items-center gap-4 rounded-3xl border border-border/60 bg-gradient-spotlight/40 p-10 text-center">
+        <section className="border-border/60 bg-gradient-spotlight/40 flex flex-col items-center gap-4 rounded-3xl border p-10 text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Ready to make your trend?
           </h2>
-          <p className="max-w-xl text-sm text-muted-foreground">
+          <p className="text-muted-foreground max-w-xl text-sm">
             Pick a viral look, upload a photo, and ship it in seconds.
           </p>
           <GradientButton size="lg" asChild>

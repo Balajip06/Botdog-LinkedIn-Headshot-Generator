@@ -75,7 +75,7 @@ export function getServerEnv(): ServerEnv {
     process.env.CI !== 'true'
   ) {
     throw new Error(
-      'MOCK_TRENDS=true is set in a production build outside CI. This flag bypasses auth + RLS and must never run in real production. Unset it before deploy.',
+      'MOCK_TRENDS=true is set in a production build outside CI. This flag bypasses auth + RLS and must never run in real production. Unset it before deploy.'
     )
   }
   // Fail-loud production guard: rate-limit + bot-check creds (red-team H4).
@@ -98,7 +98,7 @@ export function getServerEnv(): ServerEnv {
       throw new Error(
         `Production deploy missing required abuse-defense env vars: ${missing.join(', ')}. ` +
           'Rate limiting and bot-check fall back to no-op when these are unset, which bypasses non-negotiable #10. ' +
-          'Set them in Vercel before deploy.',
+          'Set them in Vercel before deploy.'
       )
     }
   }

@@ -50,7 +50,13 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
 interface EnsureResult {
   ok: boolean
-  reason?: 'unsupported' | 'denied' | 'needs_pwa_install' | 'no_vapid_key' | 'subscribe_failed' | 'post_failed'
+  reason?:
+    | 'unsupported'
+    | 'denied'
+    | 'needs_pwa_install'
+    | 'no_vapid_key'
+    | 'subscribe_failed'
+    | 'post_failed'
 }
 
 export async function ensurePushSubscription(): Promise<EnsureResult> {

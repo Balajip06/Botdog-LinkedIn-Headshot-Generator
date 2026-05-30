@@ -20,7 +20,7 @@ export function ResultCanvas({
 }: ResultCanvasProps) {
   if (status === 'completed' && outputImageUrl) {
     return (
-      <figure className="relative aspect-square overflow-hidden rounded-3xl border border-border/60 bg-card shadow-pop animate-pop-in">
+      <figure className="border-border/60 bg-card shadow-pop animate-pop-in relative aspect-square overflow-hidden rounded-3xl border">
         <Image
           src={outputImageUrl}
           alt={title}
@@ -32,19 +32,17 @@ export function ResultCanvas({
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -inset-6 -z-10 bg-gradient-hero opacity-50 blur-3xl"
+          className="bg-gradient-hero pointer-events-none absolute -inset-6 -z-10 opacity-50 blur-3xl"
         />
       </figure>
     )
   }
   if (status === 'failed') {
     return (
-      <div className="relative overflow-hidden rounded-3xl border border-destructive/30 bg-destructive/5 p-12 text-center">
-        <p className="text-2xl font-bold text-destructive">Generation failed</p>
-        {errorMessage && (
-          <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
-        )}
-        <p className="mt-4 text-sm text-muted-foreground">
+      <div className="border-destructive/30 bg-destructive/5 relative overflow-hidden rounded-3xl border p-12 text-center">
+        <p className="text-destructive text-2xl font-bold">Generation failed</p>
+        {errorMessage && <p className="text-muted-foreground mt-2 text-sm">{errorMessage}</p>}
+        <p className="text-muted-foreground mt-4 text-sm">
           Don&apos;t worry — your quota was refunded. Try again or pick a different trend.
         </p>
       </div>
@@ -58,9 +56,9 @@ export function ResultCanvas({
         ? `Auto-retrying… attempt ${attempts}`
         : 'Queued — starting in a moment…'
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-border/60 bg-card">
-      <div className="aspect-square w-full bg-gradient-hero opacity-25" />
-      <div className="absolute inset-0 animate-shimmer" />
+    <div className="border-border/60 bg-card relative overflow-hidden rounded-3xl border">
+      <div className="bg-gradient-hero aspect-square w-full opacity-25" />
+      <div className="animate-shimmer absolute inset-0" />
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
         <div className="size-12 animate-spin rounded-full border-4 border-white/60 border-t-white" />
         <p className="text-sm font-medium text-white drop-shadow-md">{subline}</p>

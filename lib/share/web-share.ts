@@ -10,7 +10,13 @@
  *   4. Clipboard copy-link
  */
 
-export type ShareChannel = 'web_share' | 'instagram' | 'tiktok' | 'twitter' | 'whatsapp' | 'copy_link'
+export type ShareChannel =
+  | 'web_share'
+  | 'instagram'
+  | 'tiktok'
+  | 'twitter'
+  | 'whatsapp'
+  | 'copy_link'
 
 export interface ShareInput {
   title: string

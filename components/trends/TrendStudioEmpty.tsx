@@ -10,16 +10,16 @@ export function TrendStudioEmpty() {
     <section
       aria-labelledby="studio-empty"
       id="upload"
-      className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/30 px-6 py-12 text-center"
+      className="border-border/60 bg-card/30 flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-12 text-center"
     >
-      <div className="grid size-12 place-items-center rounded-full bg-gradient-hero text-white shadow-glow-pink">
+      <div className="bg-gradient-hero shadow-glow-pink grid size-12 place-items-center rounded-full text-white">
         <ArrowUp className="size-5" aria-hidden="true" />
       </div>
       <div className="flex flex-col gap-1">
         <h2 id="studio-empty" className="text-lg font-bold tracking-tight">
           Pick a trend above to get started
         </h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Tap any thumbnail and the upload form will appear right here.
         </p>
       </div>

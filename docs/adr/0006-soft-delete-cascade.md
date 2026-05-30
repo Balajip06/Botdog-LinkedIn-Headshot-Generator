@@ -8,11 +8,13 @@ Status: Accepted
 GDPR Article 17 (right to erasure) requires that users be able to delete their account and have their personal data removed. Stripe's chargeback policy gives a 120-day window for disputes. Refund operations frequently need to look back 30 days after a purchase.
 
 A naive `DELETE FROM profiles WHERE id = $user_id` cascade would:
+
 - Lose the audit trail required for chargeback defense (which `generations` belonged to whom, what they cost, what we charged).
 - Make legitimate refunds impossible after deletion (can't credit a deleted account).
 - Cascade-delete `generations` immediately, leaving Stripe webhook events orphaned and unrefundable.
 
 Conversely, holding data forever:
+
 - Violates GDPR if the user requested deletion.
 - Inflates the Storage bill (the output PNGs are the largest line item per generation).
 - Creates a wider data footprint than necessary in a security incident.
@@ -44,12 +46,14 @@ The cascade through foreign keys (`generations.user_id REFERENCES profiles(id) O
 ## Consequences
 
 **Positive:**
+
 - GDPR-compliant 30-day SLA on hard erasure (well inside the GDPR-required "without undue delay" + reasonable industry interpretation of ~30 days).
 - Stripe refund window stays operational for the full 30 days after soft-delete — refund liabilities outlive the user's "deleted" status but not forever.
-- Audit log (`admin_audit_log`) is *not* affected by the cascade — admin actions remain attributable for compliance. Documented in [supabase/migrations/20260527000004_ancillary.sql](../../supabase/migrations/20260527000004_ancillary.sql).
+- Audit log (`admin_audit_log`) is _not_ affected by the cascade — admin actions remain attributable for compliance. Documented in [supabase/migrations/20260527000004_ancillary.sql](../../supabase/migrations/20260527000004_ancillary.sql).
 - A user who deletes-then-regrets has 30 days to reverse via support (manual SQL to clear `deleted_at`). Hard delete would have made this impossible.
 
 **Negative:**
+
 - Application code must remember to filter `deleted_at IS NULL` everywhere. RLS handles the SELECT path; UPDATE/INSERT from server-side code (service role) bypasses RLS and has to apply the filter manually. Easy to miss in a new endpoint.
 - 30 days of data hanging around is a wider security footprint than zero days. Mitigated by RLS (no public-facing access).
 - pg_cron must be running. If the cron job silently fails, soft-deleted users accumulate indefinitely. Mitigation: [docs/sops/daily_ops.md](../sops/daily_ops.md) calls out the weekly pg_cron status check.

@@ -21,7 +21,7 @@ export function SubmitForm() {
   return (
     <form
       action={submitTrend}
-      className="flex flex-col gap-5 rounded-3xl border border-border/60 bg-card p-6 sm:p-8"
+      className="border-border/60 bg-card flex flex-col gap-5 rounded-3xl border p-6 sm:p-8"
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor="trend_name">Trend name</Label>
@@ -44,7 +44,7 @@ export function SubmitForm() {
           required
           placeholder="https://www.tiktok.com/..."
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Link to a TikTok, Instagram, or Reddit post that shows the trend.
         </p>
       </div>
@@ -60,23 +60,18 @@ export function SubmitForm() {
           rows={4}
           value={description}
           onChange={(event) => setDescription(event.target.value)}
-          className="w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
+          className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] md:text-sm"
           placeholder="Aesthetic, lighting, what people upload, why it pops..."
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {description.length} / {MAX_DESCRIPTION}
         </p>
       </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="your_email">Your email (optional)</Label>
-        <Input
-          id="your_email"
-          name="your_email"
-          type="email"
-          placeholder="you@example.com"
-        />
-        <p className="text-xs text-muted-foreground">
+        <Input id="your_email" name="your_email" type="email" placeholder="you@example.com" />
+        <p className="text-muted-foreground text-xs">
           In case we want to ping you when the trend ships.
         </p>
       </div>

@@ -30,11 +30,11 @@ export function TrendRail({ trends, selectedSlug }: TrendRailProps) {
       <header className="flex items-baseline justify-between gap-2">
         <h2
           id="studio-pick"
-          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+          className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase"
         >
           Pick a trend
         </h2>
-        <p className="text-xs text-muted-foreground">{trends.length} trends live</p>
+        <p className="text-muted-foreground text-xs">{trends.length} trends live</p>
       </header>
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -48,9 +48,10 @@ export function TrendRail({ trends, selectedSlug }: TrendRailProps) {
                 href={`/me/studio?trend=${trend.slug}#upload`}
                 aria-current={isSelected ? 'true' : undefined}
                 className={cn(
-                  'group relative block overflow-hidden rounded-2xl border border-border/60 bg-card/40 transition-all',
-                  'hover:border-border hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60',
-                  isSelected && 'ring-2 ring-primary ring-offset-2 ring-offset-background border-primary'
+                  'group border-border/60 bg-card/40 relative block overflow-hidden rounded-2xl border transition-all',
+                  'hover:border-border focus-visible:ring-ring/60 hover:shadow-md focus-visible:ring-2 focus-visible:outline-none',
+                  isSelected &&
+                    'ring-primary ring-offset-background border-primary ring-2 ring-offset-2'
                 )}
               >
                 <div className="relative aspect-square">
@@ -64,20 +65,24 @@ export function TrendRail({ trends, selectedSlug }: TrendRailProps) {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-hero" aria-hidden="true" />
+                    <div className="bg-gradient-hero absolute inset-0" aria-hidden="true" />
                   )}
 
                   {isNew && (
-                    <span className="absolute left-2 top-2 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-sm">
+                    <span className="bg-primary text-primary-foreground absolute top-2 left-2 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase shadow-sm">
                       New
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-0.5 px-3 py-2">
-                  <p className="line-clamp-1 text-sm font-semibold text-foreground">{trend.title}</p>
+                  <p className="text-foreground line-clamp-1 text-sm font-semibold">
+                    {trend.title}
+                  </p>
                   {trend.description && (
-                    <p className="line-clamp-1 text-xs text-muted-foreground">{trend.description}</p>
+                    <p className="text-muted-foreground line-clamp-1 text-xs">
+                      {trend.description}
+                    </p>
                   )}
                 </div>
               </Link>

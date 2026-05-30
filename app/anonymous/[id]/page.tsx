@@ -125,7 +125,7 @@ export default async function AnonymousResultPage({ params }: PageProps) {
     <div className="relative">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-spotlight opacity-25 blur-3xl"
+        className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-25 blur-3xl"
       />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 pt-10 pb-20">
@@ -166,32 +166,33 @@ export default async function AnonymousResultPage({ params }: PageProps) {
             Your <span className="text-gradient-hero">{gen.trend_title}</span>
           </h1>
           {ready && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               One-off generation from the no-signup trial. Anything you don&apos;t save in the next{' '}
               {remaining} hours gets purged.
             </p>
           )}
           {expired && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               This free trial has expired and the image has been purged. Sign up to keep your future
               creations forever.
             </p>
           )}
           {pending && (
-            <p className="text-sm text-muted-foreground">
-              We&apos;re still generating your image. Refresh in a few seconds — most takes under 30s.
+            <p className="text-muted-foreground text-sm">
+              We&apos;re still generating your image. Refresh in a few seconds — most takes under
+              30s.
             </p>
           )}
           {failed && (
-            <p className="text-sm text-muted-foreground">
-              The model couldn&apos;t finish this one. Anonymous trials don&apos;t get retries — sign up to
-              try again with a fresh attempt.
+            <p className="text-muted-foreground text-sm">
+              The model couldn&apos;t finish this one. Anonymous trials don&apos;t get retries —
+              sign up to try again with a fresh attempt.
             </p>
           )}
         </header>
 
         {ready && gen.output_image_url && (
-          <figure className="relative aspect-square overflow-hidden rounded-3xl border border-border/60 shadow-pop">
+          <figure className="border-border/60 shadow-pop relative aspect-square overflow-hidden rounded-3xl border">
             <Image
               src={gen.output_image_url}
               alt={`Generated ${gen.trend_title}`}
@@ -206,7 +207,7 @@ export default async function AnonymousResultPage({ params }: PageProps) {
         {pending && (
           <figure
             aria-label="Image still generating"
-            className="flex aspect-square items-center justify-center rounded-3xl border border-dashed border-border/60 bg-muted/30 text-muted-foreground"
+            className="border-border/60 bg-muted/30 text-muted-foreground flex aspect-square items-center justify-center rounded-3xl border border-dashed"
           >
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="size-8 animate-spin" />
@@ -215,12 +216,12 @@ export default async function AnonymousResultPage({ params }: PageProps) {
           </figure>
         )}
 
-        <section className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+        <section className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
           <div className="flex items-center gap-2">
             <Sparkles className="size-5 text-[var(--brand-grad-1)]" />
             <h2 className="text-xl font-extrabold tracking-tight">Save it forever</h2>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             Sign up to keep this result, share without watermark, and unlock 5 free generations per
             week.
           </p>
@@ -230,14 +231,14 @@ export default async function AnonymousResultPage({ params }: PageProps) {
             </GradientButton>
             <Link
               href={`/trend/${gen.trend_slug}`}
-              className="rounded-full border border-border px-5 py-3 text-sm font-medium hover:bg-muted"
+              className="border-border hover:bg-muted rounded-full border px-5 py-3 text-sm font-medium"
             >
               Try another trend
             </Link>
           </div>
         </section>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           Want to try a different photo? You get one free trial per device. Sign up for more.
         </p>
       </main>

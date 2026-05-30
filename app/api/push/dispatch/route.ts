@@ -71,10 +71,7 @@ export async function POST(request: NextRequest) {
       // Stored shape is wrong (schema drift or partial write). Clear so
       // future runs go straight to email and surface the drift to
       // monitoring via the cleared-row count.
-      await supabase
-        .from('profiles')
-        .update({ push_subscription: null })
-        .eq('id', gen.user_id)
+      await supabase.from('profiles').update({ push_subscription: null }).eq('id', gen.user_id)
     }
   }
 

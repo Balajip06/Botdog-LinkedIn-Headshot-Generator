@@ -11,15 +11,9 @@ interface LogoProps {
 
 const GLYPH_SIZE = { sm: 24, md: 32, lg: 48 } as const
 
-export function Logo({
-  className,
-  wordmark = true,
-  gradient = false,
-  size = 'md',
-}: LogoProps) {
+export function Logo({ className, wordmark = true, gradient = false, size = 'md' }: LogoProps) {
   const dim = GLYPH_SIZE[size]
-  const textCls =
-    size === 'sm' ? 'text-base' : size === 'lg' ? 'text-2xl' : 'text-lg'
+  const textCls = size === 'sm' ? 'text-base' : size === 'lg' ? 'text-2xl' : 'text-lg'
   return (
     <span className={cn('inline-flex items-center gap-2 font-extrabold tracking-tight', className)}>
       <svg
@@ -47,9 +41,7 @@ export function Logo({
         />
         <circle cx="24" cy="22" r="3.5" fill="white" />
       </svg>
-      {wordmark && (
-        <span className={cn(textCls, gradient && 'text-gradient-hero')}>Trendly</span>
-      )}
+      {wordmark && <span className={cn(textCls, gradient && 'text-gradient-hero')}>Trendly</span>}
     </span>
   )
 }

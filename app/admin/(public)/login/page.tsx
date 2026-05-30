@@ -27,7 +27,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
         <h1 className="text-3xl font-extrabold tracking-tight">
           Admin <span className="text-gradient-hero">sign in</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Internal access only. Users sign in at{' '}
           <Link href="/login" className="font-medium underline-offset-2 hover:underline">
             /login
@@ -42,7 +42,7 @@ export default async function AdminLoginPage({ searchParams }: { searchParams: S
         </div>
       )}
       {errorMessage && (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-2xl border px-4 py-3 text-sm">
           {errorMessage}
         </div>
       )}

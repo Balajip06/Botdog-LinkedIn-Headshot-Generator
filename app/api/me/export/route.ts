@@ -90,7 +90,10 @@ export async function GET() {
   if (!rl.success) {
     return NextResponse.json(
       { error: 'Rate limit exceeded. Try again in an hour.' },
-      { status: 429, headers: { 'retry-after': String(Math.max(1, rl.reset - Math.floor(Date.now() / 1000))) } }
+      {
+        status: 429,
+        headers: { 'retry-after': String(Math.max(1, rl.reset - Math.floor(Date.now() / 1000))) },
+      }
     )
   }
 
@@ -136,7 +139,7 @@ export async function GET() {
         const { data, error } = await service.storage
           .from('outputs')
           .createSignedUrl(path, EXPORT_SIGNED_URL_TTL_SECONDS)
-        signedUrl = error ? null : data?.signedUrl ?? null
+        signedUrl = error ? null : (data?.signedUrl ?? null)
       }
       const exportRow: ExportGenerationInput = {
         id: g.id,

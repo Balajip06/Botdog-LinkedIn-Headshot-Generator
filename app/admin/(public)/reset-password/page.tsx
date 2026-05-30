@@ -23,13 +23,11 @@ export default async function AdminResetPasswordPage({
         <h1 className="text-3xl font-extrabold tracking-tight">
           Set a new <span className="text-gradient-hero">password</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Pick something at least 8 characters long.
-        </p>
+        <p className="text-muted-foreground text-sm">Pick something at least 8 characters long.</p>
       </header>
 
       {errorMessage && (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="border-destructive/30 bg-destructive/10 text-destructive rounded-2xl border px-4 py-3 text-sm">
           {errorMessage}
         </div>
       )}

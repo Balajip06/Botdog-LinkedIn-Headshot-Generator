@@ -29,7 +29,11 @@ export interface EmailSendResult {
   error?: string
 }
 
-function reportFailure(reason: string, payload: EmailPayload, extra?: Record<string, unknown>): void {
+function reportFailure(
+  reason: string,
+  payload: EmailPayload,
+  extra?: Record<string, unknown>
+): void {
   // Mask the recipient — keep the domain for debugging, drop the local part so
   // PII doesn't reach Sentry. e.g. "user@example.com" -> "***@example.com".
   const maskedTo = payload.to.replace(/^[^@]+/, '***')

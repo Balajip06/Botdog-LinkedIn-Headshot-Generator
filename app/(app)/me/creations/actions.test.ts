@@ -85,8 +85,7 @@ function lastRedirectUrl(): string {
 function resetState(overrides: Partial<State> = {}) {
   state.rowIsFavorite =
     'rowIsFavorite' in overrides ? (overrides.rowIsFavorite as boolean | null) : false
-  state.authUser =
-    overrides.authUser === undefined ? { id: 'user-1' } : overrides.authUser
+  state.authUser = overrides.authUser === undefined ? { id: 'user-1' } : overrides.authUser
   state.lastUpdatePayload = null
   state.lastUpdateEqFilters = []
   state.lastSelectEqFilters = []
@@ -157,9 +156,7 @@ describe('toggleFavorite — auth + ownership', () => {
 
 describe('toggleFavorite — input validation', () => {
   it('redirects ?error=invalid_id when generation_id is not a UUID', async () => {
-    await expect(toggleFavorite(makeForm('not-a-uuid'))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(toggleFavorite(makeForm('not-a-uuid'))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toBe('/me/creations?error=invalid_id')
     expect(state.lastUpdatePayload).toBeNull()
   })

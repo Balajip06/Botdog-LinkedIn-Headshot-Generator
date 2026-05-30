@@ -30,7 +30,7 @@ export default function Loading() {
 
         {/* Upload + FAQ */}
         <section className="grid items-start gap-8 lg:grid-cols-[1.2fr_1fr]">
-          <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-soft sm:p-8">
+          <div className="border-border/60 bg-card shadow-soft rounded-3xl border p-6 sm:p-8">
             <div className="mb-6 flex flex-col gap-1.5">
               <Skeleton className="h-7 w-32" />
               <Skeleton className="h-4 w-64" />
@@ -39,11 +39,11 @@ export default function Loading() {
             <Skeleton className="mt-4 h-11 w-40 rounded-full" />
           </div>
 
-          <aside className="rounded-3xl border border-border/60 bg-card/80 p-6 backdrop-blur sm:p-8">
+          <aside className="border-border/60 bg-card/80 rounded-3xl border p-6 backdrop-blur sm:p-8">
             <Skeleton className="h-7 w-32" />
             <div className="mt-4 flex flex-col gap-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex flex-col gap-2 border-b border-border/40 pb-3">
+                <div key={i} className="border-border/40 flex flex-col gap-2 border-b pb-3">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-3 w-1/2" />
                 </div>

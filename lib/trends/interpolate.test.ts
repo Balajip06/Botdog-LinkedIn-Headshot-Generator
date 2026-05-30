@@ -38,9 +38,9 @@ describe('interpolatePrompt', () => {
   })
 
   it('substitutes the same placeholder multiple times', () => {
-    expect(
-      interpolatePrompt('{{style}} / {{style}} / {{style}}', couple, { style: 'pixar' })
-    ).toBe('pixar / pixar / pixar')
+    expect(interpolatePrompt('{{style}} / {{style}} / {{style}}', couple, { style: 'pixar' })).toBe(
+      'pixar / pixar / pixar'
+    )
   })
 
   it('treats missing optional text field as empty string', () => {
@@ -65,9 +65,7 @@ describe('interpolatePrompt', () => {
   })
 
   it('rejects array value for text field', () => {
-    expect(() => interpolatePrompt('{{caption}}', couple, { caption: ['a', 'b'] })).toThrow(
-      /array/
-    )
+    expect(() => interpolatePrompt('{{caption}}', couple, { caption: ['a', 'b'] })).toThrow(/array/)
   })
 
   it('tolerates whitespace inside placeholder braces', () => {

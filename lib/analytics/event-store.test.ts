@@ -55,7 +55,12 @@ describe('event-store baseline', () => {
 
   it('CTR for any baseline is between 6% and 24%', async () => {
     const { getCounts } = await loadFresh()
-    for (const slug of ['ghibli-portrait', 'anime-portrait', 'lego-minifigure', 'y2k-digicam-flash']) {
+    for (const slug of [
+      'ghibli-portrait',
+      'anime-portrait',
+      'lego-minifigure',
+      'y2k-digicam-flash',
+    ]) {
       const c = await getCounts(slug)
       const ctr = c.clicks / c.impressions
       expect(ctr).toBeGreaterThanOrEqual(0.06)
@@ -117,7 +122,7 @@ describe('getOverall', () => {
         impressions: acc.impressions + c.impressions,
         clicks: acc.clicks + c.clicks,
       }),
-      { impressions: 0, clicks: 0 },
+      { impressions: 0, clicks: 0 }
     )
     expect(await getOverall(slugs)).toEqual(expected)
   })

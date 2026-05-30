@@ -96,7 +96,8 @@ async function probeEdgeFunction(): Promise<{
       cache: 'no-store',
     })
     const elapsedMs = Date.now() - startedAt
-    const isAliveCode = res.status === 200 || res.status === 204 || res.status === 401 || res.status === 405
+    const isAliveCode =
+      res.status === 200 || res.status === 204 || res.status === 401 || res.status === 405
     if (isAliveCode) {
       if (elapsedMs > 2000) {
         return {
@@ -250,7 +251,7 @@ export default async function StatusPage() {
     <div className="relative">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-spotlight opacity-20 blur-3xl"
+        className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[420px] opacity-20 blur-3xl"
       />
 
       <main className="mx-auto flex max-w-3xl flex-col gap-16 px-6 pt-16 pb-24">
@@ -259,7 +260,7 @@ export default async function StatusPage() {
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
             System <span className="text-gradient-hero">status</span>
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Live status of Trendly&apos;s core systems.
           </p>
         </section>
@@ -269,7 +270,7 @@ export default async function StatusPage() {
           {cards.map((card) => (
             <article
               key={card.name}
-              className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card p-6"
+              className="border-border/60 bg-card flex flex-col gap-3 rounded-3xl border p-6"
             >
               <div className="flex items-center gap-2">
                 <span
@@ -279,7 +280,7 @@ export default async function StatusPage() {
                 <h2 className="text-lg font-semibold tracking-tight">{card.name}</h2>
               </div>
               <p className="text-sm font-medium">{statusLabel(card.status)}</p>
-              <p className="text-sm text-muted-foreground">{card.detail}</p>
+              <p className="text-muted-foreground text-sm">{card.detail}</p>
               {card.note ? (
                 <p
                   title={card.note}
@@ -293,23 +294,26 @@ export default async function StatusPage() {
         </section>
 
         {/* Recent incidents */}
-        <section className="flex flex-col gap-4 rounded-3xl border border-border/60 bg-card/60 p-8 sm:p-10">
+        <section className="border-border/60 bg-card/60 flex flex-col gap-4 rounded-3xl border p-8 sm:p-10">
           <h2 className="text-2xl font-bold tracking-tight">Recent incidents</h2>
           {incidents.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No incidents in the last 90 days.</p>
+            <p className="text-muted-foreground text-sm">No incidents in the last 90 days.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {incidents.map((incident) => (
-                <li key={incident.filename} className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
+                <li
+                  key={incident.filename}
+                  className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4"
+                >
                   <time
                     dateTime={incident.date}
-                    className="font-mono text-xs text-muted-foreground tabular-nums"
+                    className="text-muted-foreground font-mono text-xs tabular-nums"
                   >
                     {incident.date}
                   </time>
                   <a
                     href={incident.href}
-                    className="text-sm font-medium underline underline-offset-4 hover:text-foreground"
+                    className="hover:text-foreground text-sm font-medium underline underline-offset-4"
                   >
                     {incident.title}
                   </a>
@@ -320,20 +324,20 @@ export default async function StatusPage() {
         </section>
 
         {/* Footer note */}
-        <section className="flex flex-col items-start gap-3 rounded-3xl border border-border/60 bg-gradient-spotlight/20 p-8 sm:p-10">
+        <section className="border-border/60 bg-gradient-spotlight/20 flex flex-col items-start gap-3 rounded-3xl border p-8 sm:p-10">
           <h2 className="text-2xl font-bold tracking-tight">Stay informed</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             For real-time monitoring, follow{' '}
             <a
               href="https://x.com/trendly_status"
-              className="underline underline-offset-4 hover:text-foreground"
+              className="hover:text-foreground underline underline-offset-4"
             >
               @trendly_status
             </a>{' '}
             on X. For incident response, see our{' '}
             <a
               href="https://github.com/Balajip06/Trend-Image-Generator/blob/main/docs/incident_response.md"
-              className="underline underline-offset-4 hover:text-foreground"
+              className="hover:text-foreground underline underline-offset-4"
             >
               SOP
             </a>
@@ -341,7 +345,7 @@ export default async function StatusPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
+            className="bg-foreground text-background inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
           >
             Report an issue →
           </Link>

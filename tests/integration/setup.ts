@@ -23,7 +23,7 @@ beforeAll(async () => {
     throw new Error(
       `Integration suite cannot connect to ${url}. ` +
         `Run \`pnpm supabase:start\` first (or set INTEGRATION_DATABASE_URL to a reachable Postgres). ` +
-        `Underlying error: ${msg}`,
+        `Underlying error: ${msg}`
     )
   }
 })

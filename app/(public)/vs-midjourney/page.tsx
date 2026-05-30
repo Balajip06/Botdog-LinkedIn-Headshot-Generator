@@ -133,7 +133,7 @@ const FAQ: Array<{ question: string; answer: string }> = [
   {
     question: 'Can I use the images commercially?',
     answer:
-      "Outputs are yours to use commercially, with two carve-outs: branded-IP styles (Ghibli, Pixar, Stranger Things, etc.) are for personal use only — see our Terms of Service §3. For commercial work, stick to generic-style trends like the Renaissance, Marble Statue, or LinkedIn Headshot.",
+      'Outputs are yours to use commercially, with two carve-outs: branded-IP styles (Ghibli, Pixar, Stranger Things, etc.) are for personal use only — see our Terms of Service §3. For commercial work, stick to generic-style trends like the Renaissance, Marble Statue, or LinkedIn Headshot.',
   },
 ]
 
@@ -162,7 +162,7 @@ export default function VsMidjourneyPage() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-gradient-spotlight opacity-30 blur-3xl"
+        className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] opacity-30 blur-3xl"
       />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-20 px-6 pt-16 pb-24">
@@ -171,7 +171,7 @@ export default function VsMidjourneyPage() {
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
             Trendly <span className="text-gradient-hero">vs Midjourney</span>
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">
+          <p className="text-muted-foreground max-w-2xl text-lg">
             If you want a trend, you don&apos;t need a $10/month Discord subscription. Here&apos;s
             the comparison — pricing, speed, signup, mobile, and what each tool is actually good at.
           </p>
@@ -181,7 +181,7 @@ export default function VsMidjourneyPage() {
             </GradientButton>
             <Link
               href="/"
-              className="rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-muted"
+              className="border-border hover:bg-muted rounded-full border px-6 py-3 text-sm font-medium"
             >
               See all trends →
             </Link>
@@ -195,20 +195,20 @@ export default function VsMidjourneyPage() {
             {VERDICTS.map((v) => (
               <li
                 key={v.heading}
-                className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card p-6"
+                className="border-border/60 bg-card flex flex-col gap-3 rounded-3xl border p-6"
               >
                 <span
                   className={
                     v.tone === 'trendly'
-                      ? 'text-sm font-semibold text-gradient-hero'
+                      ? 'text-gradient-hero text-sm font-semibold'
                       : v.tone === 'midjourney'
-                        ? 'text-sm font-semibold text-muted-foreground'
-                        : 'text-sm font-semibold text-foreground'
+                        ? 'text-muted-foreground text-sm font-semibold'
+                        : 'text-foreground text-sm font-semibold'
                   }
                 >
                   {v.heading}
                 </span>
-                <p className="text-sm text-muted-foreground">{v.body}</p>
+                <p className="text-muted-foreground text-sm">{v.body}</p>
               </li>
             ))}
           </ul>
@@ -217,23 +217,23 @@ export default function VsMidjourneyPage() {
         {/* Full compare table */}
         <section className="flex flex-col gap-6">
           <h2 className="text-2xl font-bold tracking-tight">Full comparison</h2>
-          <div className="overflow-x-auto rounded-3xl border border-border/60 bg-card">
+          <div className="border-border/60 bg-card overflow-x-auto rounded-3xl border">
             <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-border/60 bg-card/80 text-left">
+                <tr className="border-border/60 bg-card/80 border-b text-left">
                   <th className="px-5 py-4 font-semibold"> </th>
                   <th className="px-5 py-4 font-semibold">
                     <span className="text-gradient-hero">Trendly</span>
                   </th>
-                  <th className="px-5 py-4 font-semibold text-muted-foreground">Midjourney</th>
+                  <th className="text-muted-foreground px-5 py-4 font-semibold">Midjourney</th>
                 </tr>
               </thead>
               <tbody>
                 {COMPARE_ROWS.map((row) => (
-                  <tr key={row.label} className="border-b border-border/40 last:border-b-0">
+                  <tr key={row.label} className="border-border/40 border-b last:border-b-0">
                     <td className="px-5 py-4 font-medium">{row.label}</td>
                     <td className="px-5 py-4 font-semibold">{row.trendly}</td>
-                    <td className="px-5 py-4 text-muted-foreground">{row.midjourney}</td>
+                    <td className="text-muted-foreground px-5 py-4">{row.midjourney}</td>
                   </tr>
                 ))}
               </tbody>
@@ -244,11 +244,15 @@ export default function VsMidjourneyPage() {
         {/* FAQ */}
         <section className="flex flex-col gap-6">
           <h2 className="text-2xl font-bold tracking-tight">Frequently asked</h2>
-          <Accordion type="single" collapsible className="rounded-2xl border border-border/60 bg-card/40 px-5">
+          <Accordion
+            type="single"
+            collapsible
+            className="border-border/60 bg-card/40 rounded-2xl border px-5"
+          >
             {FAQ.map((item, idx) => (
               <AccordionItem key={item.question} value={`faq-${idx}`}>
                 <AccordionTrigger className="text-base">{item.question}</AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -264,7 +268,7 @@ export default function VsMidjourneyPage() {
               <li key={t.slug}>
                 <Link
                   href={`/trend/${t.slug}`}
-                  className="flex items-center justify-between rounded-2xl border border-border/60 bg-card/60 px-5 py-4 text-sm font-medium transition-colors hover:bg-muted"
+                  className="border-border/60 bg-card/60 hover:bg-muted flex items-center justify-between rounded-2xl border px-5 py-4 text-sm font-medium transition-colors"
                 >
                   <span>{t.label}</span>
                   <span aria-hidden className="text-muted-foreground">
@@ -277,11 +281,11 @@ export default function VsMidjourneyPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="flex flex-col items-center gap-4 rounded-3xl border border-border/60 bg-gradient-spotlight/40 p-10 text-center">
+        <section className="border-border/60 bg-gradient-spotlight/40 flex flex-col items-center gap-4 rounded-3xl border p-10 text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Try a trend in 30 seconds — no Discord, no card
           </h2>
-          <p className="max-w-xl text-sm text-muted-foreground">
+          <p className="text-muted-foreground max-w-xl text-sm">
             First one&apos;s free on every device. If you never come back, you owe us nothing.
           </p>
           <GradientButton size="lg" asChild>

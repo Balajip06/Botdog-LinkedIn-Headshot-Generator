@@ -36,7 +36,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Delete?"
         description="Permanent."
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     expect(screen.getByRole('button', { name: 'Delete trend' })).toBeInTheDocument()
   })
@@ -49,7 +49,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Hidden title"
         description="Hidden description"
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     expect(screen.queryByText('Hidden title')).not.toBeInTheDocument()
   })
@@ -62,7 +62,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Visible title"
         description="Visible description"
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Delete trend' }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Delete?"
         description="Permanent."
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Delete trend' }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -98,7 +98,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Revoke?"
         description="Soft action."
         confirmLabel="Yes, revoke"
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Revoke VIP' }))
     fireEvent.click(screen.getByRole('button', { name: 'Yes, revoke' }))
@@ -118,7 +118,7 @@ describe('ConfirmDestructiveButton', () => {
         description="Permanent."
         confirmLabel="Yes, delete"
         requireType="DELETE"
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Delete trend' }))
 
@@ -143,7 +143,7 @@ describe('ConfirmDestructiveButton', () => {
         description="Soft action."
         confirmLabel="Yes, revoke"
         hiddenFields={{ user_id: 'abc-123', enable: '0' }}
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Revoke VIP' }))
     fireEvent.click(screen.getByRole('button', { name: 'Yes, revoke' }))
@@ -162,7 +162,7 @@ describe('ConfirmDestructiveButton', () => {
         description="Permanent."
         confirmLabel="Yes, delete"
         requireType="DELETE"
-      />,
+      />
     )
     fireEvent.click(screen.getByRole('button', { name: 'Delete trend' }))
     fireEvent.change(screen.getByLabelText(/Type .* to confirm/i), {
@@ -187,7 +187,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Delete?"
         description="Permanent."
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     expect(screen.getByRole('button', { name: 'Delete trend' })).toBeDisabled()
   })
@@ -202,7 +202,7 @@ describe('ConfirmDestructiveButton', () => {
         title="Delete?"
         description="Permanent."
         confirmLabel="Yes, delete"
-      />,
+      />
     )
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Delete trend' }))

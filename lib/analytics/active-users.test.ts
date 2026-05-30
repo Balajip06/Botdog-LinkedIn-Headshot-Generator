@@ -208,8 +208,7 @@ function makeCacClient(fixtures: CacFixtures): SupabaseClient {
     chain.order = vi.fn(passthrough)
     chain.limit = vi.fn(passthrough)
     chain.maybeSingle = vi.fn(() => Promise.resolve(result))
-    chain.then = (resolve: (v: typeof result) => unknown) =>
-      Promise.resolve(result).then(resolve)
+    chain.then = (resolve: (v: typeof result) => unknown) => Promise.resolve(result).then(resolve)
     return chain
   }
   const client: Record<string, unknown> = {
@@ -349,9 +348,7 @@ describe('getCacByChannel', () => {
     // Two weeks of $100 each = $200 total; 4 signups → $50 CAC.
     const today = new Date()
     const thisWeek = today.toISOString().slice(0, 10)
-    const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10)
+    const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
     const supabase = makeCacClient({
       spend: [
         { week_start: thisWeek, channel: 'tiktok', usd_spent: 100 },

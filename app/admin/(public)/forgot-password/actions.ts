@@ -15,7 +15,9 @@ import { createClient } from '@/lib/supabase/server'
  * goes out but the UI flow is unchanged.
  */
 export async function sendResetEmail(formData: FormData): Promise<void> {
-  const email = String(formData.get('email') ?? '').trim().toLowerCase()
+  const email = String(formData.get('email') ?? '')
+    .trim()
+    .toLowerCase()
   if (!email) redirect('/admin/forgot-password?error=invalid_email')
 
   const supabase = await createClient()

@@ -95,7 +95,7 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
     new Set([
       ...grants.map((r) => r.admin_id).filter(Boolean),
       ...grants.map((r) => r.target_id).filter(Boolean),
-    ] as string[]),
+    ] as string[])
   )
   const emailById = new Map<string, string>()
   if (profileIds.length > 0) {
@@ -118,13 +118,13 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
       />
 
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Support
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">
           Issue <span className="text-gradient-hero">refund credits</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Manual credit grant. Writes a row to{' '}
           <code className="font-mono text-xs">admin_audit_log</code> with{' '}
           <code className="font-mono text-xs">source=support</code> for compliance.
@@ -139,7 +139,7 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
           <form method="get" className="flex flex-col gap-3">
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                 <Input
                   name="q"
                   defaultValue={q}
@@ -152,12 +152,12 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
               </Button>
             </div>
             {q.length === 0 ? (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Search for a user above, or use the manual form below.
               </p>
             ) : null}
             {searchError ? (
-              <p className="text-xs text-destructive">Search failed: {searchError}</p>
+              <p className="text-destructive text-xs">Search failed: {searchError}</p>
             ) : null}
           </form>
 
@@ -166,11 +166,11 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
               {searchResults.map((r) => (
                 <li
                   key={r.id}
-                  className="flex flex-col gap-2 rounded-2xl border border-border/60 bg-card/40 p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="border-border/60 bg-card/40 flex flex-col gap-2 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-semibold">{r.email}</span>
-                    <span className="font-mono text-[11px] text-muted-foreground">{r.id}</span>
+                    <span className="text-muted-foreground font-mono text-[11px]">{r.id}</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Badge variant="outline" className="rounded-full">
@@ -188,7 +188,7 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
               ))}
             </ul>
           ) : q.length > 0 && !searchError ? (
-            <p className="mt-3 text-xs text-muted-foreground">No matches.</p>
+            <p className="text-muted-foreground mt-3 text-xs">No matches.</p>
           ) : null}
         </CardContent>
       </Card>
@@ -198,17 +198,14 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
           <CardTitle className="text-lg font-bold">
             New grant
             {preselected ? (
-              <span className="ml-2 text-xs font-normal text-muted-foreground">
+              <span className="text-muted-foreground ml-2 text-xs font-normal">
                 for {preselected.email}
               </span>
             ) : null}
           </CardTitle>
         </CardHeader>
         <CardContent className="px-6">
-          <RefundForm
-            defaultEmail={preselected?.email}
-            defaultUserId={preselected?.id}
-          />
+          <RefundForm defaultEmail={preselected?.email} defaultUserId={preselected?.id} />
         </CardContent>
       </Card>
 
@@ -218,11 +215,11 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
         </CardHeader>
         <CardContent className="px-6">
           {grants.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No grants yet.</p>
+            <p className="text-muted-foreground text-sm">No grants yet.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <thead className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   <tr>
                     <th className="py-2 pr-3">When</th>
                     <th className="py-2 pr-3">Who</th>
@@ -238,35 +235,33 @@ export default async function AdminRefundsPage({ searchParams }: RefundsPageProp
                     const targetEmail = row.target_id ? emailById.get(row.target_id) : null
                     const adminEmail = row.admin_id ? emailById.get(row.admin_id) : null
                     return (
-                      <tr key={row.id} className="border-t border-border/40">
-                        <td className="py-2 pr-3 text-xs text-muted-foreground">
+                      <tr key={row.id} className="border-border/40 border-t">
+                        <td className="text-muted-foreground py-2 pr-3 text-xs">
                           {new Date(row.created_at).toLocaleString()}
                         </td>
                         <td className="py-2 pr-3">
                           {targetEmail ?? (
-                            <span className="font-mono text-[11px] text-muted-foreground">
+                            <span className="text-muted-foreground font-mono text-[11px]">
                               {row.target_id?.slice(0, 8) ?? '—'}
                             </span>
                           )}
                         </td>
-                        <td className="py-2 pr-3 font-semibold">
-                          +{row.after?.amount ?? '?'}
-                        </td>
+                        <td className="py-2 pr-3 font-semibold">+{row.after?.amount ?? '?'}</td>
                         <td className="py-2 pr-3">
                           {ref.category ? (
                             <Badge variant="outline" className="rounded-full text-[10px]">
                               {ref.category}
                             </Badge>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-muted-foreground text-xs">—</span>
                           )}
                         </td>
-                        <td className="py-2 pr-3 text-xs text-muted-foreground">
+                        <td className="text-muted-foreground py-2 pr-3 text-xs">
                           {ref.notes && ref.notes !== '<no notes>' ? ref.notes : '—'}
                         </td>
                         <td className="py-2 pr-3 text-xs">
                           {adminEmail ?? (
-                            <span className="font-mono text-muted-foreground">system</span>
+                            <span className="text-muted-foreground font-mono">system</span>
                           )}
                         </td>
                       </tr>

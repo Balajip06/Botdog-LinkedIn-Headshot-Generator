@@ -14,20 +14,20 @@
 
 ## 2. Key Decisions (Locked)
 
-| Area | Decision |
-|---|---|
-| Trends managed by | Me + small team (admin panel with roles) |
-| Platform | Web first, mobile (React Native) later |
-| Monetization | Freemium — 10 free generations lifetime, then Pro plan |
-| Priority for v1 | Best output quality |
-| Backend / DB / Auth / Storage | **Supabase** |
-| Frontend | **Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui** |
-| Auth | Google + Email |
-| Default model | **Nano Banana Pro (Gemini 3 Pro Image)** — quality-first |
-| Quick option | Nano Banana v1 — cheaper/faster toggle for users |
-| Watermark | None — clean output for all tiers |
-| Content moderation | Allow all uploads; moderate **outputs** only |
-| Payment gateway | Decide later (interface stubbed) |
+| Area                          | Decision                                                        |
+| ----------------------------- | --------------------------------------------------------------- |
+| Trends managed by             | Me + small team (admin panel with roles)                        |
+| Platform                      | Web first, mobile (React Native) later                          |
+| Monetization                  | Freemium — 10 free generations lifetime, then Pro plan          |
+| Priority for v1               | Best output quality                                             |
+| Backend / DB / Auth / Storage | **Supabase**                                                    |
+| Frontend                      | **Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui** |
+| Auth                          | Google + Email                                                  |
+| Default model                 | **Nano Banana Pro (Gemini 3 Pro Image)** — quality-first        |
+| Quick option                  | Nano Banana v1 — cheaper/faster toggle for users                |
+| Watermark                     | None — clean output for all tiers                               |
+| Content moderation            | Allow all uploads; moderate **outputs** only                    |
+| Payment gateway               | Decide later (interface stubbed)                                |
 
 ---
 
@@ -43,6 +43,7 @@
 ## 4. Architecture
 
 ### Stack
+
 - **Frontend**: Next.js 15 (App Router), TypeScript, Tailwind, shadcn/ui
 - **Backend**: Next.js API routes + Supabase Edge Functions (for generation jobs)
 - **DB + Auth + Storage**: Supabase (Postgres + Auth + Storage)
@@ -52,6 +53,7 @@
 - **Analytics**: PostHog (free tier)
 
 ### Folder structure
+
 ```
 /app           (Next.js routes — public, admin, api)
 /components    (UI components)
@@ -67,62 +69,69 @@
 ## 5. Data Model
 
 ### `profiles`
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid | FK → auth.users |
-| email | text | |
-| name | text | |
-| avatar_url | text | |
-| plan | enum | `free` \| `pro` |
-| free_generations_used | int | Default 0, lifetime-capped at 10 |
-| pro_credits | int | Default 0 |
-| created_at | timestamptz | |
+
+| Column                | Type        | Notes                            |
+| --------------------- | ----------- | -------------------------------- |
+| id                    | uuid        | FK → auth.users                  |
+| email                 | text        |                                  |
+| name                  | text        |                                  |
+| avatar_url            | text        |                                  |
+| plan                  | enum        | `free` \| `pro`                  |
+| free_generations_used | int         | Default 0, lifetime-capped at 10 |
+| pro_credits           | int         | Default 0                        |
+| created_at            | timestamptz |                                  |
 
 ### `trends`
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid | |
-| slug | text | URL-safe identifier |
-| title | text | |
-| description | text | |
-| thumbnail_url | text | |
-| sample_before_url | text | |
-| sample_after_url | text | |
-| prompt_template | text | The actual prompt sent to Gemini |
-| model | enum | `nano-banana` \| `nano-banana-pro` |
-| reference_image_urls | text[] | Optional anchor images |
-| aspect_ratio | enum | `1:1` \| `3:4` \| `16:9` |
-| is_active | bool | |
-| display_order | int | For sorting in UI |
-| created_by | uuid | FK → admin_users |
-| created_at | timestamptz | |
+
+| Column               | Type        | Notes                              |
+| -------------------- | ----------- | ---------------------------------- |
+| id                   | uuid        |                                    |
+| slug                 | text        | URL-safe identifier                |
+| title                | text        |                                    |
+| description          | text        |                                    |
+| thumbnail_url        | text        |                                    |
+| sample_before_url    | text        |                                    |
+| sample_after_url     | text        |                                    |
+| prompt_template      | text        | The actual prompt sent to Gemini   |
+| model                | enum        | `nano-banana` \| `nano-banana-pro` |
+| reference_image_urls | text[]      | Optional anchor images             |
+| aspect_ratio         | enum        | `1:1` \| `3:4` \| `16:9`           |
+| is_active            | bool        |                                    |
+| display_order        | int         | For sorting in UI                  |
+| created_by           | uuid        | FK → admin_users                   |
+| created_at           | timestamptz |                                    |
 
 ### `generations`
-| Column | Type | Notes |
-|---|---|---|
-| id | uuid | |
-| user_id | uuid | FK → profiles |
-| trend_id | uuid | FK → trends |
-| input_image_url | text | |
-| output_image_url | text | Null until completed |
-| status | enum | `queued` \| `processing` \| `completed` \| `failed` |
-| error_message | text | |
-| model_used | text | Snapshot of model at generation time |
-| created_at | timestamptz | |
-| completed_at | timestamptz | |
+
+| Column           | Type        | Notes                                               |
+| ---------------- | ----------- | --------------------------------------------------- |
+| id               | uuid        |                                                     |
+| user_id          | uuid        | FK → profiles                                       |
+| trend_id         | uuid        | FK → trends                                         |
+| input_image_url  | text        |                                                     |
+| output_image_url | text        | Null until completed                                |
+| status           | enum        | `queued` \| `processing` \| `completed` \| `failed` |
+| error_message    | text        |                                                     |
+| model_used       | text        | Snapshot of model at generation time                |
+| created_at       | timestamptz |                                                     |
+| completed_at     | timestamptz |                                                     |
 
 ### `admin_users`
-| Column | Type | Notes |
-|---|---|---|
-| user_id | uuid | FK → auth.users |
-| role | enum | `admin` \| `editor` |
-| created_at | timestamptz | |
+
+| Column     | Type        | Notes               |
+| ---------- | ----------- | ------------------- |
+| user_id    | uuid        | FK → auth.users     |
+| role       | enum        | `admin` \| `editor` |
+| created_at | timestamptz |                     |
 
 ### Critical RLS policy
+
 On `generations` INSERT — reject if:
+
 ```
 (plan = 'free' AND free_generations_used >= 10) AND pro_credits <= 0
 ```
+
 Quota enforcement happens at the database layer. Impossible to bypass from the client.
 
 ---
@@ -141,6 +150,7 @@ Quota enforcement happens at the database layer. Impossible to bypass from the c
 ## 7. Phased Build Plan
 
 ### Phase 1 — Foundation (2–3 days)
+
 - Next.js + Supabase project setup
 - Auth (Google + Email) with profile auto-creation trigger
 - Full DB schema + RLS policies
@@ -148,11 +158,13 @@ Quota enforcement happens at the database layer. Impossible to bypass from the c
 - Generate TypeScript types from schema (`supabase gen types typescript`)
 
 ### Phase 2 — Trends + Admin (2 days)
+
 - Admin CRUD for trends (form + Supabase Storage upload for thumbnails)
 - Public home page rendering the trends grid
 - Trend detail page
 
 ### Phase 3 — Core Generation (3–4 days)
+
 - Upload flow with client-side compression
 - `/api/generate` endpoint with quota check
 - Edge Function calling Gemini API with the prompt template + user image
@@ -161,12 +173,14 @@ Quota enforcement happens at the database layer. Impossible to bypass from the c
 - Refund logic on moderation failure
 
 ### Phase 4 — Polish (2 days)
+
 - Download + share-to-social with OG preview
 - `/my-creations` history page
 - Error states, retry logic, edge cases
 - PostHog analytics
 
 ### Phase 5 — Payments (when traction exists)
+
 - Drop in Razorpay or Stripe behind the payment interface stub
 - Pro plan pricing: e.g., ₹299/month for 100 generations, or per-credit packs
 

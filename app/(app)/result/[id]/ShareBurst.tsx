@@ -26,16 +26,12 @@ interface ShareBurstProps {
 function buildCaption(
   template: string | null | undefined,
   trendTitle: string,
-  siteUrl: string,
+  siteUrl: string
 ): string {
   if (!template) {
     return `Made my ${trendTitle} on Trendly — try yours`
   }
-  return template
-    .split('{trend_title}')
-    .join(trendTitle)
-    .split('{site_url}')
-    .join(siteUrl)
+  return template.split('{trend_title}').join(trendTitle).split('{site_url}').join(siteUrl)
 }
 
 export function ShareBurst({
@@ -101,15 +97,15 @@ export function ShareBurst({
   const showNative = mounted && isWebShareSupported()
 
   return (
-    <div className="rounded-3xl border border-border/60 bg-card/80 p-6 backdrop-blur">
+    <div className="border-border/60 bg-card/80 rounded-3xl border p-6 backdrop-blur">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
             Share
           </p>
           <p className="mt-0.5 text-base font-bold">Drop it on the feed</p>
         </div>
-        <Share2 className="size-5 text-muted-foreground" aria-hidden="true" />
+        <Share2 className="text-muted-foreground size-5" aria-hidden="true" />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5">
         {showNative && (
@@ -175,7 +171,7 @@ function ShareTile({ href, onClick, disabled, label, sub, tone, icon }: ShareTil
         {icon ? <span aria-hidden="true">{icon}</span> : null}
         {label}
       </span>
-      <span className="text-[10px] uppercase tracking-wider opacity-70">{sub}</span>
+      <span className="text-[10px] tracking-wider uppercase opacity-70">{sub}</span>
     </span>
   )
   const baseCls = `flex flex-col items-start rounded-2xl px-4 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 ${cls}`

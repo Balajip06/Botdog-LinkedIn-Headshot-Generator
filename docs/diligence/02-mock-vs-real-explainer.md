@@ -27,11 +27,11 @@ Every analytics function in [`lib/analytics/margin.ts`](../../lib/analytics/marg
 
 The user-visible markers:
 
-| Surface | Where the `isMock` signal lives | What buyer sees |
-|---|---|---|
-| `/admin/margin` | [`app/admin/margin/page.tsx`](../../app/admin/margin/page.tsx) renders a "Demo data" badge in the header when `margin.isMock === true` | Yellow `Demo data` pill next to the page title |
-| `/admin/margin` "Demo data" toggle | The page also exposes a `?mock=1` query param via the `DataSourceToggle` component to **force** mock — explicit, opt-in, for screenshot/parallel-run work | A second yellow banner "Demo data forced via ?mock=1" |
-| `/admin/users`, `/admin/referrals`, `/admin` overview | Same pattern: each page reads `isMock` from its analytics source and renders a badge near the relevant tile | Yellow badge or muted "demo" label on affected tiles |
+| Surface                                               | Where the `isMock` signal lives                                                                                                                           | What buyer sees                                       |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `/admin/margin`                                       | [`app/admin/margin/page.tsx`](../../app/admin/margin/page.tsx) renders a "Demo data" badge in the header when `margin.isMock === true`                    | Yellow `Demo data` pill next to the page title        |
+| `/admin/margin` "Demo data" toggle                    | The page also exposes a `?mock=1` query param via the `DataSourceToggle` component to **force** mock — explicit, opt-in, for screenshot/parallel-run work | A second yellow banner "Demo data forced via ?mock=1" |
+| `/admin/users`, `/admin/referrals`, `/admin` overview | Same pattern: each page reads `isMock` from its analytics source and renders a badge near the relevant tile                                               | Yellow badge or muted "demo" label on affected tiles  |
 
 **Buyer-facing rule:** if a yellow "Demo data" / "Mock" badge is visible, the numbers on that page are synthetic. No badge = real data straight from the database.
 
@@ -75,11 +75,11 @@ All three should produce the same number within rounding.
 
 ## Acceptable delta
 
-| Delta between Stripe & dashboard | Interpretation | Action |
-|---|---|---|
-| < 2% | Normal rounding + timing | None — safe to show buyer |
-| 2–5% | Yellow flag — payout-schedule lag or refund timing | Note it in the buyer comment; check next week |
-| > 5% | Red flag — likely a bug (dropped webhook, duplicate charge, refund not propagated) | **Stop.** Do not show buyer. Investigate. See [`docs/sops/incident_response.md`](../sops/incident_response.md) |
+| Delta between Stripe & dashboard | Interpretation                                                                     | Action                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| < 2%                             | Normal rounding + timing                                                           | None — safe to show buyer                                                                                      |
+| 2–5%                             | Yellow flag — payout-schedule lag or refund timing                                 | Note it in the buyer comment; check next week                                                                  |
+| > 5%                             | Red flag — likely a bug (dropped webhook, duplicate charge, refund not propagated) | **Stop.** Do not show buyer. Investigate. See [`docs/sops/incident_response.md`](../sops/incident_response.md) |
 
 A > 5% delta on a live production dashboard is a sev-2 incident. Pull the webhook delivery log from Stripe Dashboard → Developers → Webhooks → your endpoint → "Events," find any `failed` deliveries, replay them, then re-run the reconciliation.
 

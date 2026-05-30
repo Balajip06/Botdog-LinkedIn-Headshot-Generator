@@ -6,12 +6,7 @@
 
 import { describe, expect, it, vi } from 'vitest'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import {
-  getRevenueCohorts,
-  getUnitEconomics,
-  getMarginDetail,
-  getTrendLeaderboard,
-} from './margin'
+import { getRevenueCohorts, getUnitEconomics, getMarginDetail, getTrendLeaderboard } from './margin'
 
 vi.mock('@sentry/nextjs', () => ({
   captureMessage: vi.fn(),

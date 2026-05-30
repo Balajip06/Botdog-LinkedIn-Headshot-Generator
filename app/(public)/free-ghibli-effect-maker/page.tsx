@@ -169,7 +169,7 @@ export default function FreeGhibliEffectMakerPage() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-gradient-spotlight opacity-30 blur-3xl"
+        className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] opacity-30 blur-3xl"
       />
 
       <main className="mx-auto flex max-w-5xl flex-col gap-20 px-6 pt-16 pb-24">
@@ -178,7 +178,7 @@ export default function FreeGhibliEffectMakerPage() {
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
             Free <span className="text-gradient-hero">Ghibli-Style</span> Effect Maker
           </h1>
-          <p className="max-w-2xl text-lg text-muted-foreground">
+          <p className="text-muted-foreground max-w-2xl text-lg">
             Turn your photos into hand-drawn animation in 30 seconds. Free to try. No signup
             required.
           </p>
@@ -188,7 +188,7 @@ export default function FreeGhibliEffectMakerPage() {
             </GradientButton>
             <Link
               href="/"
-              className="rounded-full border border-border px-6 py-3 text-sm font-medium hover:bg-muted"
+              className="border-border hover:bg-muted rounded-full border px-6 py-3 text-sm font-medium"
             >
               See other trends →
             </Link>
@@ -204,18 +204,18 @@ export default function FreeGhibliEffectMakerPage() {
               return (
                 <li
                   key={step.title}
-                  className="flex flex-col gap-3 rounded-3xl border border-border/60 bg-card p-6"
+                  className="border-border/60 bg-card flex flex-col gap-3 rounded-3xl border p-6"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="grid size-10 place-items-center rounded-2xl bg-foreground/5 text-foreground">
+                    <span className="bg-foreground/5 text-foreground grid size-10 place-items-center rounded-2xl">
                       <Icon className="size-5" />
                     </span>
-                    <span className="text-sm font-semibold text-muted-foreground">
+                    <span className="text-muted-foreground text-sm font-semibold">
                       Step {idx + 1}
                     </span>
                   </div>
                   <h3 className="text-lg font-bold">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.body}</p>
+                  <p className="text-muted-foreground text-sm">{step.body}</p>
                 </li>
               )
             })}
@@ -229,14 +229,14 @@ export default function FreeGhibliEffectMakerPage() {
             {DIFFERENTIATORS.map((d) => (
               <li
                 key={d.title}
-                className="flex gap-3 rounded-2xl border border-border/60 bg-card/60 p-5"
+                className="border-border/60 bg-card/60 flex gap-3 rounded-2xl border p-5"
               >
                 <div className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-emerald-500/10 text-emerald-500">
                   <Check className="size-4" />
                 </div>
                 <div>
                   <h3 className="text-base font-semibold">{d.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{d.body}</p>
+                  <p className="text-muted-foreground mt-1 text-sm">{d.body}</p>
                 </div>
               </li>
             ))}
@@ -248,25 +248,25 @@ export default function FreeGhibliEffectMakerPage() {
           <h2 className="text-2xl font-bold tracking-tight">
             Trendly free Ghibli maker vs paid alternatives
           </h2>
-          <div className="overflow-x-auto rounded-3xl border border-border/60 bg-card">
+          <div className="border-border/60 bg-card overflow-x-auto rounded-3xl border">
             <table className="w-full min-w-[640px] border-collapse text-sm">
               <thead>
-                <tr className="border-b border-border/60 bg-card/80 text-left">
+                <tr className="border-border/60 bg-card/80 border-b text-left">
                   <th className="px-5 py-4 font-semibold"> </th>
                   <th className="px-5 py-4 font-semibold">
                     <span className="text-gradient-hero">Trendly</span>
                   </th>
-                  <th className="px-5 py-4 font-semibold text-muted-foreground">Midjourney</th>
-                  <th className="px-5 py-4 font-semibold text-muted-foreground">Photoshop AI</th>
+                  <th className="text-muted-foreground px-5 py-4 font-semibold">Midjourney</th>
+                  <th className="text-muted-foreground px-5 py-4 font-semibold">Photoshop AI</th>
                 </tr>
               </thead>
               <tbody>
                 {COMPARE_ROWS.map((row) => (
-                  <tr key={row.label} className="border-b border-border/40 last:border-b-0">
+                  <tr key={row.label} className="border-border/40 border-b last:border-b-0">
                     <td className="px-5 py-4 font-medium">{row.label}</td>
                     <td className="px-5 py-4 font-semibold">{row.trendly}</td>
-                    <td className="px-5 py-4 text-muted-foreground">{row.midjourney}</td>
-                    <td className="px-5 py-4 text-muted-foreground">{row.photoshop}</td>
+                    <td className="text-muted-foreground px-5 py-4">{row.midjourney}</td>
+                    <td className="text-muted-foreground px-5 py-4">{row.photoshop}</td>
                   </tr>
                 ))}
               </tbody>
@@ -277,11 +277,15 @@ export default function FreeGhibliEffectMakerPage() {
         {/* FAQ */}
         <section className="flex flex-col gap-6">
           <h2 className="text-2xl font-bold tracking-tight">Frequently asked</h2>
-          <Accordion type="single" collapsible className="rounded-2xl border border-border/60 bg-card/40 px-5">
+          <Accordion
+            type="single"
+            collapsible
+            className="border-border/60 bg-card/40 rounded-2xl border px-5"
+          >
             {FAQ.map((item, idx) => (
               <AccordionItem key={item.question} value={`faq-${idx}`}>
                 <AccordionTrigger className="text-base">{item.question}</AccordionTrigger>
-                <AccordionContent className="text-sm text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-sm">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -297,7 +301,7 @@ export default function FreeGhibliEffectMakerPage() {
               <li key={t.slug}>
                 <Link
                   href={`/trend/${t.slug}`}
-                  className="flex items-center justify-between rounded-2xl border border-border/60 bg-card/60 px-5 py-4 text-sm font-medium transition-colors hover:bg-muted"
+                  className="border-border/60 bg-card/60 hover:bg-muted flex items-center justify-between rounded-2xl border px-5 py-4 text-sm font-medium transition-colors"
                 >
                   <span>{t.label}</span>
                   <span aria-hidden className="text-muted-foreground">
@@ -310,11 +314,11 @@ export default function FreeGhibliEffectMakerPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="flex flex-col items-center gap-4 rounded-3xl border border-border/60 bg-gradient-spotlight/40 p-10 text-center">
+        <section className="border-border/60 bg-gradient-spotlight/40 flex flex-col items-center gap-4 rounded-3xl border p-10 text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
             Make your Ghibli portrait now
           </h2>
-          <p className="max-w-xl text-sm text-muted-foreground">
+          <p className="text-muted-foreground max-w-xl text-sm">
             First one&apos;s free. No card, no signup, no waitlist.
           </p>
           <GradientButton size="lg" asChild>

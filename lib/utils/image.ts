@@ -23,9 +23,10 @@ export async function prepareImageForUpload(input: File): Promise<PreparedImage>
     throw new Error('prepareImageForUpload is browser-only; use sharp on the server')
   }
 
-  const jpeg = HEIC_TYPES.has(input.type) || /\.hei[cf]$/i.test(input.name)
-    ? await convertHeicToJpeg(input)
-    : input
+  const jpeg =
+    HEIC_TYPES.has(input.type) || /\.hei[cf]$/i.test(input.name)
+      ? await convertHeicToJpeg(input)
+      : input
 
   const bitmap = await createImageBitmap(jpeg)
   const { width, height } = scaleToFit(bitmap.width, bitmap.height, MAX_DIM)

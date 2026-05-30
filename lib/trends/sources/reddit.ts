@@ -45,10 +45,9 @@ export const redditSource: SourceFetcher = {
 
     for (const sub of SUBREDDITS) {
       try {
-        const res = await fetch(
-          `https://www.reddit.com/r/${sub}/top.json?t=day&limit=${perSub}`,
-          { headers: { 'user-agent': userAgent } }
-        )
+        const res = await fetch(`https://www.reddit.com/r/${sub}/top.json?t=day&limit=${perSub}`, {
+          headers: { 'user-agent': userAgent },
+        })
         if (!res.ok) continue
         const json = (await res.json()) as RedditListing
         for (const c of json.data.children) {
@@ -60,9 +59,8 @@ export const redditSource: SourceFetcher = {
             external_id: `${sub}:${c.data.id}`,
             title: c.data.title,
             description: c.data.selftext?.slice(0, 500) ?? c.data.title,
-            exemplar_urls: c.data.thumbnail && c.data.thumbnail.startsWith('http')
-              ? [c.data.thumbnail]
-              : [],
+            exemplar_urls:
+              c.data.thumbnail && c.data.thumbnail.startsWith('http') ? [c.data.thumbnail] : [],
             momentum_score: momentum,
             source_url: `https://www.reddit.com${c.data.permalink}`,
             observed_at: new Date().toISOString(),
@@ -73,9 +71,7 @@ export const redditSource: SourceFetcher = {
       }
     }
 
-    return candidates
-      .sort((a, b) => b.momentum_score - a.momentum_score)
-      .slice(0, limit)
+    return candidates.sort((a, b) => b.momentum_score - a.momentum_score).slice(0, limit)
   },
 }
 

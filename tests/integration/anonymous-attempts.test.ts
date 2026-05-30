@@ -24,7 +24,7 @@ describe('anonymous_attempts per-field UNIQUE', () => {
       sql`
         insert into public.anonymous_attempts (fingerprint_hash, ip_hash, trend_id)
         values ('fp-1', 'ip-B', ${trend.id})
-      `,
+      `
     ).rejects.toThrow(/duplicate key|unique/i)
   })
 
@@ -41,7 +41,7 @@ describe('anonymous_attempts per-field UNIQUE', () => {
       sql`
         insert into public.anonymous_attempts (fingerprint_hash, ip_hash, trend_id)
         values ('fp-2', 'ip-A', ${trend.id})
-      `,
+      `
     ).rejects.toThrow(/duplicate key|unique/i)
   })
 

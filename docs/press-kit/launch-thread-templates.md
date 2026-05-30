@@ -171,6 +171,7 @@
 > Today we shipped <trend-name> — our 16th live trend.
 >
 > A few non-obvious decisions:
+>
 > - Credit packs, not subscription. The buying motion matches the content — bursty, trend-driven. Subscription was the wrong UX.
 > - Schema-driven trend inputs. Every trend is a JSONB schema rather than a hardcoded "one photo" form. Adding a multi-photo trend is a database row, not a code change.
 > - RLS-enforced quota at the database layer. The free-tier limit is a Postgres trigger, not a request-time check. Impossible to bypass via API misuse.

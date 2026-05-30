@@ -35,7 +35,10 @@ export function TrendRunner({ trend, freeUsedThisWeek = 5 }: TrendRunnerProps) {
   const [upsellOpen, setUpsellOpen] = useState(false)
 
   const handleSubmit = useCallback(
-    async (payload: { values: Record<string, string | string[]>; files: Record<string, File[]> }) => {
+    async (payload: {
+      values: Record<string, string | string[]>
+      files: Record<string, File[]>
+    }) => {
       setSubmitting(true)
 
       const fileCount = Object.values(payload.files).reduce((n, fs) => n + fs.length, 0)
@@ -130,7 +133,11 @@ export function TrendRunner({ trend, freeUsedThisWeek = 5 }: TrendRunnerProps) {
         submitting={submitting}
         ctaLabel="Generate"
       />
-      <QuotaUpsellModal open={upsellOpen} onOpenChange={setUpsellOpen} freeUsedThisWeek={freeUsedThisWeek} />
+      <QuotaUpsellModal
+        open={upsellOpen}
+        onOpenChange={setUpsellOpen}
+        freeUsedThisWeek={freeUsedThisWeek}
+      />
     </>
   )
 }

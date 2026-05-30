@@ -19,13 +19,7 @@ import { BarChart, Delta, DonutChart } from '@/components/admin/Charts'
 import { KpiCard } from '@/components/admin/KpiCard'
 import { StatCard } from '@/components/admin/StatCard'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   getDailySeries,
   getPeriodTotals,
@@ -47,10 +41,7 @@ async function loadCounts(): Promise<DashboardCounts> {
   const supabase = await createClient()
   const [trendsRes, liveRes, suggRes] = await Promise.all([
     supabase.from('trends').select('id, slug'),
-    supabase
-      .from('trends')
-      .select('id', { count: 'exact', head: true })
-      .eq('is_active', true),
+    supabase.from('trends').select('id', { count: 'exact', head: true }).eq('is_active', true),
     supabase
       .from('trend_suggestions')
       .select('id', { count: 'exact', head: true })
@@ -103,14 +94,14 @@ export default async function AdminHome() {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Admin console
         </p>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h1 className="text-3xl font-extrabold tracking-tight">
             What needs <span className="text-gradient-hero">your attention</span>?
           </h1>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Rolling 7-day window · UTC · refreshed on load
           </p>
         </div>
@@ -122,10 +113,7 @@ export default async function AdminHome() {
           label="Impressions"
           value={formatNumber(period.current.impressions)}
           delta={
-            <Delta
-              current={period.current.impressions}
-              previous={period.previous.impressions}
-            />
+            <Delta current={period.current.impressions} previous={period.previous.impressions} />
           }
           tone="text-[var(--brand-grad-1)]"
           series={dailyEngagement.map((d) => ({ label: d.label, value: d.impressions }))}
@@ -185,7 +173,7 @@ export default async function AdminHome() {
             label="Quota blocks · 24h"
             value={formatNumber(quotaBlocked.totalBlocks)}
             delta={
-              <span className="font-mono text-xs text-muted-foreground tabular-nums">
+              <span className="text-muted-foreground font-mono text-xs tabular-nums">
                 {quotaBlocked.distinctSlugs} trends · ~{quotaBlocked.distinctUsersEstimated} users
               </span>
             }
@@ -195,7 +183,7 @@ export default async function AdminHome() {
           />
           <Link
             href="/admin/quota-blocks"
-            className="self-end text-xs font-semibold text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground self-end text-xs font-semibold"
           >
             Drilldown →
           </Link>
@@ -207,16 +195,14 @@ export default async function AdminHome() {
           <CardHeader className="px-5">
             <div className="flex items-baseline justify-between">
               <div>
-                <CardDescription className="text-xs uppercase tracking-[0.18em]">
+                <CardDescription className="text-xs tracking-[0.18em] uppercase">
                   Engagement · 7 days
                 </CardDescription>
-                <CardTitle className="text-xl font-bold">
-                  Impressions vs generate clicks
-                </CardTitle>
+                <CardTitle className="text-xl font-bold">Impressions vs generate clicks</CardTitle>
               </div>
               <Link
                 href="/admin/engagement"
-                className="text-xs font-semibold text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground text-xs font-semibold"
               >
                 Engagement details →
               </Link>
@@ -239,7 +225,7 @@ export default async function AdminHome() {
 
         <Card className="gap-3 py-5">
           <CardHeader className="px-5">
-            <CardDescription className="text-xs uppercase tracking-[0.18em]">
+            <CardDescription className="text-xs tracking-[0.18em] uppercase">
               Margin split · 7 days
             </CardDescription>
             <CardTitle className="text-xl font-bold">Revenue vs spend</CardTitle>
@@ -270,14 +256,14 @@ export default async function AdminHome() {
         <CardHeader className="px-5">
           <div className="flex items-baseline justify-between">
             <div>
-              <CardDescription className="text-xs uppercase tracking-[0.18em]">
+              <CardDescription className="text-xs tracking-[0.18em] uppercase">
                 Revenue · 7 days
               </CardDescription>
               <CardTitle className="text-xl font-bold">Stripe revenue trend</CardTitle>
             </div>
             <Link
               href="/admin/margin"
-              className="text-xs font-semibold text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-xs font-semibold"
             >
               Margin details →
             </Link>
@@ -327,21 +313,21 @@ export default async function AdminHome() {
       </div>
 
       {margin.isMock && (
-        <p className="flex items-center gap-2 text-xs text-muted-foreground">
+        <p className="text-muted-foreground flex items-center gap-2 text-xs">
           <Badge
             variant="outline"
-            className="rounded-full border-amber-400/40 bg-amber-400/10 text-[10px] uppercase tracking-wider text-amber-700 dark:text-amber-300"
+            className="rounded-full border-amber-400/40 bg-amber-400/10 text-[10px] tracking-wider text-amber-700 uppercase dark:text-amber-300"
           >
             demo data
           </Badge>
           Showing seed-stage figures while we accrue a clean 90-day revenue history. Real-mode
-          dashboards activate the moment the <code className="font-mono">webhook_events</code>{' '}
-          or <code className="font-mono">generations</code> tables record a single row.
+          dashboards activate the moment the <code className="font-mono">webhook_events</code> or{' '}
+          <code className="font-mono">generations</code> tables record a single row.
         </p>
       )}
 
       <div>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <h2 className="text-muted-foreground mb-3 text-sm font-semibold tracking-[0.2em] uppercase">
           Jump to
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -402,4 +388,3 @@ export default async function AdminHome() {
     </section>
   )
 }
-

@@ -1,12 +1,6 @@
 import { Archive, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -80,11 +74,11 @@ export default async function AuditPage() {
   return (
     <section className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Compliance
         </p>
         <h1 className="text-3xl font-extrabold tracking-tight">Audit log</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {audit.length === PAGE_LIMIT ? `Latest ${PAGE_LIMIT}` : audit.length} entries · admin
           actions + system credit grants are appended here automatically.
         </p>
@@ -105,13 +99,13 @@ export default async function AuditPage() {
 
 function EmptyLog() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/40 p-16 text-center">
-      <div className="grid size-14 place-items-center rounded-full bg-muted text-foreground">
+    <div className="border-border/60 bg-card/40 flex flex-col items-center gap-4 rounded-3xl border border-dashed p-16 text-center">
+      <div className="bg-muted text-foreground grid size-14 place-items-center rounded-full">
         <Archive className="size-6" />
       </div>
       <div>
         <p className="text-lg font-bold">No audit entries</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Will populate as admins edit trends + Stripe webhooks grant credits.
         </p>
       </div>
@@ -130,16 +124,16 @@ function AuditCard({ row }: { row: EnrichedRow }) {
             <Badge className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${tone}`}>
               {row.action}
             </Badge>
-            <Badge variant="outline" className="rounded-full text-[10px] font-mono">
+            <Badge variant="outline" className="rounded-full font-mono text-[10px]">
               {row.target_table}
               {row.target_id ? ` · ${row.target_id.slice(0, 8)}` : ''}
             </Badge>
-            <time className="text-xs text-muted-foreground" dateTime={row.created_at}>
+            <time className="text-muted-foreground text-xs" dateTime={row.created_at}>
               {new Date(row.created_at).toLocaleString()}
             </time>
           </div>
           <CardTitle className="text-sm font-semibold">
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+            <span className="text-muted-foreground inline-flex items-center gap-1.5">
               <User className="size-3.5" />
               {row.admin_email ?? (row.admin_id ? row.admin_id.slice(0, 8) : 'system')}
             </span>
@@ -149,7 +143,7 @@ function AuditCard({ row }: { row: EnrichedRow }) {
       {hasDiff && (
         <CardContent>
           <details className="group">
-            <summary className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-foreground">
+            <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-xs font-medium">
               View payload
             </summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
@@ -175,10 +169,10 @@ function AuditCard({ row }: { row: EnrichedRow }) {
 function DiffBlock({ label, value }: { label: string; value: unknown }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
         {label}
       </p>
-      <pre className="overflow-x-auto rounded-lg border border-border/60 bg-muted/60 p-3 text-[11px] font-mono leading-snug">
+      <pre className="border-border/60 bg-muted/60 overflow-x-auto rounded-lg border p-3 font-mono text-[11px] leading-snug">
         {JSON.stringify(value, null, 2)}
       </pre>
     </div>

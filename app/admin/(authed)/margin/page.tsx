@@ -14,13 +14,7 @@ import Link from 'next/link'
 import { BarChart, Delta, DonutChart } from '@/components/admin/Charts'
 import { KpiCard } from '@/components/admin/KpiCard'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getMarginDetail,
@@ -105,8 +99,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
   const priorNet = margin.priorWeek.revenueUsd - margin.priorWeek.spendUsd
   const priorMarginPct =
     margin.priorWeek.revenueUsd > 0
-      ? ((margin.priorWeek.revenueUsd - margin.priorWeek.spendUsd) /
-          margin.priorWeek.revenueUsd) *
+      ? ((margin.priorWeek.revenueUsd - margin.priorWeek.spendUsd) / margin.priorWeek.revenueUsd) *
         100
       : 0
 
@@ -115,7 +108,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Revenue
         </p>
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -134,10 +127,10 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
           </div>
           <div className="flex items-center gap-3">
             <DataSourceToggle forceMock={forceMock} range={range} />
-            <p className="text-xs text-muted-foreground">UTC · refreshed on load</p>
+            <p className="text-muted-foreground text-xs">UTC · refreshed on load</p>
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Stripe checkout revenue vs Gemini Nano Banana spend, plus a leaderboard of top-volume
           trends. Switches to real numbers once both creds are live; until then this view runs on
           deterministic demo data so the layout stays meaningful.
@@ -168,10 +161,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
               label="Revenue"
               value={formatUsd(margin.weekRevenueUsd)}
               delta={
-                <Delta
-                  current={margin.weekRevenueUsd}
-                  previous={margin.priorWeek.revenueUsd}
-                />
+                <Delta current={margin.weekRevenueUsd} previous={margin.priorWeek.revenueUsd} />
               }
               tone="text-emerald-500"
               series={margin.daily.map((d) => ({ label: d.label, value: d.revenueUsd }))}
@@ -182,11 +172,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
               label="Spend"
               value={formatUsd(margin.weekSpendUsd)}
               delta={
-                <Delta
-                  current={margin.weekSpendUsd}
-                  previous={margin.priorWeek.spendUsd}
-                  invert
-                />
+                <Delta current={margin.weekSpendUsd} previous={margin.priorWeek.spendUsd} invert />
               }
               tone="text-rose-500"
               series={margin.daily.map((d) => ({ label: d.label, value: d.spendUsd }))}
@@ -209,10 +195,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
               label="Generations"
               value={formatNumber(margin.weekGenerations)}
               delta={
-                <Delta
-                  current={margin.weekGenerations}
-                  previous={margin.priorWeek.generations}
-                />
+                <Delta current={margin.weekGenerations} previous={margin.priorWeek.generations} />
               }
               tone="text-[var(--brand-cyan)]"
               series={margin.daily.map((d) => ({ label: d.label, value: d.generations }))}
@@ -223,7 +206,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
           <div className="grid gap-4 lg:grid-cols-3">
             <Card className="gap-3 py-5 lg:col-span-2">
               <CardHeader className="px-5">
-                <CardDescription className="text-xs uppercase tracking-[0.18em]">
+                <CardDescription className="text-xs tracking-[0.18em] uppercase">
                   Daily flow · 7 days
                 </CardDescription>
                 <CardTitle className="text-xl font-bold">Revenue vs spend</CardTitle>
@@ -252,14 +235,15 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
 
             <Card className="gap-3 py-5">
               <CardHeader className="px-5">
-                <CardDescription className="text-xs uppercase tracking-[0.18em]">
+                <CardDescription className="text-xs tracking-[0.18em] uppercase">
                   Margin split
                 </CardDescription>
                 <CardTitle className="text-xl font-bold">
                   {margin.marginPct.toFixed(1)}% net
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">
-                  Prior week {priorMarginPct.toFixed(1)}% · avg cost {formatUsd(margin.avgCostUsd)} / gen
+                <p className="text-muted-foreground text-xs">
+                  Prior week {priorMarginPct.toFixed(1)}% · avg cost {formatUsd(margin.avgCostUsd)}{' '}
+                  / gen
                 </p>
               </CardHeader>
               <CardContent className="px-5">
@@ -292,31 +276,31 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
               </CardDescription>
             </CardHeader>
             {margin.trendBreakdown.length === 0 ? (
-              <div className="flex flex-col items-center gap-2 px-5 py-10 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex flex-col items-center gap-2 px-5 py-10 text-center text-sm">
                 <Sparkles className="size-6" />
                 <p>No completed generations in the window yet.</p>
               </div>
             ) : (
-              <ul className="divide-y divide-border/60">
+              <ul className="divide-border/60 divide-y">
                 {margin.trendBreakdown.map((row, idx) => {
                   const pct = topSpend === 0 ? 0 : (row.spendUsd / topSpend) * 100
                   const inner = (
                     <div className="flex flex-col gap-2 px-5 py-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="flex min-w-0 items-center gap-3">
-                          <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted font-mono text-xs text-muted-foreground">
+                          <span className="bg-muted text-muted-foreground grid size-7 shrink-0 place-items-center rounded-lg font-mono text-xs">
                             {idx + 1}
                           </span>
-                          <p className="truncate font-semibold text-foreground">{row.title}</p>
+                          <p className="text-foreground truncate font-semibold">{row.title}</p>
                         </div>
                         <div className="flex shrink-0 items-baseline gap-3 font-mono text-xs tabular-nums">
                           <span className="text-muted-foreground">{row.generations} gens</span>
-                          <span className="font-semibold text-foreground">
+                          <span className="text-foreground font-semibold">
                             {formatUsd(row.spendUsd)}
                           </span>
                         </div>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                      <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                         <div
                           className="h-full rounded-full bg-gradient-to-r from-rose-500 to-orange-400"
                           style={{ width: `${Math.max(2, pct)}%` }}
@@ -332,7 +316,7 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
                       ) : (
                         <Link
                           href={`/admin/trends/${row.trendId}/edit`}
-                          className="block transition-colors hover:bg-muted/30"
+                          className="hover:bg-muted/30 block transition-colors"
                         >
                           {inner}
                         </Link>
@@ -344,9 +328,9 @@ export default async function AdminMarginPage({ searchParams }: MarginPageProps)
             )}
           </Card>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Need to issue a credit refund?{' '}
-            <Link href="/admin/refunds" className="font-semibold text-foreground hover:underline">
+            <Link href="/admin/refunds" className="text-foreground font-semibold hover:underline">
               Open refunds →
             </Link>
           </p>
@@ -381,12 +365,12 @@ function LeaderboardSection({ rows, range }: LeaderboardSectionProps) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold tracking-tight">Top trends by generation volume</h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Window: last {range} days · top 20 · ordered by completed generations
           </p>
         </div>
         <div
-          className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-muted/40 p-1"
+          className="border-border/60 bg-muted/40 inline-flex items-center gap-1 rounded-lg border p-1"
           aria-label="Range selector"
         >
           {VALID_RANGES.map((opt) => {
@@ -399,7 +383,7 @@ function LeaderboardSection({ rows, range }: LeaderboardSectionProps) {
                   'rounded-md px-2.5 py-1 text-xs font-semibold transition-colors',
                   active
                     ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
                 aria-current={active ? 'page' : undefined}
               >
@@ -416,7 +400,7 @@ function LeaderboardSection({ rows, range }: LeaderboardSectionProps) {
         <>
           <Card className="gap-3 py-5">
             <CardHeader className="px-5">
-              <CardDescription className="text-xs uppercase tracking-[0.18em]">
+              <CardDescription className="text-xs tracking-[0.18em] uppercase">
                 Top 10 · gen volume
               </CardDescription>
               <CardTitle className="text-lg font-bold">Distribution</CardTitle>
@@ -447,7 +431,7 @@ function LeaderboardSection({ rows, range }: LeaderboardSectionProps) {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border/60 bg-muted/30 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <tr className="border-border/60 bg-muted/30 text-muted-foreground border-b text-left text-[10px] tracking-wider uppercase">
                     <th className="px-5 py-2.5 font-semibold">Rank</th>
                     <th className="px-3 py-2.5 font-semibold">Trend</th>
                     <th className="px-3 py-2.5 text-right font-semibold">Gens</th>
@@ -465,7 +449,7 @@ function LeaderboardSection({ rows, range }: LeaderboardSectionProps) {
             </div>
           </Card>
 
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Refreshes per page load; no materialized view yet. For &gt;10k gens/day, consider
             matview (Phase 11). Per-trend revenue attribution lands in W14+.
           </p>
@@ -492,25 +476,25 @@ function LeaderboardRow({ row, rank, topGen }: LeaderboardRowProps) {
   const isMock = row.trendId.startsWith('mock-')
   const trendCell = (
     <div className="flex min-w-0 flex-col gap-0.5">
-      <p className="truncate font-semibold text-foreground">{row.title}</p>
-      <p className="truncate font-mono text-[11px] text-muted-foreground">{row.slug}</p>
+      <p className="text-foreground truncate font-semibold">{row.title}</p>
+      <p className="text-muted-foreground truncate font-mono text-[11px]">{row.slug}</p>
     </div>
   )
   return (
-    <tr className="border-b border-border/40 transition-colors hover:bg-muted/30">
+    <tr className="border-border/40 hover:bg-muted/30 border-b transition-colors">
       <td className="px-5 py-3 align-middle">
         {rank <= 3 ? (
           <span
             className={cn(
               'inline-flex h-6 min-w-[2rem] items-center justify-center rounded-md px-2 font-mono text-[11px] font-bold tracking-wide shadow-sm',
-              RANK_BADGE_TONE[rank],
+              RANK_BADGE_TONE[rank]
             )}
             aria-label={`Rank ${rank}`}
           >
             #{rank}
           </span>
         ) : (
-          <span className="font-mono text-xs text-muted-foreground">#{rank}</span>
+          <span className="text-muted-foreground font-mono text-xs">#{rank}</span>
         )}
       </td>
       <td className="min-w-[12rem] px-3 py-3 align-middle">
@@ -524,7 +508,7 @@ function LeaderboardRow({ row, rank, topGen }: LeaderboardRowProps) {
             {trendCell}
           </Link>
         )}
-        <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
+        <div className="bg-muted mt-1.5 h-1 overflow-hidden rounded-full">
           <div
             className="h-full rounded-full bg-gradient-to-r from-[var(--brand-grad-1)] to-[var(--brand-grad-2)]"
             style={{ width: `${Math.max(2, pct)}%` }}
@@ -535,13 +519,13 @@ function LeaderboardRow({ row, rank, topGen }: LeaderboardRowProps) {
       <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
         {formatNumber(row.genCount)}
       </td>
-      <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+      <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
         {formatNumber(row.shareTotal)}
       </td>
-      <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+      <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
         {formatNumber(row.paidUsersCount)}
       </td>
-      <td className="px-5 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+      <td className="text-muted-foreground px-5 py-3 text-right align-middle font-mono text-xs tabular-nums">
         {row.revenueUsd > 0 ? formatUsd(row.revenueUsd) : '—'}
       </td>
     </tr>
@@ -560,7 +544,7 @@ function DataSourceToggle({ forceMock, range }: DataSourceToggleProps) {
   const mockHref = `/admin/margin?range=${range}&mockOverride=1`
   return (
     <div
-      className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 p-1"
+      className="border-border/60 bg-muted/40 inline-flex items-center gap-1 rounded-full border p-1"
       aria-label="Data source"
     >
       <Link
@@ -570,7 +554,7 @@ function DataSourceToggle({ forceMock, range }: DataSourceToggleProps) {
           'rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors',
           !forceMock
             ? 'bg-background text-foreground shadow-sm'
-            : 'text-muted-foreground hover:text-foreground',
+            : 'text-muted-foreground hover:text-foreground'
         )}
       >
         Real data
@@ -582,7 +566,7 @@ function DataSourceToggle({ forceMock, range }: DataSourceToggleProps) {
           'rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors',
           forceMock
             ? 'bg-amber-400/20 text-amber-800 shadow-sm dark:text-amber-300'
-            : 'text-muted-foreground hover:text-foreground',
+            : 'text-muted-foreground hover:text-foreground'
         )}
       >
         Demo data
@@ -593,7 +577,7 @@ function DataSourceToggle({ forceMock, range }: DataSourceToggleProps) {
 
 function EmptyLeaderboard() {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-3xl border border-dashed border-border/60 bg-card/40 p-12 text-center text-sm text-muted-foreground">
+    <div className="border-border/60 bg-card/40 text-muted-foreground flex flex-col items-center gap-2 rounded-3xl border border-dashed p-12 text-center text-sm">
       <Sparkles className="size-6" />
       <p>No completed generations in the window yet.</p>
     </div>
@@ -624,7 +608,7 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
       txCount: acc.txCount + r.txCount,
       uniqueCustomers: acc.uniqueCustomers + r.uniqueCustomers,
     }),
-    { revenueUsd: 0, refundsUsd: 0, netUsd: 0, txCount: 0, uniqueCustomers: 0 },
+    { revenueUsd: 0, refundsUsd: 0, netUsd: 0, txCount: 0, uniqueCustomers: 0 }
   )
   const blendedRefundRate = totals.revenueUsd > 0 ? totals.refundsUsd / totals.revenueUsd : 0
 
@@ -633,13 +617,13 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold tracking-tight">Weekly revenue cohorts</h2>
-          <p className="text-xs text-muted-foreground">
-            Stripe checkout revenue grouped by UTC-Monday cohort · refunds proxied from
-            credit-grant audit entries (real Stripe refund events coming).
+          <p className="text-muted-foreground text-xs">
+            Stripe checkout revenue grouped by UTC-Monday cohort · refunds proxied from credit-grant
+            audit entries (real Stripe refund events coming).
           </p>
         </div>
         <div
-          className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-muted/40 p-1"
+          className="border-border/60 bg-muted/40 inline-flex items-center gap-1 rounded-lg border p-1"
           aria-label="Cohort window"
         >
           {VALID_REVENUE_RANGES.map((opt) => {
@@ -652,7 +636,7 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
                   'rounded-md px-2.5 py-1 text-xs font-semibold transition-colors',
                   active
                     ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
                 aria-current={active ? 'page' : undefined}
               >
@@ -665,12 +649,12 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
 
       <Card className="gap-3 py-5">
         <CardHeader className="px-5">
-          <CardDescription className="text-xs uppercase tracking-[0.18em]">
+          <CardDescription className="text-xs tracking-[0.18em] uppercase">
             Weekly net revenue · {range} weeks
           </CardDescription>
           <CardTitle className="text-lg font-bold">
             {formatUsd(totals.netUsd)} net · {formatUsd(totals.refundsUsd)} refunds
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
+            <span className="text-muted-foreground ml-2 text-xs font-normal">
               {(blendedRefundRate * 100).toFixed(1)}% blended refund rate
             </span>
           </CardTitle>
@@ -699,7 +683,7 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border/60 bg-muted/30 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+              <tr className="border-border/60 bg-muted/30 text-muted-foreground border-b text-left text-[10px] tracking-wider uppercase">
                 <th className="px-5 py-2.5 font-semibold">Week (UTC)</th>
                 <th className="px-3 py-2.5 text-right font-semibold">Revenue</th>
                 <th className="px-3 py-2.5 text-right font-semibold">Refunds</th>
@@ -711,26 +695,26 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.weekStart} className="border-b border-border/40">
+                <tr key={r.weekStart} className="border-border/40 border-b">
                   <td className="px-5 py-3 align-middle font-mono text-xs tabular-nums">
                     {formatWeekLabel(r.weekStart)}
                   </td>
                   <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                     {formatUsd(r.revenueUsd)}
                   </td>
-                  <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-rose-500">
+                  <td className="px-3 py-3 text-right align-middle font-mono text-xs text-rose-500 tabular-nums">
                     {r.refundsUsd > 0 ? `−${formatUsd(r.refundsUsd)}` : '—'}
                   </td>
-                  <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums font-semibold">
+                  <td className="px-3 py-3 text-right align-middle font-mono text-xs font-semibold tabular-nums">
                     {formatUsd(r.netUsd)}
                   </td>
-                  <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                  <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                     {formatNumber(r.txCount)}
                   </td>
-                  <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                  <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                     {formatNumber(r.uniqueCustomers)}
                   </td>
-                  <td className="px-5 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                  <td className="text-muted-foreground px-5 py-3 text-right align-middle font-mono text-xs tabular-nums">
                     {(r.refundRate * 100).toFixed(1)}%
                   </td>
                 </tr>
@@ -740,7 +724,7 @@ function RevenueCohortsSection({ rows, range }: RevenueCohortsSectionProps) {
         </div>
       </Card>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Refunds today are a proxy from <code className="font-mono">admin_audit_log</code>{' '}
         credit-grant entries ($0.10/credit). Wire real{' '}
         <code className="font-mono">charge.refunded</code> Stripe webhooks here for accurate
@@ -774,7 +758,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
           <h2 className="text-xl font-bold tracking-tight">Unit economics</h2>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             CAC from manual <code className="font-mono">admin_marketing_spend</code> entries ÷
             attributed signups · LTV from per-cohort Stripe revenue at days 7 / 30 / 60.
           </p>
@@ -794,7 +778,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           icon={<Target className="size-4" />}
           label="Blended CAC · 30d"
           value={formatCac(data.blendedCac)}
-          delta={<span className="text-xs text-muted-foreground">last 30d</span>}
+          delta={<span className="text-muted-foreground text-xs">last 30d</span>}
           tone="text-rose-500"
           series={data.ltvByCohort.map((c) => ({
             label: formatWeekLabel(c.cohortWeek),
@@ -806,7 +790,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           icon={<Users className="size-4" />}
           label="Blended LTV · day 30"
           value={formatUsd(data.blendedLtv30)}
-          delta={<span className="text-xs text-muted-foreground">avg last 4 cohorts</span>}
+          delta={<span className="text-muted-foreground text-xs">avg last 4 cohorts</span>}
           tone="text-emerald-500"
           series={data.ltvByCohort.map((c) => ({
             label: formatWeekLabel(c.cohortWeek),
@@ -818,7 +802,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           icon={<Timer className="size-4" />}
           label="Payback"
           value={formatPayback(data.paybackDays)}
-          delta={<span className="text-xs text-muted-foreground">CAC / (LTV30 / 30)</span>}
+          delta={<span className="text-muted-foreground text-xs">CAC / (LTV30 / 30)</span>}
           tone="text-[var(--brand-grad-1)]"
           series={data.ltvByCohort.map((c) => ({
             label: formatWeekLabel(c.cohortWeek),
@@ -839,7 +823,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           </CardDescription>
         </CardHeader>
         {data.cacByChannel.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-5 py-10 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-col items-center gap-2 px-5 py-10 text-center text-sm">
             <Sparkles className="size-6" />
             <p>No marketing spend or signups in the window yet.</p>
           </div>
@@ -847,7 +831,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border/60 bg-muted/30 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+                <tr className="border-border/60 bg-muted/30 text-muted-foreground border-b text-left text-[10px] tracking-wider uppercase">
                   <th className="px-5 py-2.5 font-semibold">Channel</th>
                   <th className="px-3 py-2.5 text-right font-semibold">Signups</th>
                   <th className="px-3 py-2.5 text-right font-semibold">Spend</th>
@@ -856,17 +840,17 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
               </thead>
               <tbody>
                 {data.cacByChannel.map((r) => (
-                  <tr key={r.channel} className="border-b border-border/40">
+                  <tr key={r.channel} className="border-border/40 border-b">
                     <td className="px-5 py-3 align-middle font-mono text-xs tabular-nums">
                       {r.channel}
                     </td>
-                    <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                    <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                       {formatNumber(r.signupsAttributed)}
                     </td>
                     <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                       {formatUsd(r.spendUsd)}
                     </td>
-                    <td className="px-5 py-3 text-right align-middle font-mono text-xs tabular-nums font-semibold">
+                    <td className="px-5 py-3 text-right align-middle font-mono text-xs font-semibold tabular-nums">
                       {formatCac(r.cac)}
                     </td>
                   </tr>
@@ -881,12 +865,12 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
         <CardHeader className="px-5 py-4">
           <CardTitle className="text-lg font-bold">LTV by cohort</CardTitle>
           <CardDescription className="text-xs">
-            One row per signup-cohort-week · revenue summed from Stripe checkout events ·
-            margin nets out Gemini cost
+            One row per signup-cohort-week · revenue summed from Stripe checkout events · margin
+            nets out Gemini cost
           </CardDescription>
         </CardHeader>
         {data.ltvByCohort.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 px-5 py-10 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex flex-col items-center gap-2 px-5 py-10 text-center text-sm">
             <Sparkles className="size-6" />
             <p>No signups in the cohort window yet.</p>
           </div>
@@ -894,7 +878,7 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border/60 bg-muted/30 text-left text-[10px] uppercase tracking-wider text-muted-foreground">
+                <tr className="border-border/60 bg-muted/30 text-muted-foreground border-b text-left text-[10px] tracking-wider uppercase">
                   <th className="px-5 py-2.5 font-semibold">Week</th>
                   <th className="px-3 py-2.5 text-right font-semibold">Size</th>
                   <th className="px-3 py-2.5 text-right font-semibold">LTV d7</th>
@@ -905,11 +889,11 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
               </thead>
               <tbody>
                 {data.ltvByCohort.map((c) => (
-                  <tr key={c.cohortWeek} className="border-b border-border/40">
+                  <tr key={c.cohortWeek} className="border-border/40 border-b">
                     <td className="px-5 py-3 align-middle font-mono text-xs tabular-nums">
                       {formatWeekLabel(c.cohortWeek)}
                     </td>
-                    <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums text-muted-foreground">
+                    <td className="text-muted-foreground px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
                       {formatNumber(c.cohortSize)}
                     </td>
                     <td className="px-3 py-3 text-right align-middle font-mono text-xs tabular-nums">
@@ -932,11 +916,11 @@ function UnitEconomicsSection({ data }: UnitEconomicsSectionProps) {
         )}
       </Card>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         CAC requires <code className="font-mono">admin_marketing_spend</code> entries. Use{' '}
         <Link
           href="/admin/marketing-spend"
-          className="font-semibold text-foreground hover:underline"
+          className="text-foreground font-semibold hover:underline"
         >
           /admin/marketing-spend
         </Link>{' '}

@@ -11,10 +11,7 @@
 import type { TrendInput } from './input-schema'
 import type { TrendInputValues } from './interpolate'
 
-export function buildEvalValues(
-  schema: TrendInput,
-  evalImageUrl: string
-): TrendInputValues {
+export function buildEvalValues(schema: TrendInput, evalImageUrl: string): TrendInputValues {
   const values: TrendInputValues = {}
   for (const field of schema.fields) {
     if (field.type === 'image') {

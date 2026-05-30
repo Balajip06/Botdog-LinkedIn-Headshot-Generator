@@ -1,12 +1,6 @@
 import { Coins, Gift, ShieldCheck, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   MOCK_REFERRAL_EVENTS,
   MOCK_REFERRERS,
@@ -83,7 +77,10 @@ async function loadData(): Promise<PageData> {
   totals.bonusCredited = totals.rewarded * 10
 
   // Top referrers by referrals made
-  const byReferrer = new Map<string, { id: string; email: string; code: string; total: number; rewarded: number }>()
+  const byReferrer = new Map<
+    string,
+    { id: string; email: string; code: string; total: number; rewarded: number }
+  >()
   for (const r of rows) {
     if (!r.referrer) continue
     const cur = byReferrer.get(r.referrer.id) ?? {
@@ -139,7 +136,7 @@ export default async function AdminReferralsPage() {
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
           Growth
         </p>
         <div className="flex items-center gap-3">
@@ -155,9 +152,9 @@ export default async function AdminReferralsPage() {
             </Badge>
           )}
         </div>
-        <p className="text-sm text-muted-foreground">
-          +10 credits to the referrer after the referee&apos;s first completed generation. Capped at 50 bonus credits per
-          account.
+        <p className="text-muted-foreground text-sm">
+          +10 credits to the referrer after the referee&apos;s first completed generation. Capped at
+          50 bonus credits per account.
         </p>
       </header>
 
@@ -184,9 +181,7 @@ export default async function AdminReferralsPage() {
           icon={<Coins className="size-4" />}
           label="Conversion"
           value={
-            totals.total === 0
-              ? '—'
-              : `${Math.round((totals.rewarded / totals.total) * 100)}%`
+            totals.total === 0 ? '—' : `${Math.round((totals.rewarded / totals.total) * 100)}%`
           }
           hint="rewarded ÷ total"
         />
@@ -199,7 +194,7 @@ export default async function AdminReferralsPage() {
         </CardHeader>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-muted/50 text-[11px] uppercase tracking-wide text-muted-foreground">
+            <thead className="bg-muted/50 text-muted-foreground text-[11px] tracking-wide uppercase">
               <tr>
                 <th className="px-4 py-3 font-semibold">#</th>
                 <th className="px-4 py-3 font-semibold">Referrer</th>
@@ -212,12 +207,12 @@ export default async function AdminReferralsPage() {
               {topReferrers.map((r, idx) => (
                 <tr
                   key={r.id}
-                  className="border-t border-border/60 transition-colors hover:bg-muted/30"
+                  className="border-border/60 hover:bg-muted/30 border-t transition-colors"
                 >
-                  <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{idx + 1}</td>
+                  <td className="text-muted-foreground px-4 py-3 font-mono text-xs">{idx + 1}</td>
                   <td className="px-4 py-3">
                     <div className="font-semibold">{r.email}</div>
-                    <div className="font-mono text-[11px] text-muted-foreground">
+                    <div className="text-muted-foreground font-mono text-[11px]">
                       /?ref={r.referral_code}
                     </div>
                   </td>
@@ -243,27 +238,25 @@ export default async function AdminReferralsPage() {
           <CardDescription className="text-xs">Latest 20 referral events</CardDescription>
         </CardHeader>
         <CardContent className="px-0 py-0">
-          <ul className="divide-y divide-border/60">
+          <ul className="divide-border/60 divide-y">
             {recentEvents.map((e) => (
               <li key={e.id} className="flex items-center justify-between gap-4 px-5 py-3 text-sm">
                 <div className="min-w-0">
                   <p className="font-semibold">{e.referrer_email}</p>
-                  <p className="text-xs text-muted-foreground">
-                    invited {e.referred_email}
-                  </p>
+                  <p className="text-muted-foreground text-xs">invited {e.referred_email}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <Badge
                     variant={e.status === 'rewarded' ? 'default' : 'outline'}
                     className={
                       e.status === 'rewarded'
-                        ? 'rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-transparent'
-                        : 'rounded-full text-muted-foreground'
+                        ? 'rounded-full border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                        : 'text-muted-foreground rounded-full'
                     }
                   >
                     {e.status}
                   </Badge>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {formatRelative(e.rewarded_at ?? e.created_at)}
                   </span>
                 </div>
@@ -287,13 +280,13 @@ function StatTile({ icon, label, value, hint }: StatTileProps) {
   return (
     <Card className="gap-2 py-5">
       <CardHeader className="px-5">
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
-          <span className="grid size-6 place-items-center rounded-md bg-muted">{icon}</span>
+        <div className="text-muted-foreground flex items-center gap-2 text-xs tracking-wide uppercase">
+          <span className="bg-muted grid size-6 place-items-center rounded-md">{icon}</span>
           {label}
         </div>
         <CardTitle className="text-3xl font-extrabold tracking-tight">{value}</CardTitle>
       </CardHeader>
-      <CardContent className="px-5 text-xs text-muted-foreground">{hint}</CardContent>
+      <CardContent className="text-muted-foreground px-5 text-xs">{hint}</CardContent>
     </Card>
   )
 }

@@ -20,7 +20,7 @@ export default function Loading() {
       </div>
 
       {/* Share burst grid */}
-      <div className="rounded-3xl border border-border/60 bg-card/40 p-5">
+      <div className="border-border/60 bg-card/40 rounded-3xl border p-5">
         <Skeleton className="h-5 w-40" />
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (

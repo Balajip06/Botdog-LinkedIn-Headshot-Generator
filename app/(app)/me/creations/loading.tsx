@@ -13,7 +13,7 @@ export default function Loading() {
       </header>
 
       {/* Filter bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-card/40 p-4 sm:flex-row sm:items-end">
+      <div className="border-border/60 bg-card/40 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-end">
         <div className="flex-1">
           <Skeleton className="mb-1 h-3 w-12" />
           <Skeleton className="h-9 w-full" />
@@ -30,7 +30,7 @@ export default function Loading() {
       </div>
 
       {/* View chip row (All / Favorites) */}
-      <div className="inline-flex w-fit items-center gap-1 rounded-lg border border-border/60 bg-muted p-1">
+      <div className="border-border/60 bg-muted inline-flex w-fit items-center gap-1 rounded-lg border p-1">
         <Skeleton className="h-7 w-14" />
         <Skeleton className="h-7 w-24" />
       </div>

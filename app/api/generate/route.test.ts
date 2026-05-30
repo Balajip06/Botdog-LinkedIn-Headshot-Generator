@@ -120,7 +120,7 @@ function makeReq(opts: {
     headers.set('content-length', String(opts.contentLength))
   }
   const bodyBytes = new TextEncoder().encode(
-    opts.bodyString ?? JSON.stringify(opts.body ?? { trend_slug: 'a-trend', values: {} }),
+    opts.bodyString ?? JSON.stringify(opts.body ?? { trend_slug: 'a-trend', values: {} })
   )
 
   // Build a ReadableStream that emits the body in one (or chunked) reads.
@@ -202,7 +202,7 @@ describe('POST /api/generate', () => {
         bodyString: JSON.stringify({ trend_slug: 'a-trend', values: { f: big } }),
         contentLength: null,
         chunked: true,
-      }),
+      })
     )
     expect(res.status).toBe(413)
   })
@@ -232,6 +232,6 @@ describe('POST /api/generate', () => {
     const { POST } = await loadRoute()
     const res = await POST(makeReq({}))
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ generation_id: 'gen-1' })
+    expect(await res.json()).toEqual({ generation_id: 'gen-1' })
   })
 })

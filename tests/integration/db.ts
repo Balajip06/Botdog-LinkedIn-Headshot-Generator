@@ -19,8 +19,7 @@ import { randomUUID } from 'node:crypto'
 
 export function defaultDatabaseUrl(): string {
   return (
-    process.env.INTEGRATION_DATABASE_URL ??
-    'postgres://postgres:postgres@127.0.0.1:54322/postgres'
+    process.env.INTEGRATION_DATABASE_URL ?? 'postgres://postgres:postgres@127.0.0.1:54322/postgres'
   )
 }
 
@@ -57,7 +56,7 @@ export async function asUser<T>(userId: string, fn: (sql: Sql) => Promise<T>): P
   const result = await sql.begin(async (tx) => {
     await tx.unsafe(`set local role = 'authenticated'`)
     await tx.unsafe(
-      `set local request.jwt.claims = '${JSON.stringify({ sub: userId, role: 'authenticated' })}'`,
+      `set local request.jwt.claims = '${JSON.stringify({ sub: userId, role: 'authenticated' })}'`
     )
     return await fn(tx as unknown as Sql)
   })
@@ -83,7 +82,7 @@ export async function createTestUser(args: {
 
   await sql.unsafe(
     `insert into auth.users (id, instance_id, email, encrypted_password, aud, role, raw_user_meta_data, raw_app_meta_data, created_at, updated_at)
-     values ('${id}', '00000000-0000-0000-0000-000000000000', '${email}', '', 'authenticated', 'authenticated', '{}', '{}', now(), now())`,
+     values ('${id}', '00000000-0000-0000-0000-000000000000', '${email}', '', 'authenticated', 'authenticated', '{}', '{}', now(), now())`
   )
 
   // handle_new_user trigger created the profile row; UPDATE it with the
@@ -95,7 +94,7 @@ export async function createTestUser(args: {
             free_used_this_week = ${args.freeUsed ?? 0},
             is_vip = ${args.isVip ? 'true' : 'false'},
             referred_by = ${args.referredBy ? `'${args.referredBy}'` : 'null'}
-      where id = '${id}'`,
+      where id = '${id}'`
   )
 
   return { id, email }
@@ -123,7 +122,7 @@ export async function createTestTrend(args: {
   // trigger from migration 0024 which blocks passed-without-proof.
   await sql.unsafe(
     `insert into public.trends (id, slug, title, prompt_template, is_active, eval_status)
-     values ('${id}', '${slug}', 'Integration Trend', 'apply trend to {{user_photo}}', false, 'untested')`,
+     values ('${id}', '${slug}', 'Integration Trend', 'apply trend to {{user_photo}}', false, 'untested')`
   )
 
   if (evalStatus === 'passed') {
@@ -131,12 +130,12 @@ export async function createTestTrend(args: {
     const inputId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_inputs (id, trend_id, label, image_url)
-       values ('${inputId}', '${id}', 'sample', 'https://example.test/sample.png')`,
+       values ('${inputId}', '${id}', 'sample', 'https://example.test/sample.png')`
     )
     const runId = randomUUID()
     await sql.unsafe(
       `insert into public.trend_eval_runs (id, trend_id, prompt_version, eval_input_id, admin_rating, output_url)
-       values ('${runId}', '${id}', 1, '${inputId}', 'pass', 'https://example.test/out.png')`,
+       values ('${runId}', '${id}', 1, '${inputId}', 'pass', 'https://example.test/out.png')`
     )
     await sql.unsafe(`update public.trends set eval_status = 'passed' where id = '${id}'`)
   } else if (evalStatus === 'failed') {

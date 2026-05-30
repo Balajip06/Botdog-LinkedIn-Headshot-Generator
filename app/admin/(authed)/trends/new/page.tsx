@@ -17,11 +17,11 @@ export default async function NewTrendPage({ searchParams }: NewTrendPageProps) 
 
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.2em] uppercase">
             Catalogue
           </p>
           <h1 className="text-3xl font-extrabold tracking-tight">New trend</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             Drafts start inactive. Activate from the Edit page once eval passes.
           </p>
         </div>

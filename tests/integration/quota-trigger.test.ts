@@ -36,7 +36,7 @@ describe('consume_quota_on_generation_insert', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`
     )
 
     const [row] = await sql<{ tier_at_generation: string }[]>`
@@ -59,7 +59,7 @@ describe('consume_quota_on_generation_insert', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`
     )
 
     const [row] = await sql<{ tier_at_generation: string }[]>`
@@ -82,7 +82,7 @@ describe('consume_quota_on_generation_insert', () => {
     const genId = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`,
+       values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`
     )
 
     const [row] = await sql<{ tier_at_generation: string }[]>`
@@ -107,8 +107,8 @@ describe('consume_quota_on_generation_insert', () => {
     await expect(
       sql.unsafe(
         `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-         values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`,
-      ),
+         values ('${genId}', '${user.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb)`
+      )
     ).rejects.toThrow(/quota exhausted/)
 
     // RAISE rolls back the generation insert. quota_blocked emission
@@ -138,11 +138,11 @@ describe('consume_quota_on_generation_insert', () => {
     // CHECK (credits_balance >= 0) would then fail at update time).
     const a = sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values (gen_random_uuid(), '${user.id}', '${trend.id}', 1, 'race-a', '{}'::jsonb)`,
+       values (gen_random_uuid(), '${user.id}', '${trend.id}', 1, 'race-a', '{}'::jsonb)`
     )
     const b = sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload)
-       values (gen_random_uuid(), '${user.id}', '${trend.id}', 1, 'race-b', '{}'::jsonb)`,
+       values (gen_random_uuid(), '${user.id}', '${trend.id}', 1, 'race-b', '{}'::jsonb)`
     )
 
     const results = await Promise.allSettled([a, b])

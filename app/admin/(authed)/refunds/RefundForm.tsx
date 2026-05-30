@@ -67,7 +67,7 @@ export function RefundForm({ defaultEmail = '', defaultUserId = '' }: RefundForm
           autoComplete="off"
         />
         {defaultUserId ? (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Target ID: <code className="font-mono">{defaultUserId}</code>
           </p>
         ) : null}
@@ -86,8 +86,8 @@ export function RefundForm({ defaultEmail = '', defaultUserId = '' }: RefundForm
                 className={cn(
                   'inline-flex h-9 items-center rounded-full px-4 text-sm font-semibold transition-all',
                   active
-                    ? 'bg-gradient-hero text-white shadow-glow-pink'
-                    : 'border border-border bg-muted/40 text-foreground/80 hover:border-foreground/30 hover:text-foreground',
+                    ? 'bg-gradient-hero shadow-glow-pink text-white'
+                    : 'border-border bg-muted/40 text-foreground/80 hover:border-foreground/30 hover:text-foreground border'
                 )}
                 aria-pressed={active}
               >
@@ -101,8 +101,8 @@ export function RefundForm({ defaultEmail = '', defaultUserId = '' }: RefundForm
             className={cn(
               'inline-flex h-9 items-center rounded-full px-4 text-sm font-semibold transition-all',
               customMode
-                ? 'bg-gradient-hero text-white shadow-glow-pink'
-                : 'border border-border bg-muted/40 text-foreground/80 hover:border-foreground/30 hover:text-foreground',
+                ? 'bg-gradient-hero shadow-glow-pink text-white'
+                : 'border-border bg-muted/40 text-foreground/80 hover:border-foreground/30 hover:text-foreground border'
             )}
             aria-pressed={customMode}
           >
@@ -136,7 +136,7 @@ export function RefundForm({ defaultEmail = '', defaultUserId = '' }: RefundForm
               <SelectItem key={opt.value} value={opt.value}>
                 <span className="flex flex-col">
                   <span className="font-medium">{opt.label}</span>
-                  <span className="text-xs text-muted-foreground">{opt.hint}</span>
+                  <span className="text-muted-foreground text-xs">{opt.hint}</span>
                 </span>
               </SelectItem>
             ))}
@@ -154,16 +154,16 @@ export function RefundForm({ defaultEmail = '', defaultUserId = '' }: RefundForm
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="e.g. refund for failed gen #abc123, ticket #4421"
-          className="min-h-[88px] w-full rounded-xl border border-input bg-transparent px-3 py-2 text-sm shadow-xs outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 min-h-[88px] w-full rounded-xl border bg-transparent px-3 py-2 text-sm shadow-xs transition-colors outline-none focus-visible:ring-[3px]"
         />
-        <p className="text-xs text-muted-foreground">{notes.length}/500</p>
+        <p className="text-muted-foreground text-xs">{notes.length}/500</p>
       </div>
 
       <div className="flex items-center gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-200">
         <ShieldAlert className="size-4 shrink-0" />
         <span>
-          Action is audited. Reason + notes persist to{' '}
-          <code className="font-mono">source_ref</code> for compliance grep.
+          Action is audited. Reason + notes persist to <code className="font-mono">source_ref</code>{' '}
+          for compliance grep.
         </span>
       </div>
 

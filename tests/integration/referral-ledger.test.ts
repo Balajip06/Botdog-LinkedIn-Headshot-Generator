@@ -9,12 +9,7 @@ import { createTestTrend, createTestUser, getSql, resetTables } from './db'
  */
 describe('referral_rewards ledger', () => {
   beforeEach(async () => {
-    await resetTables([
-      'referral_rewards',
-      'referrals',
-      'generations',
-      'profiles',
-    ])
+    await resetTables(['referral_rewards', 'referrals', 'generations', 'profiles'])
     const sql = getSql()
     await sql.unsafe(`delete from auth.users where email like 'int-%@test.local'`)
   })
@@ -27,7 +22,7 @@ describe('referral_rewards ledger', () => {
 
     await sql.unsafe(
       `insert into public.referrals (referrer_id, referred_id, status)
-       values ('${referrer.id}', '${referee.id}', 'pending')`,
+       values ('${referrer.id}', '${referee.id}', 'pending')`
     )
 
     const genId = randomUUID()
@@ -35,7 +30,7 @@ describe('referral_rewards ledger', () => {
     // Service-role bypasses RLS; quota trigger consumes a free slot.
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload, status)
-       values ('${genId}', '${referee.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb, 'pending')`,
+       values ('${genId}', '${referee.id}', '${trend.id}', 1, 'k-${genId}', '{}'::jsonb, 'pending')`
     )
     await sql.unsafe(`update public.generations set status = 'completed' where id = '${genId}'`)
 
@@ -67,12 +62,12 @@ describe('referral_rewards ledger', () => {
     // First cycle: complete a generation → referrer earns 10.
     await sql.unsafe(
       `insert into public.referrals (referrer_id, referred_id, status)
-       values ('${referrer.id}', '${referee1.id}', 'pending')`,
+       values ('${referrer.id}', '${referee1.id}', 'pending')`
     )
     const gen1 = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload, status)
-       values ('${gen1}', '${referee1.id}', '${trend.id}', 1, 'k1', '{}'::jsonb, 'pending')`,
+       values ('${gen1}', '${referee1.id}', '${trend.id}', 1, 'k1', '{}'::jsonb, 'pending')`
     )
     await sql.unsafe(`update public.generations set status = 'completed' where id = '${gen1}'`)
 
@@ -88,12 +83,12 @@ describe('referral_rewards ledger', () => {
     })
     await sql.unsafe(
       `insert into public.referrals (referrer_id, referred_id, status)
-       values ('${referrer.id}', '${referee2.id}', 'pending')`,
+       values ('${referrer.id}', '${referee2.id}', 'pending')`
     )
     const gen2 = randomUUID()
     await sql.unsafe(
       `insert into public.generations (id, user_id, trend_id, trend_version, idempotency_key, input_payload, status)
-       values ('${gen2}', '${referee2.id}', '${trend.id}', 1, 'k2', '{}'::jsonb, 'pending')`,
+       values ('${gen2}', '${referee2.id}', '${trend.id}', 1, 'k2', '{}'::jsonb, 'pending')`
     )
     await sql.unsafe(`update public.generations set status = 'completed' where id = '${gen2}'`)
 

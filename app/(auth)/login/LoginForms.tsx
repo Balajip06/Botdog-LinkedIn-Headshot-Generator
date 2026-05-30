@@ -28,14 +28,14 @@ export function LoginForms({ next }: LoginFormsProps) {
     <div className="flex flex-col gap-5">
       <label
         htmlFor="tos_accepted_checkbox"
-        className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/40 p-3 text-xs text-muted-foreground"
+        className="border-border/60 bg-card/40 text-muted-foreground flex items-start gap-3 rounded-2xl border p-3 text-xs"
       >
         <input
           id="tos_accepted_checkbox"
           type="checkbox"
           checked={tosAccepted}
           onChange={(e) => setTosAccepted(e.target.checked)}
-          className="mt-0.5 size-4 shrink-0 rounded border border-border bg-background"
+          className="border-border bg-background mt-0.5 size-4 shrink-0 rounded border"
           aria-required="true"
         />
         <span>
@@ -43,7 +43,7 @@ export function LoginForms({ next }: LoginFormsProps) {
           <Link
             href="/terms"
             target="_blank"
-            className="font-medium text-foreground underline-offset-2 hover:underline"
+            className="text-foreground font-medium underline-offset-2 hover:underline"
           >
             terms of service
           </Link>{' '}
@@ -51,7 +51,7 @@ export function LoginForms({ next }: LoginFormsProps) {
           <Link
             href="/privacy"
             target="_blank"
-            className="font-medium text-foreground underline-offset-2 hover:underline"
+            className="text-foreground font-medium underline-offset-2 hover:underline"
           >
             privacy policy
           </Link>
@@ -62,9 +62,7 @@ export function LoginForms({ next }: LoginFormsProps) {
       {turnstileGated && (
         <div className="flex flex-col items-center gap-2">
           <TurnstileWidget onToken={setToken} />
-          {!token && (
-            <p className="text-xs text-muted-foreground">Waiting for bot-check…</p>
-          )}
+          {!token && <p className="text-muted-foreground text-xs">Waiting for bot-check…</p>}
         </div>
       )}
 
@@ -75,7 +73,7 @@ export function LoginForms({ next }: LoginFormsProps) {
         <button
           type="submit"
           disabled={!ready}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-card text-sm font-semibold transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-border bg-card hover:bg-muted flex h-12 w-full items-center justify-center gap-2 rounded-full border text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           <GoogleGlyph />
           Continue with Google
@@ -84,7 +82,7 @@ export function LoginForms({ next }: LoginFormsProps) {
 
       <div className="relative">
         <Separator />
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-card px-3 text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        <span className="bg-card text-muted-foreground absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full px-3 text-[10px] font-medium tracking-widest uppercase">
           or
         </span>
       </div>

@@ -67,7 +67,7 @@ describe('GradientButton', () => {
     render(
       <GradientButton asChild>
         <a href="/somewhere">Anchor</a>
-      </GradientButton>,
+      </GradientButton>
     )
     const link = screen.getByRole('link', { name: 'Anchor' })
     expect(link.tagName).toBe('A')

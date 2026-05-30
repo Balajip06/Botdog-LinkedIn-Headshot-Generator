@@ -66,7 +66,9 @@ export default async function ResultPage({ params }: ResultPageProps) {
 
   const { data: row } = await supabase
     .from('generations')
-    .select('id, user_id, trend_id, status, output_image_url, error_message, attempts, created_at, cost_usd, completed_at')
+    .select(
+      'id, user_id, trend_id, status, output_image_url, error_message, attempts, created_at, cost_usd, completed_at'
+    )
     .eq('id', id)
     .maybeSingle()
 

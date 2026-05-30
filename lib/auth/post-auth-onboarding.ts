@@ -3,10 +3,7 @@ import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
 import type { User, SupabaseClient } from '@supabase/supabase-js'
 import { EVENTS, flushServer, identifyServer, trackServer } from '@/lib/analytics/server'
-import {
-  parseReferralFromCookie,
-  REFERRAL_COOKIE_NAME,
-} from '@/lib/referrals/links'
+import { parseReferralFromCookie, REFERRAL_COOKIE_NAME } from '@/lib/referrals/links'
 import type { Database } from '@/lib/supabase/database.types'
 
 // Window during which a profile is considered "newly created" — gate for
@@ -84,8 +81,7 @@ export async function runPostAuthOnboarding({
   let consumedReferralCookie = false
 
   const isNewUser =
-    profile !== null &&
-    Date.now() - new Date(profile.created_at).getTime() < NEW_USER_WINDOW_MS
+    profile !== null && Date.now() - new Date(profile.created_at).getTime() < NEW_USER_WINDOW_MS
 
   // Stamp ToS acceptance on first arrival. The login server actions reject
   // any sign-in attempt where the checkbox wasn't ticked, so reaching this

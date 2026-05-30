@@ -7,10 +7,7 @@ import { logAdminAction } from '@/lib/admin/audit'
 import { generateImage } from '@/lib/image-provider'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { buildEvalValues } from '@/lib/trends/eval-values'
-import {
-  TrendInputSchema,
-  type TrendInput,
-} from '@/lib/trends/input-schema'
+import { TrendInputSchema, type TrendInput } from '@/lib/trends/input-schema'
 import { collectImageInputs, interpolatePrompt } from '@/lib/trends/interpolate'
 
 const InputCreateSchema = z.object({

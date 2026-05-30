@@ -14,7 +14,7 @@ export default function Loading() {
       </header>
 
       {/* Table card */}
-      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+      <div className="bg-card overflow-hidden rounded-xl border shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/50">
@@ -28,7 +28,7 @@ export default function Loading() {
             </thead>
             <tbody>
               {Array.from({ length: 8 }).map((_, rowIdx) => (
-                <tr key={rowIdx} className="border-t border-border/60">
+                <tr key={rowIdx} className="border-border/60 border-t">
                   <td className="px-4 py-3">
                     <Skeleton className="h-3 w-6" />
                   </td>

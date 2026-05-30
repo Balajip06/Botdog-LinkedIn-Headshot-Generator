@@ -128,7 +128,7 @@ describe('setVip — happy path enable', () => {
         action: 'vip_grant',
         targetTable: 'profiles',
         targetId: 'a1b2c3d4-1111-4222-8333-444455556666',
-      }),
+      })
     )
 
     expect(revalidatePath).toHaveBeenCalledWith('/admin/vip')
@@ -145,42 +145,32 @@ describe('setVip — happy path disable', () => {
       vip_granted_by: null,
       vip_granted_at: null,
     })
-    expect(logAdminAction).toHaveBeenCalledWith(
-      expect.objectContaining({ action: 'vip_revoke' }),
-    )
+    expect(logAdminAction).toHaveBeenCalledWith(expect.objectContaining({ action: 'vip_revoke' }))
   })
 })
 
 describe('setVip — input validation', () => {
   it('malformed UUID → redirects with error', async () => {
-    await expect(setVip(makeForm({ user_id: 'not-a-uuid' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(setVip(makeForm({ user_id: 'not-a-uuid' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/vip\?error=/)
     expect(lastUpdatePayload).toBeNull()
   })
 
   it('malformed email → redirects with error', async () => {
-    await expect(setVip(makeForm({ email: 'not-an-email' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(setVip(makeForm({ email: 'not-an-email' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/vip\?error=/)
     expect(lastUpdatePayload).toBeNull()
   })
 
   it('reason longer than 300 chars → redirects with error', async () => {
     const tooLong = 'x'.repeat(301)
-    await expect(setVip(makeForm({ reason: tooLong }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(setVip(makeForm({ reason: tooLong }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/vip\?error=/)
     expect(lastUpdatePayload).toBeNull()
   })
 
   it('invalid `enable` value → redirects with error', async () => {
-    await expect(setVip(makeForm({ enable: 'maybe' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
-    )
+    await expect(setVip(makeForm({ enable: 'maybe' }))).rejects.toThrow(/NEXT_REDIRECT:/)
     expect(lastRedirectUrl()).toMatch(/^\/admin\/vip\?error=/)
     expect(lastUpdatePayload).toBeNull()
   })
@@ -194,9 +184,7 @@ describe('setVip — admin attribution', () => {
       is_vip: true,
       vip_granted_by: null,
     })
-    expect(logAdminAction).toHaveBeenCalledWith(
-      expect.objectContaining({ adminId: null }),
-    )
+    expect(logAdminAction).toHaveBeenCalledWith(expect.objectContaining({ adminId: null }))
   })
 })
 
@@ -239,7 +227,7 @@ describe('findUserForVip', () => {
 
   it('invalid email format: redirects with error=invalid email', async () => {
     await expect(findUserForVip(makeFindForm({ email: 'not-an-email' }))).rejects.toThrow(
-      /NEXT_REDIRECT:/,
+      /NEXT_REDIRECT:/
     )
     expect(lastRedirectUrl()).toMatch(/^\/admin\/vip\?error=/)
     expect(lastRedirectUrl().replace(/\+/g, ' ')).toMatch(/invalid email/)

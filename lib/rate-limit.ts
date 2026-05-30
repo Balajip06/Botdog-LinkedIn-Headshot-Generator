@@ -2,7 +2,9 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
 type Limiter = {
-  limit: (identifier: string) => Promise<{ success: boolean; limit: number; remaining: number; reset: number }>
+  limit: (
+    identifier: string
+  ) => Promise<{ success: boolean; limit: number; remaining: number; reset: number }>
 }
 
 const passThroughLimiter: Limiter = {
@@ -21,7 +23,11 @@ function getRedis(): Redis | null {
   return cachedRedis
 }
 
-function createLimiter(prefix: string, requests: number, window: `${number} ${'s' | 'm' | 'h' | 'd'}`): Limiter {
+function createLimiter(
+  prefix: string,
+  requests: number,
+  window: `${number} ${'s' | 'm' | 'h' | 'd'}`
+): Limiter {
   const redis = getRedis()
   if (!redis) return passThroughLimiter
   return new Ratelimit({

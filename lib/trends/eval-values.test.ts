@@ -9,7 +9,14 @@ describe('buildEvalValues', () => {
   it('binds the single eval image URL to every image field', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'user_photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
+        {
+          type: 'image',
+          name: 'user_photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
       ],
     }
     const v = buildEvalValues(schema, IMG)
@@ -19,8 +26,22 @@ describe('buildEvalValues', () => {
   it('uses text field default when provided', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
-        { type: 'text', name: 'caption', label: 'Caption', required: false, max_length: 50, default: 'hello world' },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
+        {
+          type: 'text',
+          name: 'caption',
+          label: 'Caption',
+          required: false,
+          max_length: 50,
+          default: 'hello world',
+        },
       ],
     }
     expect(buildEvalValues(schema, IMG).caption).toBe('hello world')
@@ -29,7 +50,14 @@ describe('buildEvalValues', () => {
   it('emits an empty string for text fields without a default', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
         { type: 'text', name: 'mood', label: 'Mood', required: false, max_length: 50 },
       ],
     }
@@ -39,7 +67,14 @@ describe('buildEvalValues', () => {
   it('falls back to the first select option when no default is set', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
         {
           type: 'select',
           name: 'style',
@@ -58,7 +93,14 @@ describe('buildEvalValues', () => {
   it('prefers select default over first option', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
         {
           type: 'select',
           name: 'style',
@@ -78,8 +120,22 @@ describe('buildEvalValues', () => {
   it('produced values flow cleanly through interpolatePrompt + collectImageInputs', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
-        { type: 'text', name: 'mood', label: 'Mood', required: false, max_length: 50, default: 'cinematic' },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
+        {
+          type: 'text',
+          name: 'mood',
+          label: 'Mood',
+          required: false,
+          max_length: 50,
+          default: 'cinematic',
+        },
         {
           type: 'select',
           name: 'palette',
@@ -102,11 +158,20 @@ describe('buildEvalValues', () => {
   it('required text field without default throws via interpolatePrompt — caller surfaces missing_eval_default', () => {
     const schema: TrendInput = {
       fields: [
-        { type: 'image', name: 'photo', label: 'Photo', required: true, min_count: 1, max_count: 1 },
+        {
+          type: 'image',
+          name: 'photo',
+          label: 'Photo',
+          required: true,
+          min_count: 1,
+          max_count: 1,
+        },
         { type: 'text', name: 'subject', label: 'Subject', required: true, max_length: 50 },
       ],
     }
     const values = buildEvalValues(schema, IMG)
-    expect(() => interpolatePrompt('A {{subject}} portrait', schema, values)).toThrow(/Required field missing/)
+    expect(() => interpolatePrompt('A {{subject}} portrait', schema, values)).toThrow(
+      /Required field missing/
+    )
   })
 })

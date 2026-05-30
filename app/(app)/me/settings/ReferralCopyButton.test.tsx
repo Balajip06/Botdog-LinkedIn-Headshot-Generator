@@ -92,9 +92,7 @@ describe('ReferralCopyButton', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button'))
     })
-    expect(toastMocks.error).toHaveBeenCalledWith(
-      'Could not copy — long-press to copy manually.',
-    )
+    expect(toastMocks.error).toHaveBeenCalledWith('Could not copy — long-press to copy manually.')
     expect(toastMocks.success).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: /^copy$/i })).toBeInTheDocument()
   })

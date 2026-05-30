@@ -29,15 +29,14 @@ async function loadAndValidate(suggestionId: string): Promise<{
   }
   const parsed = TrendSuggestionPayloadSchema.safeParse(row.payload)
   if (!parsed.success) {
-    redirect(`/admin/suggestions?error=${encodeURIComponent('payload invalid: ' + (parsed.error.issues[0]?.message ?? ''))}`)
+    redirect(
+      `/admin/suggestions?error=${encodeURIComponent('payload invalid: ' + (parsed.error.issues[0]?.message ?? ''))}`
+    )
   }
   return { row, payload: parsed.data }
 }
 
-async function markReviewed(
-  suggestionId: string,
-  status: 'approved' | 'rejected'
-): Promise<void> {
+async function markReviewed(suggestionId: string, status: 'approved' | 'rejected'): Promise<void> {
   const supabase = await createClient()
   const {
     data: { user },
@@ -53,7 +52,9 @@ async function markReviewed(
 export async function approveAutoSuggestion(suggestionId: string): Promise<void> {
   const { row, payload } = await loadAndValidate(suggestionId)
   if (row.source !== 'auto' || payload.type !== 'auto') {
-    redirect(`/admin/suggestions?error=${encodeURIComponent('only auto suggestions can be auto-approved')}`)
+    redirect(
+      `/admin/suggestions?error=${encodeURIComponent('only auto suggestions can be auto-approved')}`
+    )
   }
   const auto = payload as AutoSuggestionPayload
   const supabase = await createClient()

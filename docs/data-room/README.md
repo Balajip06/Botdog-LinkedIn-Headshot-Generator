@@ -33,15 +33,15 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder (at listing time):**
 
-| File | Description |
-|---|---|
-| `revenue-by-month.csv` | Monthly Stripe gross revenue, refunds, net revenue. Pulled from Stripe Dashboard → Reports → Payouts. |
-| `revenue-by-pack.csv` | Per-pack-id (small / medium / large) volume + AOV. Sourced from `webhook_events` joined to Stripe metadata. |
-| `cost-of-goods.csv` | Monthly Gemini spend (per GCP billing), Vercel spend, Supabase spend, Resend spend, etc. One row per vendor per month. |
-| `unit-economics.md` | Narrative: gross margin per pack, blended COGS per generation, sensitivity to Gemini price changes, the $20/day anonymous-trial guardrail and what happens when it's breached. |
-| `marketing-spend.csv` | Monthly UTM-sourced ad spend, sourced from `admin_marketing_spend` (migration `20260529000011`). |
-| `cohort-retention.csv` | (Accrual-dependent — see "Files to add post-W14" below.) Weekly retention by signup cohort, sourced from PostHog → Insights → Retention. |
-| `financial-model.xlsx` | (Accrual-dependent — added when ≥ 3 months of revenue history exists.) Forward 12-month projection with assumptions cell-marked. |
+| File                   | Description                                                                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `revenue-by-month.csv` | Monthly Stripe gross revenue, refunds, net revenue. Pulled from Stripe Dashboard → Reports → Payouts.                                                                          |
+| `revenue-by-pack.csv`  | Per-pack-id (small / medium / large) volume + AOV. Sourced from `webhook_events` joined to Stripe metadata.                                                                    |
+| `cost-of-goods.csv`    | Monthly Gemini spend (per GCP billing), Vercel spend, Supabase spend, Resend spend, etc. One row per vendor per month.                                                         |
+| `unit-economics.md`    | Narrative: gross margin per pack, blended COGS per generation, sensitivity to Gemini price changes, the $20/day anonymous-trial guardrail and what happens when it's breached. |
+| `marketing-spend.csv`  | Monthly UTM-sourced ad spend, sourced from `admin_marketing_spend` (migration `20260529000011`).                                                                               |
+| `cohort-retention.csv` | (Accrual-dependent — see "Files to add post-W14" below.) Weekly retention by signup cohort, sourced from PostHog → Insights → Retention.                                       |
+| `financial-model.xlsx` | (Accrual-dependent — added when ≥ 3 months of revenue history exists.) Forward 12-month projection with assumptions cell-marked.                                               |
 
 **Source of truth:**
 
@@ -61,14 +61,14 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
-| `users-summary.md` | High-level counts: total signups, 7-day active, 30-day active, all-time generations, paid users, free-tier-only users. As of last refresh date. |
+| File                         | Description                                                                                                                                                      |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `users-summary.md`           | High-level counts: total signups, 7-day active, 30-day active, all-time generations, paid users, free-tier-only users. As of last refresh date.                  |
 | `acquisition-by-channel.csv` | `profiles.acquisition_source` rollup — organic / SEO / paid social / referral / direct. Sourced from migration `20260529000003_profiles_acquisition_source.sql`. |
-| `top-trends.csv` | Per-trend impression + generation counts, ordered. Sourced from `trend_events` + `generations` joined to `trends.slug`. |
-| `support-volume.csv` | Monthly count of support tickets received via the contact form. Currently low / zero pre-launch — refresh post-launch. |
-| `testimonials.md` | (Accrual-dependent.) Verbatim customer testimonials collected post-launch, attributed with consent. Anonymous quotes marked as such. |
-| `screenshots/` | (Accrual-dependent.) Screenshots of standout user-generated outputs (with creator consent). |
+| `top-trends.csv`             | Per-trend impression + generation counts, ordered. Sourced from `trend_events` + `generations` joined to `trends.slug`.                                          |
+| `support-volume.csv`         | Monthly count of support tickets received via the contact form. Currently low / zero pre-launch — refresh post-launch.                                           |
+| `testimonials.md`            | (Accrual-dependent.) Verbatim customer testimonials collected post-launch, attributed with consent. Anonymous quotes marked as such.                             |
+| `screenshots/`               | (Accrual-dependent.) Screenshots of standout user-generated outputs (with creator consent).                                                                      |
 
 **Source of truth:**
 
@@ -87,14 +87,14 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
-| `architecture_diagram.md` | Pointer to [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md). One paragraph + link to avoid duplication. |
-| `roadmap.md` | The 12-month roadmap from the seller's perspective: Phase 5 payments → Phase 6 auto trend detector → multilingual → API for B2B. Buyer can fork after acquisition. |
-| `changelog.md` | Curated changelog of shipped milestones (Phase 0-4 done dates, key commits). Sourced from `git log --oneline --grep="feat:"`. |
-| `feature-inventory.md` | Inventory of every consumer-facing surface (route + what it does) and admin surface. Mirrors the route table in `docs/ARCHITECTURE.md`. |
-| `retention-cohorts.png` | (Accrual-dependent.) PostHog retention-curve screenshot, weekly cohorts. |
-| `nps-results.md` | (Accrual-dependent.) NPS survey results if a survey has been run. |
+| File                      | Description                                                                                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `architecture_diagram.md` | Pointer to [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md). One paragraph + link to avoid duplication.                                                                |
+| `roadmap.md`              | The 12-month roadmap from the seller's perspective: Phase 5 payments → Phase 6 auto trend detector → multilingual → API for B2B. Buyer can fork after acquisition. |
+| `changelog.md`            | Curated changelog of shipped milestones (Phase 0-4 done dates, key commits). Sourced from `git log --oneline --grep="feat:"`.                                      |
+| `feature-inventory.md`    | Inventory of every consumer-facing surface (route + what it does) and admin surface. Mirrors the route table in `docs/ARCHITECTURE.md`.                            |
+| `retention-cohorts.png`   | (Accrual-dependent.) PostHog retention-curve screenshot, weekly cohorts.                                                                                           |
+| `nps-results.md`          | (Accrual-dependent.) NPS survey results if a survey has been run.                                                                                                  |
 
 **Source of truth:**
 
@@ -113,14 +113,14 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
-| `architecture.md` | Pointer to [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md). |
-| `sub-processors.md` | Pointer to [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md). |
-| `credentials-reference.md` | Pointer to [`docs/CREDENTIALS.md`](../CREDENTIALS.md). |
-| `security-posture.md` | One-page summary: HSTS + X-Frame + Referrer-Policy + Permissions-Policy live; CSP deferred; RLS on every user-facing table; Turnstile on signup + anonymous; idempotency on `/api/generate` + `/api/stripe/webhook`; SHA-256 PII hashing pre-log; soft-delete + 30d purge; audit log immutable; service-role bypass only inside server-side trusted code paths. |
-| `vendor-security-overview/` | One file per sub-processor with a link to their public security overview + SOC 2 / ISO status. |
-| `penetration-test.pdf` | (Accrual-dependent — Y2 milestone.) Third-party pen-test results. |
+| File                        | Description                                                                                                                                                                                                                                                                                                                                                     |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture.md`           | Pointer to [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md).                                                                                                                                                                                                                                                                                                        |
+| `sub-processors.md`         | Pointer to [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md).                                                                                                                                                                                                                                                                                        |
+| `credentials-reference.md`  | Pointer to [`docs/CREDENTIALS.md`](../CREDENTIALS.md).                                                                                                                                                                                                                                                                                                          |
+| `security-posture.md`       | One-page summary: HSTS + X-Frame + Referrer-Policy + Permissions-Policy live; CSP deferred; RLS on every user-facing table; Turnstile on signup + anonymous; idempotency on `/api/generate` + `/api/stripe/webhook`; SHA-256 PII hashing pre-log; soft-delete + 30d purge; audit log immutable; service-role bypass only inside server-side trusted code paths. |
+| `vendor-security-overview/` | One file per sub-processor with a link to their public security overview + SOC 2 / ISO status.                                                                                                                                                                                                                                                                  |
+| `penetration-test.pdf`      | (Accrual-dependent — Y2 milestone.) Third-party pen-test results.                                                                                                                                                                                                                                                                                               |
 
 **Source of truth:**
 
@@ -138,14 +138,14 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
-| `ip-ownership-statement.md` | Seller's representation that 100% of source code in the repository was authored by the seller, free of prior-employer IP claims, no contracting agreement covers the work. |
-| `contributors.md` | List of every Git contributor to `main`. Today: 1 (`balaji@kimp.xyz`). If contractors are added pre-listing, their IP-assignment agreement is filed alongside. |
-| `oss-licenses.md` | Inventory of all open-source dependencies + their licenses (auto-generated via `pnpm licenses list`). Flags any non-permissive licenses (none expected; the stack is MIT / Apache / BSD throughout). |
-| `trademark-status.md` | Trademark filing status for "Trendly" and any associated marks. Pre-listing: not filed. |
-| `domain-ownership.md` | Domain registrar + WHOIS record (with privacy enabled). |
-| `contractor-agreements/` | (Accrual-dependent.) Signed IP-assignment + NDA for any contractor work. |
+| File                        | Description                                                                                                                                                                                          |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ip-ownership-statement.md` | Seller's representation that 100% of source code in the repository was authored by the seller, free of prior-employer IP claims, no contracting agreement covers the work.                           |
+| `contributors.md`           | List of every Git contributor to `main`. Today: 1 (`balaji@kimp.xyz`). If contractors are added pre-listing, their IP-assignment agreement is filed alongside.                                       |
+| `oss-licenses.md`           | Inventory of all open-source dependencies + their licenses (auto-generated via `pnpm licenses list`). Flags any non-permissive licenses (none expected; the stack is MIT / Apache / BSD throughout). |
+| `trademark-status.md`       | Trademark filing status for "Trendly" and any associated marks. Pre-listing: not filed.                                                                                                              |
+| `domain-ownership.md`       | Domain registrar + WHOIS record (with privacy enabled).                                                                                                                                              |
+| `contractor-agreements/`    | (Accrual-dependent.) Signed IP-assignment + NDA for any contractor work.                                                                                                                             |
 
 **Source of truth:**
 
@@ -163,17 +163,17 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
+| File                  | Description                                                                                                                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `terms-of-service.md` | Pointer to [`docs/TERMS_OF_SERVICE.md`](../TERMS_OF_SERVICE.md). §3 (personal-use only) + §4 (style references + takedown protocol) are load-bearing for franchise-IP risk. |
-| `privacy-policy.md` | Pointer to [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md). |
-| `dpa-template.md` | Pointer to [`docs/legal/DPA_TEMPLATE.md`](../legal/DPA_TEMPLATE.md). |
-| `sub-processors.md` | Pointer to [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md). |
-| `takedown-sop.md` | Pointer to [`docs/sops/takedown.md`](../sops/takedown.md). |
-| `refund-sop.md` | Pointer to [`docs/sops/refund_request.md`](../sops/refund_request.md). |
-| `trend-banlist.md` | Pointer to [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md) — the explicit franchise-IP banlist. |
-| `dmca-history.md` | (Accrual-dependent — populated as DMCA notices arrive post-launch.) |
-| `disputes-log.md` | (Accrual-dependent.) Stripe chargeback log + resolution status. |
+| `privacy-policy.md`   | Pointer to [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md).                                                                                                                |
+| `dpa-template.md`     | Pointer to [`docs/legal/DPA_TEMPLATE.md`](../legal/DPA_TEMPLATE.md).                                                                                                        |
+| `sub-processors.md`   | Pointer to [`docs/legal/SUB_PROCESSORS.md`](../legal/SUB_PROCESSORS.md).                                                                                                    |
+| `takedown-sop.md`     | Pointer to [`docs/sops/takedown.md`](../sops/takedown.md).                                                                                                                  |
+| `refund-sop.md`       | Pointer to [`docs/sops/refund_request.md`](../sops/refund_request.md).                                                                                                      |
+| `trend-banlist.md`    | Pointer to [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md) — the explicit franchise-IP banlist.                                                                              |
+| `dmca-history.md`     | (Accrual-dependent — populated as DMCA notices arrive post-launch.)                                                                                                         |
+| `disputes-log.md`     | (Accrual-dependent.) Stripe chargeback log + resolution status.                                                                                                             |
 
 **Source of truth:**
 
@@ -191,17 +191,17 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
-| `mvp-runbook.md` | Pointer to [`docs/RUNBOOK.md`](../RUNBOOK.md) — credential onboarding + 14-test verification matrix. |
-| `daily-ops.md` | Pointer to [`docs/sops/daily_ops.md`](../sops/daily_ops.md). |
-| `new-trend-weekly.md` | Pointer to [`docs/sops/new_trend_weekly.md`](../sops/new_trend_weekly.md). |
-| `refund-request.md` | Pointer to [`docs/sops/refund_request.md`](../sops/refund_request.md). |
-| `takedown.md` | Pointer to [`docs/sops/takedown.md`](../sops/takedown.md). |
-| `incident-response.md` | Pointer to [`docs/sops/incident_response.md`](../sops/incident_response.md). |
-| `launch-checklist.md` | Pointer to [`docs/LAUNCH_CHECKLIST.md`](../LAUNCH_CHECKLIST.md). |
-| `bundle-analysis.md` | Pointer to [`docs/BUNDLE_ANALYSIS.md`](../BUNDLE_ANALYSIS.md). |
-| `incidents-log.md` | Pointer to [`docs/incidents/README.md`](../incidents/README.md) — postmortem index. "No incidents yet" today. |
+| File                   | Description                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `mvp-runbook.md`       | Pointer to [`docs/RUNBOOK.md`](../RUNBOOK.md) — credential onboarding + 14-test verification matrix.          |
+| `daily-ops.md`         | Pointer to [`docs/sops/daily_ops.md`](../sops/daily_ops.md).                                                  |
+| `new-trend-weekly.md`  | Pointer to [`docs/sops/new_trend_weekly.md`](../sops/new_trend_weekly.md).                                    |
+| `refund-request.md`    | Pointer to [`docs/sops/refund_request.md`](../sops/refund_request.md).                                        |
+| `takedown.md`          | Pointer to [`docs/sops/takedown.md`](../sops/takedown.md).                                                    |
+| `incident-response.md` | Pointer to [`docs/sops/incident_response.md`](../sops/incident_response.md).                                  |
+| `launch-checklist.md`  | Pointer to [`docs/LAUNCH_CHECKLIST.md`](../LAUNCH_CHECKLIST.md).                                              |
+| `bundle-analysis.md`   | Pointer to [`docs/BUNDLE_ANALYSIS.md`](../BUNDLE_ANALYSIS.md).                                                |
+| `incidents-log.md`     | Pointer to [`docs/incidents/README.md`](../incidents/README.md) — postmortem index. "No incidents yet" today. |
 
 **Source of truth:**
 
@@ -218,12 +218,12 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 **Files in this folder:**
 
-| File | Description |
-|---|---|
+| File                           | Description                                                                                                                                                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `per-account-transfer-plan.md` | Pointer to [`docs/transferability/per-account-transfer-plan.md`](../transferability/per-account-transfer-plan.md). Per-account ETA + risk + buyer pre-requisites. |
-| `post-acquisition-timeline.md` | Pointer to [`docs/transferability/post-acquisition-timeline.md`](../transferability/post-acquisition-timeline.md). Day-by-day sequencing. |
-| `credentials-reference.md` | Pointer to [`docs/CREDENTIALS.md`](../CREDENTIALS.md). |
-| `seller-availability.md` | Seller's commitment to the 30-day advisory window post-close: response SLA, escalation contact, hourly cap (if any). |
+| `post-acquisition-timeline.md` | Pointer to [`docs/transferability/post-acquisition-timeline.md`](../transferability/post-acquisition-timeline.md). Day-by-day sequencing.                         |
+| `credentials-reference.md`     | Pointer to [`docs/CREDENTIALS.md`](../CREDENTIALS.md).                                                                                                            |
+| `seller-availability.md`       | Seller's commitment to the 30-day advisory window post-close: response SLA, escalation contact, hourly cap (if any).                                              |
 
 **Source of truth:**
 
@@ -237,20 +237,20 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 
 These files cannot exist today because the underlying data hasn't accrued yet. Buyer should expect them at the dates noted.
 
-| File | Folder | Accrues by | Source |
-|---|---|---|---|
-| `financial-model.xlsx` | 01-financial | W14 (3 months post-launch) | Hand-built from 3 months of Stripe + cost data |
-| `cohort-retention.csv` | 01-financial | W12 (8 weeks post-launch) | PostHog retention export |
-| `testimonials.md` | 02-customers | W10 | Customer outreach + consent log |
-| `screenshots/` | 02-customers | W10 | Standout user outputs (with consent) |
-| `retention-cohorts.png` | 03-product | W12 | PostHog screenshot |
-| `nps-results.md` | 03-product | post-launch survey | Tally / Typeform export |
-| `penetration-test.pdf` | 04-infrastructure | Y2 milestone | Third-party pen-test vendor |
-| `contractor-agreements/` | 05-ownership | as contractors join | Signed PDFs |
-| `dmca-history.md` | 06-legal | as DMCA notices arrive | Email + response archive |
-| `disputes-log.md` | 06-legal | as Stripe chargebacks arrive | Stripe Dashboard export |
-| `traffic-stats.md` | 02-customers | W10 | Vercel Analytics + PostHog |
-| `seo-rankings.csv` | 02-customers | W12 | Ahrefs / Semrush export |
+| File                     | Folder            | Accrues by                   | Source                                         |
+| ------------------------ | ----------------- | ---------------------------- | ---------------------------------------------- |
+| `financial-model.xlsx`   | 01-financial      | W14 (3 months post-launch)   | Hand-built from 3 months of Stripe + cost data |
+| `cohort-retention.csv`   | 01-financial      | W12 (8 weeks post-launch)    | PostHog retention export                       |
+| `testimonials.md`        | 02-customers      | W10                          | Customer outreach + consent log                |
+| `screenshots/`           | 02-customers      | W10                          | Standout user outputs (with consent)           |
+| `retention-cohorts.png`  | 03-product        | W12                          | PostHog screenshot                             |
+| `nps-results.md`         | 03-product        | post-launch survey           | Tally / Typeform export                        |
+| `penetration-test.pdf`   | 04-infrastructure | Y2 milestone                 | Third-party pen-test vendor                    |
+| `contractor-agreements/` | 05-ownership      | as contractors join          | Signed PDFs                                    |
+| `dmca-history.md`        | 06-legal          | as DMCA notices arrive       | Email + response archive                       |
+| `disputes-log.md`        | 06-legal          | as Stripe chargebacks arrive | Stripe Dashboard export                        |
+| `traffic-stats.md`       | 02-customers      | W10                          | Vercel Analytics + PostHog                     |
+| `seo-rankings.csv`       | 02-customers      | W12                          | Ahrefs / Semrush export                        |
 
 ---
 

@@ -10,7 +10,7 @@ export default function Loading() {
       </header>
 
       {/* Quota dashboard card */}
-      <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+      <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
         <Skeleton className="h-7 w-40" />
         <div className="mt-6 grid gap-6 sm:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -26,7 +26,7 @@ export default function Loading() {
       </div>
 
       {/* Buy credits card */}
-      <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+      <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
         <div className="flex items-baseline justify-between">
           <Skeleton className="h-7 w-36" />
           <Skeleton className="h-6 w-32 rounded-full" />
@@ -40,7 +40,7 @@ export default function Loading() {
       </div>
 
       {/* Referral card */}
-      <div className="rounded-3xl border border-border/60 bg-gradient-spotlight/20 p-6 sm:p-8">
+      <div className="border-border/60 bg-gradient-spotlight/20 rounded-3xl border p-6 sm:p-8">
         <div className="flex items-center gap-2">
           <Skeleton className="size-5 rounded-md" />
           <Skeleton className="h-7 w-40" />
@@ -50,7 +50,7 @@ export default function Loading() {
       </div>
 
       {/* Your data card */}
-      <div className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8">
+      <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
         <div className="flex items-center gap-2">
           <Skeleton className="size-5 rounded-md" />
           <Skeleton className="h-7 w-32" />
@@ -60,7 +60,7 @@ export default function Loading() {
       </div>
 
       {/* Danger zone card */}
-      <div className="rounded-3xl border border-destructive/30 bg-destructive/5 p-6 sm:p-8">
+      <div className="border-destructive/30 bg-destructive/5 rounded-3xl border p-6 sm:p-8">
         <div className="flex items-center gap-2">
           <Skeleton className="size-5 rounded-md" />
           <Skeleton className="h-6 w-36" />

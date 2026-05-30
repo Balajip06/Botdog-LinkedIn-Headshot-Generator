@@ -12,9 +12,11 @@ vi.mock('@/lib/share/web-share', () => ({
   shareNative: vi.fn(async () => ({ ok: true, channel: 'web_share' })),
   buildTwitterShareUrl: vi.fn(
     (text: string, url: string) =>
-      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
   ),
-  buildWhatsappShareUrl: vi.fn((text: string, url: string) => `https://wa.me/?text=${text}%20${url}`),
+  buildWhatsappShareUrl: vi.fn(
+    (text: string, url: string) => `https://wa.me/?text=${text}%20${url}`
+  ),
   copyToClipboard: vi.fn(async () => ({ ok: true, channel: 'copy_link' })),
   isWebShareSupported: vi.fn(() => true),
 }))
@@ -55,7 +57,7 @@ beforeEach(() => {
   // Predictable fetch — returns a blob for native share.
   vi.stubGlobal(
     'fetch',
-    vi.fn(async () => ({ ok: true, blob: async () => new Blob(['fake'], { type: 'image/jpeg' }) })),
+    vi.fn(async () => ({ ok: true, blob: async () => new Blob(['fake'], { type: 'image/jpeg' }) }))
   )
 })
 
@@ -101,7 +103,7 @@ describe('ShareBurst', () => {
     render(<ShareBurst {...baseProps} />)
     expect(buildTwitterShareUrl).toHaveBeenCalledWith(
       expect.stringContaining('Glow Up'),
-      expect.stringContaining('/trend/glow-up'),
+      expect.stringContaining('/trend/glow-up')
     )
     const link = screen.getByText('X / Twitter').closest('a')
     expect(link?.getAttribute('href')).toContain('https://x.com/intent/tweet')
@@ -111,7 +113,7 @@ describe('ShareBurst', () => {
     render(<ShareBurst {...baseProps} />)
     expect(buildWhatsappShareUrl).toHaveBeenCalledWith(
       expect.stringContaining('Glow Up'),
-      expect.stringContaining('/trend/glow-up'),
+      expect.stringContaining('/trend/glow-up')
     )
     const link = screen.getByText('WhatsApp').closest('a')
     expect(link?.getAttribute('href')).toContain('https://wa.me/')
@@ -179,7 +181,7 @@ describe('ShareBurst', () => {
       'fetch',
       vi.fn(async () => {
         throw new Error('network blip')
-      }),
+      })
     )
     render(<ShareBurst {...baseProps} />)
     const shareBtn = findNativeShareTile()

@@ -97,10 +97,10 @@ describe('POST /api/analytics/referral', () => {
       makeReq({
         auth: `Bearer ${SECRET}`,
         body: { ...VALID_PAYLOAD, old_record: { status: 'rewarded' } },
-      }),
+      })
     )
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ skipped: true, reason: 'not first transition' })
+    expect(await res.json()).toEqual({ skipped: true, reason: 'not first transition' })
     expect(trackServer).not.toHaveBeenCalled()
   })
 
@@ -108,7 +108,7 @@ describe('POST /api/analytics/referral', () => {
     const { POST } = await loadRoute()
     const res = await POST(makeReq({ auth: `Bearer ${SECRET}`, body: VALID_PAYLOAD }))
     expect(res.status).toBe(200)
-    expect((await res.json())).toEqual({ ok: true })
+    expect(await res.json()).toEqual({ ok: true })
     expect(trackServer).toHaveBeenCalledTimes(1)
     const [distinctId, event, props] = trackServer.mock.calls[0] as [
       string,

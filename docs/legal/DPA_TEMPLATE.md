@@ -6,6 +6,7 @@
 This template is a starting point for B2B / agency customers who require a Data Processing Agreement before contracting. It is drafted to GDPR Article 28 requirements with reference to Standard Contractual Clauses for cross-border transfers. It is **not** legal advice and should be reviewed by qualified counsel in the relevant jurisdiction before execution.
 
 Variables to fill before sending:
+
 - `[CUSTOMER NAME]`, `[CUSTOMER ADDRESS]`, `[CUSTOMER CONTACT]`
 - `[CUSTOMER ENTITY TYPE]` (e.g. limited company, LLC, GmbH)
 - `[EFFECTIVE DATE]`
@@ -97,6 +98,7 @@ Trendly shall implement appropriate technical and organizational measures to ens
 ### 4.3 Cooperation
 
 Trendly shall assist Customer in fulfilling Customer's obligations under Applicable Data Protection Law, including:
+
 - Responding to requests from Data Subjects exercising their rights under Chapter III of GDPR (Section 6).
 - Meeting Customer's obligations in relation to security (GDPR Article 32), Personal Data Breach notification (Articles 33–34), data protection impact assessments (Articles 35–36), and prior consultation with supervisory authorities.
 
@@ -145,6 +147,7 @@ Trendly shall notify Customer of any Personal Data Breach affecting Personal Dat
 ### 7.2 Contents of the notification
 
 The notification shall include, to the extent known at the time:
+
 - The nature of the breach, including the categories and approximate number of Data Subjects and records affected.
 - The name and contact details of the Trendly point of contact for further information.
 - The likely consequences of the breach.
@@ -171,6 +174,7 @@ Trendly shall make available to Customer, on reasonable written request and no m
 ### 8.2 Audit method
 
 Customer's audit right shall be satisfied by:
+
 - The provision by Trendly of summary reports of relevant audits or certifications it holds (e.g., SOC 2 Type II, ISO 27001, when available); or
 - A written questionnaire from Customer to which Trendly shall respond within thirty (30) days.
 
@@ -189,6 +193,7 @@ Audit rights do not extend to information that would compromise the confidential
 ### 9.1 General
 
 Trendly may transfer Personal Data to a country outside the European Economic Area or the United Kingdom only where:
+
 - The European Commission or UK competent authority has issued an adequacy decision in respect of the destination country; or
 - Appropriate safeguards under GDPR Article 46 are in place, including the Standard Contractual Clauses; or
 - A specific derogation under GDPR Article 49 applies.
@@ -228,6 +233,7 @@ Each Party shall indemnify and hold harmless the other from and against any dama
 ### 11.1 At termination
 
 On termination of the Services, Trendly shall, at Customer's choice expressed in writing within thirty (30) days of termination:
+
 - Return all Personal Data Processed on Customer's behalf in a commonly used machine-readable format (typically JSON via the export tooling described in [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) §5.1); or
 - Delete all Personal Data Processed on Customer's behalf and certify deletion in writing.
 
@@ -271,32 +277,32 @@ This DPA, together with the Principal Agreement, constitutes the entire agreemen
 
 **Signed for and on behalf of [CUSTOMER NAME]:**
 
-Name: ______________________________
-Title: ______________________________
-Date: ______________________________
-Signature: ______________________________
+Name: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Title: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Date: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Signature: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
 
 **Signed for and on behalf of Trendly:**
 
-Name: ______________________________
-Title: ______________________________
-Date: ______________________________
-Signature: ______________________________
+Name: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Title: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Date: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
+Signature: **\*\***\*\***\*\***\_\_**\*\***\*\***\*\***
 
 ---
 
 # Annex 1 — Details of Processing
 
-| Item | Detail |
-|---|---|
-| **Subject matter of the Processing** | [The provision of an AI image generation service to Customer's end users via the Trendly platform.] |
-| **Duration of the Processing** | For the term of the Principal Agreement, subject to the retention windows in Section 11 and [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) §4. |
-| **Nature and purpose of the Processing** | [Hosting, transmission, storage, and AI-based transformation of end-user-uploaded photographs and associated metadata to deliver the Services to Customer's end users. Processing of payment metadata via the Stripe sub-processor for billing. Sending transactional notifications via the Resend sub-processor.] |
-| **Types of Personal Data** | [End-user email addresses; account display name and avatar (where provided via OAuth); user-uploaded photographs (which may contain biometric identifiers); user-generated output images derived from those photographs; IP addresses (transient, hashed for anti-abuse); browser fingerprint hashes (anti-abuse only); push notification subscription tokens.] |
-| **Categories of Data Subjects** | [Customer's end users / authorized account holders.] |
-| **Frequency of transfer** | [Continuous, for the duration of Service usage.] |
-| **Retention periods** | As set out in [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) §4. Summary: uploaded source photos deleted within 24 hours; generated outputs purged 30 days after generation on free tier or on account deletion on paid tier; anonymous-trial fingerprint hashes purged within 24 hours; Stripe payment metadata retained 7 years for accounting compliance. |
-| **Special categories of data** | Uploaded photographs may contain biometric identifiers (Article 9 GDPR) by virtue of being images of identifiable persons. Customer represents that it has obtained any consents required from its end users to upload such images. |
+| Item                                     | Detail                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Subject matter of the Processing**     | [The provision of an AI image generation service to Customer's end users via the Trendly platform.]                                                                                                                                                                                                                                                             |
+| **Duration of the Processing**           | For the term of the Principal Agreement, subject to the retention windows in Section 11 and [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) §4.                                                                                                                                                                                                                |
+| **Nature and purpose of the Processing** | [Hosting, transmission, storage, and AI-based transformation of end-user-uploaded photographs and associated metadata to deliver the Services to Customer's end users. Processing of payment metadata via the Stripe sub-processor for billing. Sending transactional notifications via the Resend sub-processor.]                                              |
+| **Types of Personal Data**               | [End-user email addresses; account display name and avatar (where provided via OAuth); user-uploaded photographs (which may contain biometric identifiers); user-generated output images derived from those photographs; IP addresses (transient, hashed for anti-abuse); browser fingerprint hashes (anti-abuse only); push notification subscription tokens.] |
+| **Categories of Data Subjects**          | [Customer's end users / authorized account holders.]                                                                                                                                                                                                                                                                                                            |
+| **Frequency of transfer**                | [Continuous, for the duration of Service usage.]                                                                                                                                                                                                                                                                                                                |
+| **Retention periods**                    | As set out in [`docs/PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) §4. Summary: uploaded source photos deleted within 24 hours; generated outputs purged 30 days after generation on free tier or on account deletion on paid tier; anonymous-trial fingerprint hashes purged within 24 hours; Stripe payment metadata retained 7 years for accounting compliance.  |
+| **Special categories of data**           | Uploaded photographs may contain biometric identifiers (Article 9 GDPR) by virtue of being images of identifiable persons. Customer represents that it has obtained any consents required from its end users to upload such images.                                                                                                                             |
 
 ---
 
@@ -360,17 +366,17 @@ The following TOMs are in place as of the Effective Date. Trendly may update the
 
 This Annex reflects the Sub-processors authorised at the Effective Date. The canonical, up-to-date list is maintained at [`docs/SUB_PROCESSORS.md`](./SUB_PROCESSORS.md). On any change, Trendly will notify Customer in accordance with Section 5.3.
 
-| Sub-processor | Purpose | Data shared | Location |
-|---|---|---|---|
-| Supabase Inc | Database, Auth, Storage, Edge Functions, scheduled jobs | User accounts, generations, payment event log, anonymous attempts | US (Multi-region) |
-| Vercel Inc | Application hosting, CDN, Edge runtime | All HTTP request data, server logs | US (Multi-region) |
-| Google LLC | Gemini API for image generation | User-uploaded photos (transient), prompt text | US |
-| Stripe Inc | Payment processing | Customer email, tokenized card data, purchase amounts | US, EU (multi-region) |
-| Resend Inc | Transactional email delivery | Email addresses, email content | US (Multi-region) |
-| Cloudflare Inc | Bot challenge (Turnstile), DNS | IP addresses (transient), browser fingerprint (hashed) | Global |
-| PostHog Inc | Product analytics | User session events, IP address | US |
-| Functional Software Inc (Sentry) | Error monitoring | Stack traces, request URLs, masked user IDs | US |
-| Upstash Inc | Redis (rate limiting, abuse budget) | IP address hashes (transient) | Global (multi-region) |
+| Sub-processor                    | Purpose                                                 | Data shared                                                       | Location              |
+| -------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------- | --------------------- |
+| Supabase Inc                     | Database, Auth, Storage, Edge Functions, scheduled jobs | User accounts, generations, payment event log, anonymous attempts | US (Multi-region)     |
+| Vercel Inc                       | Application hosting, CDN, Edge runtime                  | All HTTP request data, server logs                                | US (Multi-region)     |
+| Google LLC                       | Gemini API for image generation                         | User-uploaded photos (transient), prompt text                     | US                    |
+| Stripe Inc                       | Payment processing                                      | Customer email, tokenized card data, purchase amounts             | US, EU (multi-region) |
+| Resend Inc                       | Transactional email delivery                            | Email addresses, email content                                    | US (Multi-region)     |
+| Cloudflare Inc                   | Bot challenge (Turnstile), DNS                          | IP addresses (transient), browser fingerprint (hashed)            | Global                |
+| PostHog Inc                      | Product analytics                                       | User session events, IP address                                   | US                    |
+| Functional Software Inc (Sentry) | Error monitoring                                        | Stack traces, request URLs, masked user IDs                       | US                    |
+| Upstash Inc                      | Redis (rate limiting, abuse budget)                     | IP address hashes (transient)                                     | Global (multi-region) |
 
 For each Sub-processor, Trendly has reviewed and relies on the Sub-processor's published DPA / privacy commitments and (where required) Standard Contractual Clauses for cross-border transfers. Links to each Sub-processor's data protection documentation are maintained in [`docs/SUB_PROCESSORS.md`](./SUB_PROCESSORS.md).
 

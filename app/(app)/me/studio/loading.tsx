@@ -28,7 +28,7 @@ export default function StudioLoading() {
         </ul>
       </section>
 
-      <div className="flex flex-col items-center gap-4 rounded-3xl border border-dashed border-border/60 bg-card/30 px-6 py-12">
+      <div className="border-border/60 bg-card/30 flex flex-col items-center gap-4 rounded-3xl border border-dashed px-6 py-12">
         <Skeleton className="size-12 rounded-full" />
         <Skeleton className="h-6 w-72" />
         <Skeleton className="h-4 w-64" />

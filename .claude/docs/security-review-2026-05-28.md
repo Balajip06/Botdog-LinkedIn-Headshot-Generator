@@ -91,9 +91,14 @@ request, so the actions are gated TODAY. However:
 
 ```ts
 const supabase = await createClient()
-const { data: { user } } = await supabase.auth.getUser()
+const {
+  data: { user },
+} = await supabase.auth.getUser()
 const { data: adminRow } = await supabase
-  .from('admin_users').select('user_id').eq('user_id', user?.id).maybeSingle()
+  .from('admin_users')
+  .select('user_id')
+  .eq('user_id', user?.id)
+  .maybeSingle()
 if (!adminRow) redirect('/')
 ```
 
@@ -213,27 +218,27 @@ attributes by default. Bigger risk is malicious image content
 
 Mapped against the security-review skill's standard list.
 
-| Item | Status |
-|---|---|
-| No hardcoded secrets | ✅ verified by grep |
-| All user inputs validated | ✅ Zod on every server-action + API body |
-| SQL parameterized | ✅ Supabase JS client only |
-| XSS sanitization | ✅ after C1 fix |
-| CSRF protection | ✅ Next.js Server Actions enforce origin + encrypted action IDs |
-| Auth check before sensitive op | ✅ all 8 API routes + 4 action modules |
-| RLS enabled | ✅ all 11 public tables |
-| Role-based access | ✅ middleware admin gate + (H1 recommends defense-in-depth) |
-| Rate limiting | ✅ generate + anonymous; ⚠️ push/subscribe (H3) |
-| HTTPS enforced | ⚠️ Vercel/edge-config concern — verify after deploy |
-| Security headers | ❌ no CSP/HSTS yet (H2) |
-| Error messages generic | ✅ |
-| No secrets in logs | ✅ |
-| Deps up to date | ⚠️ no CI audit (H4) |
-| RLS in Supabase | ✅ |
-| CORS | ✅ (Next default — same-origin only) |
-| File uploads validated | ✅ HEIC→JPEG conversion + 2048px resize + per-field Zod schemas |
-| Wallet signatures | n/a (no blockchain) |
-| Open redirects | ✅ after C2 fix |
+| Item                           | Status                                                          |
+| ------------------------------ | --------------------------------------------------------------- |
+| No hardcoded secrets           | ✅ verified by grep                                             |
+| All user inputs validated      | ✅ Zod on every server-action + API body                        |
+| SQL parameterized              | ✅ Supabase JS client only                                      |
+| XSS sanitization               | ✅ after C1 fix                                                 |
+| CSRF protection                | ✅ Next.js Server Actions enforce origin + encrypted action IDs |
+| Auth check before sensitive op | ✅ all 8 API routes + 4 action modules                          |
+| RLS enabled                    | ✅ all 11 public tables                                         |
+| Role-based access              | ✅ middleware admin gate + (H1 recommends defense-in-depth)     |
+| Rate limiting                  | ✅ generate + anonymous; ⚠️ push/subscribe (H3)                 |
+| HTTPS enforced                 | ⚠️ Vercel/edge-config concern — verify after deploy             |
+| Security headers               | ❌ no CSP/HSTS yet (H2)                                         |
+| Error messages generic         | ✅                                                              |
+| No secrets in logs             | ✅                                                              |
+| Deps up to date                | ⚠️ no CI audit (H4)                                             |
+| RLS in Supabase                | ✅                                                              |
+| CORS                           | ✅ (Next default — same-origin only)                            |
+| File uploads validated         | ✅ HEIC→JPEG conversion + 2048px resize + per-field Zod schemas |
+| Wallet signatures              | n/a (no blockchain)                                             |
+| Open redirects                 | ✅ after C2 fix                                                 |
 
 ## Action plan
 
