@@ -2,6 +2,7 @@ import { LogOut } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { Logo } from '@/components/brand/Logo'
+import { BottomNav } from '@/components/nav/BottomNav'
 import { PushBootstrapper } from '@/components/push/PushBootstrapper'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { createClient } from '@/lib/supabase/server'
@@ -29,19 +30,19 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           <nav className="flex items-center gap-1 text-sm">
             <Link
               href="/me/studio"
-              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground hidden rounded-full px-3 py-1.5 sm:inline"
             >
               Studio
             </Link>
             <Link
               href="/me/creations"
-              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground hidden rounded-full px-3 py-1.5 sm:inline"
             >
               My creations
             </Link>
             <Link
               href="/me/settings"
-              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full px-3 py-1.5"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground hidden rounded-full px-3 py-1.5 sm:inline"
             >
               Settings
             </Link>
@@ -79,7 +80,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-10">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pb-24 sm:px-6 sm:py-10 sm:pb-10">
+        {children}
+      </main>
+      <BottomNav />
     </div>
   )
 }
