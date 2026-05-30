@@ -37,7 +37,10 @@ test('happy path: home → trend → login → creations → settings → result
 
   // 4. Studio (drawer-based — grid of trend cards, no empty-state card)
   await page.goto('/me/studio')
-  await expect(page.getByRole('heading', { name: /Pick a trend/i })).toBeVisible()
+  // Two headings start with "Pick a trend" (h1 "Pick a trend and go"
+  // + h2 "Pick a trend" section eyebrow). Pin to the h1 to avoid the
+  // strict-mode locator collision.
+  await expect(page.getByRole('heading', { level: 1, name: /Pick a trend/i })).toBeVisible()
   // Drawer is closed by default; grid cards are visible
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await expect(page.getByRole('button').first()).toBeVisible()
