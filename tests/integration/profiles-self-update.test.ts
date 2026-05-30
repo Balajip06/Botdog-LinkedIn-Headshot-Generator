@@ -86,13 +86,18 @@ describe('profiles_self_update column lockdown', () => {
     const user = await createTestUser({})
 
     await asUser(user.id, async (tx) => {
-      // Debug: confirm auth.uid() resolves to the user before the
-      // protected UPDATE. If this rows-back as NULL, the GUC isn't
-      // wired through to auth.uid() and the test environment is the
-      // real problem, not the RLS policy.
       const [{ uid }] = await tx<{ uid: string | null }[]>`select auth.uid() as uid`
       // eslint-disable-next-line no-console
       console.log('[debug] auth.uid() inside asUser =', uid, 'expected', user.id)
+      // Dump every policy on profiles so we can see if a second policy
+      // is rejecting the soft-delete that my RLS WITH CHECK approves.
+      const policies = await tx<
+        { polname: string; polcmd: string; polqual: string | null; polwithcheck: string | null }[]
+      >`select polname, polcmd::text, pg_get_expr(polqual, polrelid) as polqual,
+                 pg_get_expr(polwithcheck, polrelid) as polwithcheck
+          from pg_policy where polrelid = 'public.profiles'::regclass`
+      // eslint-disable-next-line no-console
+      console.log('[debug] profiles policies:', JSON.stringify(policies, null, 2))
       await tx`update public.profiles set deleted_at = now() where id = ${user.id}`
     })
 
