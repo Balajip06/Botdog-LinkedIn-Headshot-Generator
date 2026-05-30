@@ -22,7 +22,7 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } })
 
 function normalizeNextPath(raw: string | undefined): string {
-  if (!raw) return '/me/creations'
+  if (!raw) return '/me/studio'
   // Strip Git-Bash MSYS path conversion artifact: `/me/creations` on Windows
   // bash gets rewritten to `C:/Program Files/Git/me/creations`. Detect by
   // looking for a drive prefix + recover the trailing slash-prefixed path.

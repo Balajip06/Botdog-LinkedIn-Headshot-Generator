@@ -616,3 +616,41 @@ update public.trends set is_active = false where is_active = true;
 ```
 
 All `/api/generate` calls then fail at the trend-fetch step. Home grid empties. Safe rollback.
+
+## M7 — manual storage policy fix (restrict outputs/eval/\* to service-role)
+
+Migration `20260530000008_storage_outputs_eval_private.sql` is a no-op
+because the migration runner role cannot drop policies on
+`storage.objects` (only `supabase_storage_admin` can). The corrective
+SQL must be applied via the **Supabase Dashboard SQL editor** on each
+environment by hand.
+
+Open SQL editor for the target project and run:
+
+```sql
+drop policy if exists "outputs_public_read" on storage.objects;
+
+create policy "outputs_public_read" on storage.objects
+  for select using (
+    bucket_id = 'outputs'
+    and (
+      auth.role() = 'service_role'
+      or (storage.foldername(name))[1] <> 'eval'
+    )
+  );
+
+comment on policy "outputs_public_read" on storage.objects is
+  'Public read on outputs/* EXCEPT outputs/eval/* (admin QA outputs, service-role only).';
+```
+
+Verify with:
+
+```sql
+select polname, polqual::text
+  from pg_policy
+  join pg_class on pg_class.oid = pg_policy.polrelid
+ where polname = 'outputs_public_read';
+```
+
+The `polqual` should contain `<> 'eval'`. If it doesn't, the policy is
+the old wide-open version and eval outputs are still publicly readable.
