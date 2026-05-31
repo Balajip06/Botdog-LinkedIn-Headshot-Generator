@@ -55,13 +55,13 @@ export async function generateMetadata({ params }: TrendPageProps): Promise<Meta
       title,
       description,
       type: 'website',
-      images: trend.sample_after_url ? [{ url: trend.sample_after_url }] : undefined,
+      images: (trend.sample_after_url ?? trend.thumbnail_url) ? [{ url: (trend.sample_after_url ?? trend.thumbnail_url)! }] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: trend.sample_after_url ? [trend.sample_after_url] : undefined,
+      images: (trend.sample_after_url ?? trend.thumbnail_url) ? [(trend.sample_after_url ?? trend.thumbnail_url)!] : undefined,
     },
   }
 }
@@ -89,7 +89,7 @@ export default async function TrendPage({ params }: TrendPageProps) {
   const howTo = buildHowToJsonLd({
     name: trend.title,
     description: trend.description ?? `Try ${trend.title}.`,
-    image: trend.sample_after_url ?? `${siteUrl}/og.png`,
+    image: trend.sample_after_url ?? trend.thumbnail_url ?? `${siteUrl}/og.png`,
     url: canonicalUrl,
     steps: [
       { name: 'Upload your photo', text: 'Pick a clear photo of your subject.' },
@@ -173,12 +173,13 @@ export default async function TrendPage({ params }: TrendPageProps) {
             </div>
 
             <figure className="border-border/60 shadow-pop animate-pop-in relative aspect-[4/5] overflow-hidden rounded-3xl border">
-              {trend.sample_after_url ? (
+              {(trend.sample_after_url ?? trend.thumbnail_url) ? (
                 <Image
-                  src={trend.sample_after_url}
+                  src={(trend.sample_after_url ?? trend.thumbnail_url)!}
                   alt={`Sample output for ${trend.title}`}
                   fill
                   priority
+                  unoptimized
                   sizes="(max-width: 1024px) 100vw, 540px"
                   className="object-cover"
                 />

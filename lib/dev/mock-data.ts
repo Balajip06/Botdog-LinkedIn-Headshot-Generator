@@ -50,15 +50,23 @@ const SINGLE_PHOTO: TrendInput = {
   ],
 }
 
-// 5 brand-gradient SVG placeholders. Cycled across 15 trends — picks the same
-// thumb for the same slug deterministically.
-const THUMBS = [
-  '/mock/sample-1.svg',
-  '/mock/sample-2.svg',
-  '/mock/sample-3.svg',
-  '/mock/sample-4.svg',
-  '/mock/sample-5.svg',
-] as const
+const THUMBS: Record<string, string> = {
+  'ghibli-portrait': '/thumbnails/ghibli-portrait.webp',
+  'pixar-3d-character': '/thumbnails/pixar-3d-character.webp',
+  'anime-portrait': '/thumbnails/anime-portrait.webp',
+  'vintage-polaroid': '/thumbnails/vintage-polaroid.webp',
+  'marble-statue': '/thumbnails/marble-statue.webp',
+  'stranger-things-poster': '/thumbnails/stranger-things-poster.webp',
+  'action-figure-box': '/thumbnails/action-figure-box.webp',
+  'funko-pop-figure': '/thumbnails/funko-pop-figure.webp',
+  'lego-minifigure': '/thumbnails/lego-minifigure.webp',
+  'wes-anderson-pastel': '/thumbnails/wes-anderson-pastel.webp',
+  'renaissance-oil-painting': '/thumbnails/renaissance-oil-painting.webp',
+  'south-park-cartoon': '/thumbnails/south-park-cartoon.webp',
+  'cyberpunk-neon': '/thumbnails/cyberpunk-neon.webp',
+  'y2k-digicam-flash': '/thumbnails/y2k-digicam-flash.webp',
+  'linkedin-headshot': '/thumbnails/linkedin-headshot.webp',
+}
 
 interface Seed {
   slug: string
@@ -313,7 +321,7 @@ function hexId(seed: number): string {
 }
 
 export const MOCK_TRENDS: PublicTrend[] = SEEDS.map((seed, idx) => {
-  const thumb = THUMBS[idx % THUMBS.length]
+  const thumb = THUMBS[seed.slug] ?? '/thumbnails/ghibli-portrait.webp'
   return {
     id: hexId(idx + 1),
     slug: seed.slug,

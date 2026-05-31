@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { Star } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo, useState } from 'react'
 import { cn } from '@/lib/utils/cn'
@@ -11,6 +12,8 @@ interface TrendGridProps {
   trends: PublicTrend[]
   freeUsedThisWeek: number
   initialSlug: string | null
+  favoritedTrendIds?: string[]
+  onToggleFavourite?: (formData: FormData) => Promise<void>
   onSelect?: (trend: PublicTrend) => void
 }
 
@@ -23,7 +26,15 @@ function isNewTrend(activatedAt: string | null): boolean {
   return Date.now() - ts < NEW_WINDOW_MS
 }
 
-export function TrendGrid({ trends, freeUsedThisWeek, initialSlug, onSelect }: TrendGridProps) {
+export function TrendGrid({
+  trends,
+  freeUsedThisWeek,
+  initialSlug,
+  favoritedTrendIds = [],
+  onToggleFavourite,
+  onSelect,
+}: TrendGridProps) {
+  const favSet = useMemo(() => new Set(favoritedTrendIds), [favoritedTrendIds])
   const router = useRouter()
   const searchParams = useSearchParams()
   const paramSlug = searchParams.get('trend')
@@ -80,9 +91,10 @@ export function TrendGrid({ trends, freeUsedThisWeek, initialSlug, onSelect }: T
             const isSelected = trend.slug === selectedTrend?.slug
             const isNew = isNewTrend(trend.activated_at)
             const thumb = trend.sample_after_url ?? trend.thumbnail_url
+            const hasFavorite = favSet.has(trend.id)
 
             return (
-              <li key={trend.id}>
+              <li key={trend.id} className="group/card relative">
                 <button
                   type="button"
                   onClick={() => handleSelect(trend)}
@@ -100,6 +112,7 @@ export function TrendGrid({ trends, freeUsedThisWeek, initialSlug, onSelect }: T
                         src={thumb}
                         alt=""
                         fill
+                        unoptimized
                         sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
                         className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                         loading="lazy"
@@ -126,6 +139,35 @@ export function TrendGrid({ trends, freeUsedThisWeek, initialSlug, onSelect }: T
                     )}
                   </div>
                 </button>
+
+                {onToggleFavourite && (
+                  <form
+                    action={onToggleFavourite}
+                    className={cn(
+                      'absolute top-2 right-2 transition-opacity',
+                      hasFavorite ? 'opacity-100' : 'opacity-0 group-hover/card:opacity-100'
+                    )}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input type="hidden" name="trend_id" value={trend.id} />
+                    <button
+                      type="submit"
+                      aria-label={hasFavorite ? `Unfavourite ${trend.title}` : `Favourite ${trend.title}`}
+                      aria-pressed={hasFavorite}
+                      className="border-border/60 bg-card/90 hover:bg-card grid size-7 place-items-center rounded-full border backdrop-blur-sm transition-colors"
+                    >
+                      <Star
+                        className={cn(
+                          'size-3.5 transition-colors',
+                          hasFavorite
+                            ? 'fill-current text-[var(--brand-grad-1)]'
+                            : 'text-foreground/50'
+                        )}
+                        aria-hidden
+                      />
+                    </button>
+                  </form>
+                )}
               </li>
             )
           })}

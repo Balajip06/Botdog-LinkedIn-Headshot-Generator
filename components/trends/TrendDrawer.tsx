@@ -34,14 +34,13 @@ export function TrendDrawer({ trend, open, onOpenChange, freeUsedThisWeek }: Tre
   const [lastTrend, setLastTrend] = useState<PublicTrend | null>(trend)
   if (trend && trend !== lastTrend) setLastTrend(trend)
   const displayTrend = lastTrend
-  if (!displayTrend) return null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
         aria-labelledby="trend-drawer-title"
-        aria-describedby={displayTrend.description ? 'trend-drawer-desc' : undefined}
+        aria-describedby={displayTrend?.description ? 'trend-drawer-desc' : undefined}
         className={[
           // Mobile: bottom-sheet — slide up from bottom, full width, rounded top
           'fixed inset-x-0 top-auto bottom-0 mx-0 max-w-none translate-x-0 translate-y-0 rounded-t-3xl px-4 pt-6 pb-8',
@@ -71,16 +70,21 @@ export function TrendDrawer({ trend, open, onOpenChange, freeUsedThisWeek }: Tre
           aria-hidden="true"
         />
 
-        <DialogHeader className="mb-4 pr-12">
-          <DialogTitle id="trend-drawer-title" className="text-2xl font-extrabold tracking-tight">
-            {displayTrend.title}
-          </DialogTitle>
-          {displayTrend.description && (
-            <DialogDescription id="trend-drawer-desc">{displayTrend.description}</DialogDescription>
-          )}
-        </DialogHeader>
-
-        <TrendRunner trend={displayTrend} freeUsedThisWeek={freeUsedThisWeek} />
+        {displayTrend ? (
+          <>
+            <DialogHeader className="mb-4 pr-12">
+              <DialogTitle id="trend-drawer-title" className="text-2xl font-extrabold tracking-tight">
+                {displayTrend.title}
+              </DialogTitle>
+              {displayTrend.description && (
+                <DialogDescription id="trend-drawer-desc">{displayTrend.description}</DialogDescription>
+              )}
+            </DialogHeader>
+            <TrendRunner trend={displayTrend} freeUsedThisWeek={freeUsedThisWeek} />
+          </>
+        ) : (
+          <DialogTitle className="sr-only">Trend</DialogTitle>
+        )}
       </DialogContent>
     </Dialog>
   )

@@ -87,6 +87,58 @@ export async function listActiveTrends(): Promise<PublicTrend[]> {
   return (data as Record<string, unknown>[]).map(coerce)
 }
 
+export interface PagedTrends {
+  trends: PublicTrend[]
+  total: number
+}
+
+export async function listActiveTrendsPaged(
+  q: string,
+  page: number,
+  perPage: number
+): Promise<PagedTrends> {
+  if (MOCK_TRENDS_ENABLED) {
+    const lower = q.toLowerCase()
+    const filtered = q
+      ? MOCK_TRENDS.filter(
+          (t) =>
+            t.title.toLowerCase().includes(lower) ||
+            (t.description ?? '').toLowerCase().includes(lower)
+        )
+      : MOCK_TRENDS
+    const from = (page - 1) * perPage
+    return { trends: filtered.slice(from, from + perPage), total: filtered.length }
+  }
+
+  const supabase = await createClient()
+  const from = (page - 1) * perPage
+  const to = from + perPage - 1
+
+  let query = supabase
+    .from('trends')
+    .select(COLUMNS, { count: 'exact' })
+    .order('display_order', { ascending: true })
+    .range(from, to)
+
+  if (q) query = query.ilike('title', `%${q}%`)
+
+  const { data, error, count } = await query
+
+  if (error) {
+    Sentry.captureMessage('trends.paged failed', {
+      level: 'error',
+      tags: { component: 'trends-repository', op: 'listActiveTrendsPaged' },
+      extra: { code: error.code, message: error.message },
+    })
+    return { trends: [], total: 0 }
+  }
+
+  return {
+    trends: (data ?? []).map((r) => coerce(r as Record<string, unknown>)),
+    total: count ?? 0,
+  }
+}
+
 export async function getActiveTrendBySlug(slug: string): Promise<PublicTrend | null> {
   if (MOCK_TRENDS_ENABLED) return MOCK_TRENDS.find((t) => t.slug === slug) ?? null
 

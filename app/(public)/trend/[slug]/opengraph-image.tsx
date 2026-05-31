@@ -33,7 +33,7 @@ export default async function OpengraphImage({ params }: OgProps) {
   const trend = await getActiveTrendBySlug(slug)
   const title = trend?.title ?? 'Trend Image Generator'
   const description = trend?.description ?? 'Viral image trends with your photo.'
-  const sample = trend?.sample_after_url ?? null
+  const sample = trend?.sample_after_url ?? trend?.thumbnail_url ?? null
 
   return new ImageResponse(
     <div

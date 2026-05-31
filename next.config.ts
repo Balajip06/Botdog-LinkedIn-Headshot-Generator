@@ -47,6 +47,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/sign/**' },
+      { protocol: 'https', hostname: 'rkvhpiienwdeawqkrdxm.supabase.co', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
       { protocol: 'https', hostname: 'cdn.imgix.net', pathname: '/**' },
     ],
