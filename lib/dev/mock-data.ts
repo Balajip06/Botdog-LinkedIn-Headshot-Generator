@@ -71,7 +71,6 @@ const THUMBS: Record<string, string> = {
   'vintage-magazine-cover': '/thumbnails/vintage-magazine-cover.webp',
   'manga-panel': '/thumbnails/manga-panel.webp',
   'ai-passport-photo': '/thumbnails/ai-passport-photo.webp',
-  'renaissance-portrait-frame': '/thumbnails/renaissance-portrait-frame.webp',
 }
 
 interface Seed {
@@ -402,23 +401,6 @@ const SEEDS: Seed[] = [
       {
         question: 'Does it remove glasses?',
         answer: 'Yes — ICAO 2022 rules prohibit glasses, so the AI removes them automatically.',
-      },
-    ],
-  },
-  {
-    slug: 'renaissance-portrait-frame',
-    title: 'Renaissance portrait + frame',
-    description: 'You as a 16th-century Flemish master portrait — oils, gold-leaf frame, dramatic chiaroscuro.',
-    model: 'nano-banana-pro',
-    aspect: '3:4',
-    faq: [
-      {
-        question: 'How is this different from the existing Renaissance trend?',
-        answer: 'This version adds an ornate gold-leaf frame around the painting for a full museum-piece look.',
-      },
-      {
-        question: 'Does it pick the outfit?',
-        answer: 'Yes — the AI infers period-accurate Flemish attire from your appearance.',
       },
     ],
   },

@@ -29,7 +29,6 @@ const EXPECTED_SLUGS = [
   'vintage-magazine-cover',
   'manga-panel',
   'ai-passport-photo',
-  'renaissance-portrait-frame',
 ] as const
 
 const VALID_MODELS = new Set(['nano-banana', 'nano-banana-pro'])
@@ -39,8 +38,8 @@ const VALID_ASPECTS = new Set(['1:1', '3:4', '16:9', '9:16'])
 const UUID_V4_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 describe('MOCK_TRENDS', () => {
-  it('contains exactly 21 entries', () => {
-    expect(MOCK_TRENDS).toHaveLength(21)
+  it('contains exactly 20 entries', () => {
+    expect(MOCK_TRENDS).toHaveLength(20)
   })
 
   it('matches the canonical seed slug set in order', () => {

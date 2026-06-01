@@ -213,36 +213,6 @@ const trends: SeedTrend[] = [
     is_active: true,
     eval_status: 'passed',
   },
-  {
-    slug: 'renaissance-portrait-frame',
-    title: 'Renaissance portrait + frame',
-    description: 'You as a 16th-century Flemish master portrait — oils, gold-leaf frame, dramatic chiaroscuro.',
-    prompt_template:
-      "A photorealistic museum-quality 16th-century Flemish oil painting portrait of the subject in the reference photo, in the tradition of Jan van Eyck, Hans Holbein the Younger, and Rembrandt van Rijn. Technique: rich luminous oil paint with visible layered glazes, translucent shadow passages, impasto highlights on fabrics and jewellery, ultra-fine detail in facial hair and skin pores. Lighting: classic Rembrandt chiaroscuro — single candle or north-light studio source from the upper left casting a small triangular highlight under the shadow-side eye, warm amber candlelight colour temperature. Background: dark olive-brown ground transitioning to near-black at the edges. Period-accurate wardrobe: rich merchant or nobleman attire (dark velvet doublet, lace ruff collar, fur-trimmed cloak for men; pearl earrings, velvet gown, white linen chemise for women — infer from subject). Preserve the subject's exact facial structure, ethnicity, approximate age, and any distinctive features, slightly idealised in the Flemish master tradition. The finished painting is displayed inside an ornate hand-carved gilded gold-leaf wooden frame with acanthus-leaf and egg-and-dart moulding — the frame is visible as the border of the image. Portrait 3:4. No text, no signature, no museum label.",
-    model: 'nano-banana-pro',
-    aspect_ratio: '3:4',
-    input_schema: singlePhoto,
-    display_order: 21,
-    seo_title: 'Renaissance portrait generator — turn your photo into a Flemish oil painting',
-    seo_description:
-      'Get a museum-quality Renaissance oil painting of yourself, complete with gold-leaf frame. Free to try.',
-    faq: [
-      {
-        question: 'How is this different from the existing Renaissance trend?',
-        answer: 'This version adds an ornate gold-leaf frame around the painting for a full museum-piece look.',
-      },
-      {
-        question: 'Does it pick the outfit?',
-        answer: 'Yes — the AI infers period-accurate Flemish attire from your appearance.',
-      },
-      {
-        question: 'Will it look like me?',
-        answer: 'Facial features are preserved and slightly idealised in the 16th-century master tradition.',
-      },
-    ],
-    is_active: true,
-    eval_status: 'passed',
-  },
 ]
 
 async function main() {
