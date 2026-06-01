@@ -66,6 +66,12 @@ const THUMBS: Record<string, string> = {
   'cyberpunk-neon': '/thumbnails/cyberpunk-neon.webp',
   'y2k-digicam-flash': '/thumbnails/y2k-digicam-flash.webp',
   'linkedin-headshot': '/thumbnails/linkedin-headshot.webp',
+  'claymation-selfie': '/thumbnails/claymation-selfie.webp',
+  'barbie-box': '/thumbnails/barbie-box.webp',
+  'vintage-magazine-cover': '/thumbnails/vintage-magazine-cover.webp',
+  'manga-panel': '/thumbnails/manga-panel.webp',
+  'ai-passport-photo': '/thumbnails/ai-passport-photo.webp',
+  'renaissance-portrait-frame': '/thumbnails/renaissance-portrait-frame.webp',
 }
 
 interface Seed {
@@ -309,6 +315,110 @@ const SEEDS: Seed[] = [
       {
         question: 'Keep my own outfit?',
         answer: 'V1 swaps to business attire. Outfit-preserving mode is on the roadmap.',
+      },
+    ],
+  },
+  {
+    slug: 'claymation-selfie',
+    title: 'Claymation selfie',
+    description: 'You reimagined as a chunky, handcrafted clay character — Aardman meets Laika.',
+    model: 'nano-banana-pro',
+    aspect: '1:1',
+    faq: [
+      {
+        question: 'Will it look like me?',
+        answer:
+          'Yes — hair colour, hairstyle, glasses, and distinctive features are translated into clay texture.',
+      },
+      {
+        question: 'Can I use group photos?',
+        answer: 'Single subjects give the best results.',
+      },
+    ],
+  },
+  {
+    slug: 'barbie-box',
+    title: 'Barbie doll box',
+    description: 'You as a Barbie doll packaged in a glossy pink branded box — complete with career label.',
+    model: 'nano-banana-pro',
+    aspect: '3:4',
+    faq: [
+      {
+        question: 'Does it add a career label?',
+        answer: 'Yes — the AI picks a fitting career label based on your appearance and style.',
+      },
+      {
+        question: 'Will it preserve my face?',
+        answer: 'Facial features are idealised in the Barbie doll style while keeping you recognisable.',
+      },
+    ],
+  },
+  {
+    slug: 'vintage-magazine-cover',
+    title: '70s magazine cover',
+    description: 'You on the cover of a glossy 1970s lifestyle magazine — bold typography, warm film grain.',
+    model: 'nano-banana-pro',
+    aspect: '3:4',
+    faq: [
+      {
+        question: 'Does it add real text?',
+        answer: 'The AI generates placeholder magazine-style headlines — not real brand names.',
+      },
+      {
+        question: 'Which decade?',
+        answer: 'V1 is tuned for 1970–1978. Other decades coming in a future release.',
+      },
+    ],
+  },
+  {
+    slug: 'manga-panel',
+    title: 'Manga panel',
+    description: 'You as a black-and-white manga panel — crisp ink lines, screen-tone shading, dramatic energy.',
+    model: 'nano-banana-pro',
+    aspect: '1:1',
+    faq: [
+      {
+        question: 'Is it black and white only?',
+        answer: 'Yes — authentic manga uses pure ink and dot-screen halftone, no colour.',
+      },
+      {
+        question: 'Will it keep my features?',
+        answer: 'Hairstyle, glasses, and distinctive features are all preserved in ink-line form.',
+      },
+    ],
+  },
+  {
+    slug: 'ai-passport-photo',
+    title: 'AI passport photo',
+    description: 'A hyper-realistic official-style ID portrait — neutral backdrop, perfect exposure, print-ready.',
+    model: 'nano-banana-pro',
+    aspect: '1:1',
+    faq: [
+      {
+        question: 'Is it officially valid?',
+        answer:
+          'AI-generated photos may not be accepted by all governments. Check your local rules before submitting.',
+      },
+      {
+        question: 'Does it remove glasses?',
+        answer: 'Yes — ICAO 2022 rules prohibit glasses, so the AI removes them automatically.',
+      },
+    ],
+  },
+  {
+    slug: 'renaissance-portrait-frame',
+    title: 'Renaissance portrait + frame',
+    description: 'You as a 16th-century Flemish master portrait — oils, gold-leaf frame, dramatic chiaroscuro.',
+    model: 'nano-banana-pro',
+    aspect: '3:4',
+    faq: [
+      {
+        question: 'How is this different from the existing Renaissance trend?',
+        answer: 'This version adds an ornate gold-leaf frame around the painting for a full museum-piece look.',
+      },
+      {
+        question: 'Does it pick the outfit?',
+        answer: 'Yes — the AI infers period-accurate Flemish attire from your appearance.',
       },
     ],
   },
