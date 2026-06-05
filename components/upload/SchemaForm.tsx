@@ -180,7 +180,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
     typeof values[field.name] === 'string' ? (values[field.name] as string) : (field.default ?? '')
   return (
     <div className="flex flex-col gap-2">
-      <Label className="flex items-baseline justify-between">
+      <Label htmlFor={field.name} className="flex items-baseline justify-between">
         <span>
           {field.label}
           {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
@@ -188,7 +188,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
         {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
       </Label>
       <Select value={current} onValueChange={(v) => onText(field.name, v)}>
-        <SelectTrigger className="h-12 rounded-xl">
+        <SelectTrigger id={field.name} aria-label={field.label} className="h-12 rounded-xl">
           <SelectValue placeholder="Pick one…" />
         </SelectTrigger>
         <SelectContent>
