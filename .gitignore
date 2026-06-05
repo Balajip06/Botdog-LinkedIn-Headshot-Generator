@@ -81,3 +81,11 @@ graphify-out/
 /spike-in/
 /spike-out/
 /spike-out-openai/
+
+# Agent/tooling scratch dot-dirs (brainstorm mockups, local server state, etc.)
+.superpowers/
+
+# Throwaway UI screenshots (MOCK-mode review artifacts)
+/mock-*.png
+/visual-*.png
+/prod-*.png
