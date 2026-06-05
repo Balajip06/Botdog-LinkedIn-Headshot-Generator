@@ -26,6 +26,9 @@ interface SchemaFormProps {
   submitting?: boolean
   ctaLabel?: string
   className?: string
+  /** Render single-image uploads as a big square "stage" (dropzone + preview
+   *  fill an aspect-square) so the generator card stays a consistent size. */
+  square?: boolean
 }
 
 type LocalState = {
@@ -51,6 +54,7 @@ export function SchemaForm({
   submitting = false,
   ctaLabel = 'Generate',
   className,
+  square = false,
 }: SchemaFormProps) {
   const [state, setState] = useState<LocalState>(() => initialState(schema))
 
@@ -107,29 +111,40 @@ export function SchemaForm({
     [onSubmit, state.files, state.values, validate]
   )
 
+  const renderField = (field: TrendField) => (
+    <FieldRenderer
+      key={field.name}
+      field={field}
+      values={state.values}
+      files={state.files}
+      error={state.fieldErrors[field.name]}
+      onText={setText}
+      onFiles={setFiles}
+      square={square}
+    />
+  )
+
+  // Image fields render full-width on their own rows; the remaining controls
+  // share a row with the submit button so the CTA sits beside the last input.
+  const imageFields = schema.fields.filter((f) => f.type === 'image')
+  const controlFields = schema.fields.filter((f) => f.type !== 'image')
+
   return (
-    <form onSubmit={handleSubmit} className={cn('flex flex-col gap-6', className)}>
-      {schema.fields.map((field) => (
-        <FieldRenderer
-          key={field.name}
-          field={field}
-          values={state.values}
-          files={state.files}
-          error={state.fieldErrors[field.name]}
-          onText={setText}
-          onFiles={setFiles}
-        />
-      ))}
-      <GradientButton type="submit" disabled={submitting} size="lg" className="w-full">
-        {submitting ? (
-          <span className="inline-flex items-center gap-2">
-            <span className="size-2 animate-pulse rounded-full bg-white" />
-            Generating…
-          </span>
-        ) : (
-          ctaLabel
-        )}
-      </GradientButton>
+    <form onSubmit={handleSubmit} className={cn('flex flex-col gap-5', className)}>
+      {imageFields.map(renderField)}
+      <div className="flex flex-wrap items-end gap-3">
+        {controlFields.map(renderField)}
+        <GradientButton type="submit" disabled={submitting} size="lg" className="h-12 flex-1">
+          {submitting ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="size-2 animate-pulse rounded-full bg-white" />
+              Generating…
+            </span>
+          ) : (
+            ctaLabel
+          )}
+        </GradientButton>
+      </div>
     </form>
   )
 }
@@ -141,9 +156,10 @@ interface FieldRendererProps {
   error?: string
   onText: (name: string, value: string) => void
   onFiles: (name: string, files: File[]) => void
+  square?: boolean
 }
 
-function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRendererProps) {
+function FieldRenderer({ field, values, files, error, onText, onFiles, square }: FieldRendererProps) {
   if (field.type === 'image') {
     return (
       <ImageField
@@ -151,6 +167,7 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
         files={files[field.name] ?? []}
         error={error}
         onFiles={(list) => onFiles(field.name, list)}
+        square={square}
       />
     )
   }
@@ -180,15 +197,16 @@ function FieldRenderer({ field, values, files, error, onText, onFiles }: FieldRe
     typeof values[field.name] === 'string' ? (values[field.name] as string) : (field.default ?? '')
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={field.name} className="flex items-baseline justify-between">
-        <span>
-          {field.label}
-          {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
-        </span>
-        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
+      <Label htmlFor={field.name}>
+        {field.label}
+        {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
       </Label>
       <Select value={current} onValueChange={(v) => onText(field.name, v)}>
-        <SelectTrigger id={field.name} aria-label={field.label} className="h-12 rounded-xl">
+        <SelectTrigger
+          id={field.name}
+          aria-label={field.label}
+          className="w-fit min-w-36 rounded-xl data-[size=default]:h-12"
+        >
           <SelectValue placeholder="Pick one…" />
         </SelectTrigger>
         <SelectContent>
@@ -209,6 +227,7 @@ interface ImageFieldProps {
   files: File[]
   error?: string
   onFiles: (files: File[]) => void
+  square?: boolean
 }
 
 function ImageField(props: ImageFieldProps) {
@@ -218,7 +237,7 @@ function ImageField(props: ImageFieldProps) {
   return <SingleImageField {...props} />
 }
 
-function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
+function SingleImageField({ field, files, error, onFiles, square }: ImageFieldProps) {
   const [dragOver, setDragOver] = useState(false)
   const [previews, setPreviews] = useState<string[]>([])
 
@@ -254,15 +273,53 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={inputId} className="flex items-baseline justify-between">
-        <span>
-          {field.label}
-          {field.required && <span className="text-[var(--brand-grad-1)]"> *</span>}
-        </span>
-        {field.hint && <span className="text-muted-foreground text-xs">{field.hint}</span>}
-      </Label>
-
-      {previews.length > 0 ? (
+      {square ? (
+        // Fixed square "stage": the chosen photo fills the slot (big, centered),
+        // and the empty dropzone is the same square — so the generator card stays
+        // a consistent size from upload → result.
+        previews.length > 0 ? (
+          <div className="group border-border bg-muted relative aspect-square w-full overflow-hidden rounded-2xl border">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={previews[0]} alt="Preview" className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => removeAt(0)}
+              aria-label="Remove photo"
+              className="absolute top-2 right-2 grid size-8 place-items-center rounded-full bg-black/60 text-white transition-opacity hover:bg-black/80"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        ) : (
+          <label
+            htmlFor={inputId}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setDragOver(true)
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault()
+              setDragOver(false)
+              if (e.dataTransfer.files?.length) handleFileList(e.dataTransfer.files)
+            }}
+            className={cn(
+              'flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 text-center transition-colors',
+              dragOver
+                ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
+                : 'border-border bg-muted/40 hover:border-foreground/30'
+            )}
+          >
+            <div className="bg-primary shadow-soft grid size-14 place-items-center rounded-full text-white">
+              <Upload className="size-6" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm font-medium">Drop a photo, or tap to browse</span>
+              <span className="text-muted-foreground text-xs">JPG, PNG, HEIC up to ~20MB</span>
+            </div>
+          </label>
+        )
+      ) : previews.length > 0 ? (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
           {previews.map((src, idx) => (
             <div
@@ -296,14 +353,14 @@ function SingleImageField({ field, files, error, onFiles }: ImageFieldProps) {
             if (e.dataTransfer.files?.length) handleFileList(e.dataTransfer.files)
           }}
           className={cn(
-            'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-colors',
+            'flex cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 py-16 text-center transition-colors',
             dragOver
               ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
               : 'border-border bg-muted/40 hover:border-foreground/30'
           )}
         >
-          <div className="bg-gradient-hero shadow-glow-pink grid size-12 place-items-center rounded-full text-white">
-            <Upload className="size-5" />
+          <div className="bg-primary shadow-soft grid size-14 place-items-center rounded-full text-white">
+            <Upload className="size-6" />
           </div>
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">Drop a photo, or tap to browse</span>

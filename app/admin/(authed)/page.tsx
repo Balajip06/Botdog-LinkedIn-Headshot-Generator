@@ -2,14 +2,18 @@ import {
   Archive,
   BarChart3,
   Coins,
+  CreditCard,
   DollarSign,
   Eye,
+  Filter,
   Flame,
   Gift,
   Inbox,
   LifeBuoy,
+  Mail,
   MousePointerClick,
   ShieldX,
+  SlidersHorizontal,
   Sparkles,
   TrendingUp,
 } from 'lucide-react'
@@ -26,6 +30,7 @@ import {
   getQuotaBlockedSummary,
 } from '@/lib/analytics/event-store'
 import { getMarginDetail } from '@/lib/analytics/margin'
+import { getAcquisitionFunnel } from '@/lib/analytics/funnel'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -81,7 +86,12 @@ export default async function AdminHome() {
     getQuotaBlockedSummary(24),
   ])
   const supabase = await createClient()
-  const margin = await getMarginDetail(supabase, 7)
+  // email_leads + anonymous_attempts are service-role-only; the funnel must use
+  // the service client (the authed client would read 0 rows).
+  const [margin, funnel] = await Promise.all([
+    getMarginDetail(supabase, 7),
+    getAcquisitionFunnel(createServiceClient(), 7),
+  ])
 
   const ctrCurrent =
     period.current.impressions === 0
@@ -192,6 +202,48 @@ export default async function AdminHome() {
             Drilldown →
           </Link>
         </div>
+      </div>
+
+      {/* Acquisition funnel summary */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <KpiCard
+          icon={<Mail className="size-4" />}
+          label="Emails captured · 7d"
+          value={formatNumber(funnel.emailsCaptured)}
+          delta={<span className="text-muted-foreground text-xs">to unlock more</span>}
+          tone="text-[var(--brand-grad-1)]"
+          series={funnel.daily.map((d) => ({ label: d.label, value: d.emailEntered }))}
+          ariaLabel="Daily emails captured, last 7 days"
+        />
+        <KpiCard
+          icon={<CreditCard className="size-4" />}
+          label="Subscribed · 7d"
+          value={formatNumber(funnel.paidUsers)}
+          delta={
+            <span className="text-muted-foreground text-xs">
+              {(funnel.emailToPaidRate * 100).toFixed(1)}% of emails
+            </span>
+          }
+          tone="text-emerald-500"
+          series={funnel.daily.map((d) => ({ label: d.label, value: d.paid }))}
+          ariaLabel="Daily new subscriptions, last 7 days"
+        />
+        <KpiCard
+          icon={<Filter className="size-4" />}
+          label="Email → paid · 7d"
+          value={`${(funnel.emailToPaidRate * 100).toFixed(1)}%`}
+          delta={
+            <Link
+              href="/admin/acquisition"
+              className="text-muted-foreground hover:text-foreground text-xs font-semibold"
+            >
+              Funnel →
+            </Link>
+          }
+          tone="text-[var(--brand-grad-2)]"
+          series={funnel.daily.map((d) => ({ label: d.label, value: d.accountCreated }))}
+          ariaLabel="Email to paid conversion, last 7 days"
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -336,6 +388,13 @@ export default async function AdminHome() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <AdminTile
+            href="/admin/acquisition"
+            icon={<Filter className="size-5" />}
+            title="Acquisition"
+            description="Anon → email → signup → paid."
+            accent="from-[var(--brand-grad-1)] to-emerald-400"
+          />
+          <AdminTile
             href="/admin/engagement"
             icon={<BarChart3 className="size-5" />}
             title="Engagement"
@@ -386,6 +445,13 @@ export default async function AdminHome() {
             title="Audit log"
             description="Compliance trail."
             accent="from-[var(--brand-grad-2)] to-[var(--brand-grad-3)]"
+          />
+          <AdminTile
+            href="/admin/settings"
+            icon={<SlidersHorizontal className="size-5" />}
+            title="Settings"
+            description="Active image model."
+            accent="from-slate-400 to-slate-600"
           />
         </div>
       </div>

@@ -13,6 +13,39 @@ Format:
 
 ---
 
+## 2026-06-06 — "are u sure?" → the metric the user named didn't exist in code
+**Trigger:** User asked for admin metrics incl. "how many subscribed for botdog subscription". Code had NO subscription — `BotdogPlanCard` sold a one-time credit pack. I planned to measure pack-buyers as "subscribers"; on ExitPlanMode the user rejected with "are u sure?". On re-asking, they actually wanted a real recurring subscription built.
+**Lesson:** When the user names a business object/metric ("subscription", "subscribers"), verify it EXISTS in code before designing a proxy. If absent, surface a fork ("current code is one-time packs — measure packs, or build a real subscription?") rather than silently redefining their word. A terse "are u sure?" after a plan = re-examine my judgment calls, don't re-submit the same plan.
+**Apply when:** Any request referencing a feature/metric by name — grep for it first; if absent, treat build-vs-proxy as a user decision.
+
+## 2026-06-06 — Stripe SDK v22 moved subscription-period + invoice→sub fields
+**Trigger:** Wrote webhook handlers using `subscription.current_period_end` and `invoice.subscription` (pre-v22 shapes) — would have failed typecheck.
+**Lesson:** In `stripe@22`, period end is per-item: `subscription.items.data[0].current_period_end` (not top-level). `invoice.subscription` is gone — use `invoice.parent.subscription_details.subscription`. Grep the pinned SDK's `.d.ts` (`node_modules/.pnpm/stripe@*/.../cjs/resources/*.d.ts`) for the real field path before writing handlers; don't trust training-data names.
+**Apply when:** Touching Stripe webhook/subscription code.
+
+## 2026-06-06 — New privileged profiles columns must be added to the lockdown blacklist
+**Trigger:** Added `subscription_status`, `sub_allowance`, etc. to `profiles`. `enforce_profiles_self_update_lockdown` is a BLACKLIST (rejects only named columns), so any new column is silently user-writable — a client could `update profiles set subscription_status='active'` and self-grant unlimited gens.
+**Lesson:** When adding a privileged-only column to `profiles`, recreate the lockdown trigger and add the column to the locked set in the SAME migration. A blacklist lockdown is a footgun for every future column.
+**Apply when:** Any migration adding columns to a table guarded by a blacklist-style self-update lockdown.
+
+## 2026-06-05 — Sequential fallback must fit the Edge wall; orphan rows need a reaper
+
+**Trigger:** User repeated "are you sure?" through planning. The hidden bug: adding in-invocation provider fallback (call active model, then the other on failure) chains TWO API calls inside one Supabase Edge invocation bounded by the ~150s wall. With the original 90s timeout that's 180s → the function is killed mid-fallback. There was no reaper for rows stuck in `processing`, so quota stayed consumed (refund only fires on `status='failed'`) and the user saw an infinite spinner. A second miss: each call's image fetch used its own `AbortSignal.timeout(15s)` OUTSIDE the provider timeout, so the real budget was `15 + timeout`, not `timeout`.
+
+**Lesson:** When chaining N provider calls in one bounded execution: (1) per-call timeouts must SUM under the wall (here 60+45=105s < 110s self-limit < 150s); (2) the timeout must wrap the WHOLE call incl. any pre-fetch — share one `AbortController` across image-fetch + API; (3) always add a cron reaper that flips long-`processing` rows to the terminal/refund state, anchored on a `processing_at` stamp (use `coalesce(processing_at, created_at)` so retried rows aren't reaped early and legacy rows still get swept). This bug is invisible to tsc/lint/build/tests — only a wall-clock trace catches it.
+
+**Apply when:** any feature that adds retries/fallback/multi-step work inside an Edge Function or other wall-clock-bounded runtime; any new long-running status on a quota'd row.
+
+## 2026-06-05 — "are you sure?" means re-audit, don't re-submit
+
+**Trigger:** User rejected ExitPlanMode repeatedly with bare "are you sure?" / "will this be 100% perfect?". Re-submitting the same plan was wrong; each genuine re-audit surfaced a real defect (scope creep, missing PNG/size/moderation handling, the fallback-orphan bug). The honest answer to "100% perfect?" was **no** — the feature gates on an unproven spike (gpt-image-2 facial fidelity).
+
+**Lesson:** Treat a repeated "are you sure?" as a signal to trace the live code again and hunt for a concrete flaw, not to re-assert. Never claim 100% on an unvalidated cross-provider AI integration; state what's proven, what's gated on a spike, and what fails safe. If guessing the user's concern twice fails, ask directly what's blocking.
+
+**Apply when:** plan-approval loops; any time confidence is challenged on AI-output or external-provider work.
+
+---
+
 ## 2026-05-27 — Track plan + session state on disk
 
 **Trigger:** User flagged session tracker missing; plan being lost between sessions. Referenced KIMP project as template.
@@ -217,8 +250,24 @@ Format:
 
 ---
 
+## 2026-06-05 — SECURITY DEFINER triggers don't bypass auth.uid(); use current_user check
+
+**Trigger:** `consume_quota_on_generation_insert` (SECURITY DEFINER) tried to `UPDATE profiles SET free_used_this_week = free_used_this_week + 1`. The `enforce_profiles_self_update_lockdown` trigger blocked it with `profiles_self_update: free_used_this_week is locked` because `auth.uid()` was non-null — set from the session JWT, persists across SECURITY DEFINER boundaries.
+**Lesson:** `SECURITY DEFINER` changes the DB execution role (`current_user`), NOT the JWT session context (`auth.uid()`). Guards using `auth.uid() is null` as the service-role bypass will still fire during authenticated sessions. Correct bypass: `if current_user in ('postgres', 'supabase_admin', 'service_role') then return new; end if;`
+**Apply when:** Any BEFORE UPDATE trigger that must allow SECURITY DEFINER quota/credits triggers to write locked columns. Never rely on `auth.uid() is null` alone.
+
+---
+
 ## 2026-06-05 — "Botdog" is a real company — trademark caveat on the brand clone
 
 **Trigger:** Reskinned this app to the Botdog brand + cloned the structure of botdog.co/tools/linkedin-headshot-generator. Botdog.co is a real LinkedIn-automation company.
 **Lesson:** Using a real company's exact name/logo/page for an unrelated product is a trademark/passing-off risk if you're not them. User accepted the caveat for this build. Before any PUBLIC deploy: confirm authorization/ownership or rename; never reuse their real testimonials (we used clearly-labeled "Illustrative examples") or verbatim marketing copy (we wrote original copy).
 **Apply when:** Any rebrand that adopts an existing company's name/identity. Surface the trademark risk; don't copy real testimonials/claims.
+
+---
+
+## 2026-06-05 — Build to the spec's LAYOUT, not just its features; never promise "100%"
+
+**Trigger:** On the in-card-funnel rebuild, the user pushed back ("are you sure it is going to be designed like how i asked for?", "are you sure this will be 100% perfect"). I had built the account page by APPENDING the new 2-panel on top of the existing search/filter/favorites gallery — the user's step 6 described a CLEAN 2-panel (ad left; images-first generator right). I also nearly exited planning with implied confidence the whole thing would work.
+**Lesson:** (1) Re-read the user's described LAYOUT step-by-step and match it; do not bolt new UI onto old surfaces. The fix was: clean 2-panel /me/creations + AccountStudio (images-first) + move the gallery to /me/creations/all behind a "View all creations" link. (2) Never claim "100% perfect" — calibrate: code+gates+MOCK are provable here; live anon-gen needs creds + Edge Function deploy + 2 DB webhooks + Resend, and the model is ~90% likeness. State what is vs is NOT verifiable.
+**Apply when:** Any multi-step UX request — diff each described step against the build; and when asked "are you sure", give honest residual-risk calibration, not reassurance.

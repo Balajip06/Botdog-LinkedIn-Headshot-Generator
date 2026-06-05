@@ -9,11 +9,12 @@
  *
  * Post-Botdog pivot: the homepage `/` IS the generator (single linkedin-headshot
  * tool with a style picker). There is no trend grid and no `/trend/*` routes,
- * and login is email + password.
+ * and login is magic-link only. `/me/creations` is now the 2-panel account page;
+ * the full gallery lives at `/me/creations/all`.
  */
 import { test, expect } from '@playwright/test'
 
-test('happy path: home → login → studio → creations → settings → result', async ({ page }) => {
+test('happy path: home → login → account → all-creations → settings → result', async ({ page }) => {
   // 1. Home is the generator — hero + upload card render
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
@@ -27,9 +28,13 @@ test('happy path: home → login → studio → creations → settings → resul
   await page.goto('/me/studio')
   await expect(page).toHaveURL(/\/me\/creations/)
 
-  // 4. Creations (history)
+  // 4. Account — 2-panel (generator + recent headshots + plan)
   await page.goto('/me/creations')
-  await expect(page.getByRole('heading', { name: /creations/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /account/i })).toBeVisible()
+
+  // 4b. Full gallery moved behind "View all creations"
+  await page.goto('/me/creations/all')
+  await expect(page.getByRole('heading', { name: /all creations/i })).toBeVisible()
 
   // 5. Settings
   await page.goto('/me/settings')

@@ -9,7 +9,7 @@
 
 import sharp from 'sharp'
 
-const DEFAULT_WORDMARK = 'trendimage.com'
+const DEFAULT_WORDMARK = 'Botdog'
 const FONT_FAMILY = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif'
 
 export interface WatermarkOptions {

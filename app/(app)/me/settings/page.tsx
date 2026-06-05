@@ -7,6 +7,8 @@ import { MOCK_PROFILE, MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
 import { CREDIT_PACKS } from '@/lib/payments/packs'
 import { buildReferralUrl } from '@/lib/referrals/links'
 import { createClient } from '@/lib/supabase/server'
+import { BotdogPlanCard } from '@/components/account/BotdogPlanCard'
+import { ManageSubscriptionButton } from '@/components/account/ManageSubscriptionButton'
 import { CreditPacksClient } from './CreditPacksClient'
 import { DataExportButton } from './DataExportButton'
 import { ReferralCopyButton } from './ReferralCopyButton'
@@ -22,6 +24,8 @@ interface ProfileRow {
   free_used_this_week: number
   referral_code: string
   bonus_credits_earned: number
+  subscription_status?: string | null
+  subscription_period_end?: string | null
 }
 
 async function softDeleteAccount(): Promise<void> {
@@ -42,11 +46,11 @@ async function softDeleteAccount(): Promise<void> {
 }
 
 interface SettingsPageProps {
-  searchParams: Promise<{ purchase?: string; pack?: string }>
+  searchParams: Promise<{ purchase?: string; pack?: string; sub?: string }>
 }
 
 export default async function SettingsPage({ searchParams }: SettingsPageProps) {
-  const { purchase, pack } = await searchParams
+  const { purchase, pack, sub } = await searchParams
 
   let profile: ProfileRow | null
 
@@ -61,7 +65,9 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
     const { data: profileRow } = await supabase
       .from('profiles')
-      .select('email, credits_balance, free_used_this_week, referral_code, bonus_credits_earned')
+      .select(
+        'email, credits_balance, free_used_this_week, referral_code, bonus_credits_earned, subscription_status, subscription_period_end'
+      )
       .eq('id', user.id)
       .maybeSingle()
 
@@ -99,9 +105,38 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
           Checkout cancelled — no charge made.
         </div>
       )}
+      {sub === 'cancelled' && (
+        <div className="border-border bg-muted text-muted-foreground rounded-2xl border px-4 py-3 text-sm">
+          Subscription checkout cancelled — no charge made.
+        </div>
+      )}
 
       {profile && (
         <>
+          {/* Subscription — the Botdog plan */}
+          {profile.subscription_status === 'active' ? (
+            <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-5 text-[var(--brand-grad-1)]" />
+                <h2 className="text-2xl font-extrabold tracking-tight">Botdog plan</h2>
+                <Badge variant="outline" className="rounded-full text-xs">
+                  Active
+                </Badge>
+              </div>
+              <p className="text-muted-foreground mt-1 text-sm">
+                200 headshots a month, no watermark, kept forever.
+                {profile.subscription_period_end
+                  ? ` Renews ${new Date(profile.subscription_period_end).toLocaleDateString()}.`
+                  : ''}
+              </p>
+              <div className="mt-5">
+                <ManageSubscriptionButton />
+              </div>
+            </div>
+          ) : (
+            <BotdogPlanCard />
+          )}
+
           {/* Quota dashboard */}
           <div className="border-border/60 bg-card rounded-3xl border p-6 sm:p-8">
             <h2 className="text-2xl font-extrabold tracking-tight">Your quota</h2>

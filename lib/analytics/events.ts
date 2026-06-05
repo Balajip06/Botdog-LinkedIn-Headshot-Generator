@@ -78,9 +78,12 @@ export interface PayloadByEvent {
   [EVENTS.PUSH_PERMISSION_REQUESTED]: BasePayload
   [EVENTS.PUSH_PERMISSION_GRANTED]: BasePayload
   [EVENTS.PUSH_PERMISSION_DENIED]: BasePayload
-  [EVENTS.CHECKOUT_STARTED]: BasePayload & { credit_pack: '50' | '200' | '600'; price_usd: number }
+  [EVENTS.CHECKOUT_STARTED]: BasePayload & {
+    credit_pack: '50' | '200' | '600' | 'botdog_plan'
+    price_usd: number
+  }
   [EVENTS.CHECKOUT_COMPLETED]: BasePayload & {
-    credit_pack: '50' | '200' | '600'
+    credit_pack: '50' | '200' | '600' | 'botdog_plan'
     price_usd: number
   }
   [EVENTS.SIGNUP_COMPLETED]: BasePayload & { method: 'google' | 'magic_link'; referred: boolean }

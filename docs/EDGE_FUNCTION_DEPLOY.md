@@ -17,6 +17,7 @@ Project ref used throughout: `rkvhpiienwdeawqkrdxm` (from `supabase/.temp/projec
 | Secret                      | Source                                                              | Auto-injected?              | What breaks if missing                                                                                                                                                                               |
 | --------------------------- | ------------------------------------------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GEMINI_API_KEY`            | [aistudio.google.com](https://aistudio.google.com/) → "Get API key" | no                          | `callGemini` returns `{ ok: false, reason: 'invalid', message: 'GEMINI_API_KEY missing' }`. Every generation lands on `failed_retryable`, then `failed` after 3 attempts. Quota refunded by trigger. |
+| `OPENAI_API_KEY`            | [platform.openai.com](https://platform.openai.com/) → API keys      | no                          | `callOpenAI` returns `invalid` immediately. Only matters when `app_settings.active_model='gpt-image-2'` (then generations fall back to Gemini) or when OpenAI is the fallback provider.               |
 | `SUPABASE_URL`              | n/a                                                                 | **yes** (platform-injected) | Function cannot init the supabase client. Don't set this manually.                                                                                                                                   |
 | `SUPABASE_SERVICE_ROLE_KEY` | n/a                                                                 | **yes** (platform-injected) | Same — auth bearer check + DB writes fail. Don't set this manually.                                                                                                                                  |
 | `SITE_URL`                  | Your canonical app URL (e.g. `https://trendly.app`)                 | no                          | `dispatchNotification` silently no-ops. Generations still complete, but the push / email fallback after `status='completed'` never fires.                                                            |
@@ -26,6 +27,8 @@ Set the two manual secrets via CLI (preferred — scriptable):
 ```powershell
 pnpm supabase secrets set GEMINI_API_KEY=AIza... --project-ref rkvhpiienwdeawqkrdxm
 pnpm supabase secrets set SITE_URL=https://your-domain.com --project-ref rkvhpiienwdeawqkrdxm
+# Only if you use the OpenAI model (active_model='gpt-image-2') or want it as fallback:
+pnpm supabase secrets set OPENAI_API_KEY=sk-... --project-ref rkvhpiienwdeawqkrdxm
 ```
 
 Or by hand: Supabase Dashboard → Project Settings → **Edge Functions → Secrets** → "Add new secret" twice.

@@ -24,6 +24,17 @@ const BodySchema = z.object({
   fingerprint_hash: z.string().regex(/^[0-9a-f]{64}$/),
 })
 
+/** Only HTTPS URLs on our own Supabase host may be fetched by the Edge Function. */
+function isAllowedImageUrl(url: string): boolean {
+  try {
+    const u = new URL(url)
+    const supaHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').hostname
+    return u.protocol === 'https:' && !!supaHost && u.hostname === supaHost
+  } catch {
+    return false
+  }
+}
+
 async function sha256Hex(input: string): Promise<string> {
   const data = new TextEncoder().encode(input)
   const buf = await crypto.subtle.digest('SHA-256', data)
@@ -95,14 +106,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Trend input_schema corrupt' }, { status: 500 })
   }
   const values = body.values as TrendInputValues
+  let imageUrls: string[]
   try {
-    collectImageInputs(schemaCheck.data, values)
+    imageUrls = collectImageInputs(schemaCheck.data, values)
     interpolatePrompt('', schemaCheck.data, values)
   } catch (err: unknown) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'invalid input' },
       { status: 400 }
     )
+  }
+
+  // SSRF guard: the Edge Function will fetch these URLs server-side and send the
+  // bytes to Gemini. Only allow HTTPS URLs on our own Supabase host (the upload
+  // route returns signed URLs there) — never attacker-supplied internal targets.
+  if (!imageUrls.every(isAllowedImageUrl)) {
+    return NextResponse.json({ error: 'invalid image url' }, { status: 400 })
   }
 
   // 8. Insert anonymous_attempts row. UNIQUE (fingerprint_hash, ip_hash) blocks 2nd attempt lifetime.
@@ -112,6 +131,9 @@ export async function POST(request: NextRequest) {
     ip_hash: ipHash,
     trend_id: trend.id,
     status: 'pending' as const,
+    // Persist the validated image URLs EXPLICITLY (mirrors generations.input_payload)
+    // so the Edge Function never has to guess which value is the photo.
+    input_payload: { values, image_urls: imageUrls },
   }
 
   const { data: inserted, error: insertError } = await supabase
@@ -121,7 +143,7 @@ export async function POST(request: NextRequest) {
     .maybeSingle()
 
   if (insertError) {
-    if (insertError.message.includes('duplicate key')) {
+    if (insertError.code === '23505') {
       return NextResponse.json(
         { error: 'You already used your free anonymous trial — sign up to continue' },
         { status: 409 }

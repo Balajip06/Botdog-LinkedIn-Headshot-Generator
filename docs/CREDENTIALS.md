@@ -37,11 +37,13 @@ Last re-synced with `lib/env.ts` on 2026-05-29 (commit `9e439d8` closed the sche
 | Var              | Required        | Where to get                                                                                                           | Public | What breaks if missing                                                                                                                                                                                                                                                                   |
 | ---------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GEMINI_API_KEY` | optional in dev | https://aistudio.google.com/ → "Get API key". Confirm Nano Banana Pro pricing + region availability before going live. | no     | `lib/gemini/client.ts:52` drops into mock mode and returns a deterministic 1px PNG header; Edge Function (`supabase/functions/generate-image/index.ts`) errors when deployed without the secret. `lib/trends/proposer.ts:67` falls back to `mockProposer` for the Phase 6 auto-detector. |
+| `OPENAI_API_KEY` | optional        | https://platform.openai.com/ → API keys. Only needed when `app_settings.active_model = 'gpt-image-2'` (or as the fallback provider). ~$0.04/image (gpt-image-2, 1024×1024).                                  | no     | The OpenAI branch of the Edge Function (`callOpenAI`) returns `invalid` immediately. If gpt-image-2 is the active model, every generation falls back to Gemini; if it's only the fallback, nothing breaks. |
 
-The Edge Function needs `GEMINI_API_KEY` set as a Supabase secret separately (not from `.env.local`):
+The Edge Function needs `GEMINI_API_KEY` (and `OPENAI_API_KEY` if you use the OpenAI model) set as a Supabase secret separately (not from `.env.local`):
 
 ```
 pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
+pnpm supabase secrets set OPENAI_API_KEY=... --project-ref <ref>
 ```
 
 ---
@@ -56,6 +58,9 @@ pnpm supabase secrets set GEMINI_API_KEY=... --project-ref <ref>
 | `STRIPE_PRICE_ID_SMALL`              | optional        | Stripe Dashboard → Products → Create product "Credit pack – 50" + one-time price `$4.99`. Copy `price_…` id. | no     | `lib/payments/packs.ts` `requirePackPriceId(pack)` throws on the first checkout for the small pack.                  |
 | `STRIPE_PRICE_ID_MEDIUM`             | optional        | Same flow, product "Credit pack – 200" + price `$14.99`.                                                     | no     | Same — medium pack checkout fails.                                                                                   |
 | `STRIPE_PRICE_ID_LARGE`              | optional        | Same flow, product "Credit pack – 600" + price `$39.99`.                                                     | no     | Same — large pack checkout fails.                                                                                    |
+| `STRIPE_PRICE_ID_SUB_MONTHLY`        | optional        | Stripe Dashboard → Products → Create product "Botdog plan" + a **recurring** monthly price `$9/mo`. Copy `price_…` id. Also enable the **Billing Portal** (Settings → Billing → Customer portal) so cancel/manage works. | no     | `lib/payments/subscription.ts` `requireSubPriceId()` throws on the first subscription checkout. The portal route 400s until a customer id is captured.                  |
+
+Subscription webhook events to enable on the endpoint: `checkout.session.completed`, `invoice.paid`, `customer.subscription.updated`, `customer.subscription.deleted` (in addition to the existing pack `checkout.session.completed`).
 
 ---
 

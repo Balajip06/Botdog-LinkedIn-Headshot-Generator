@@ -39,5 +39,6 @@ export async function toggleFavorite(formData: FormData): Promise<void> {
     .eq('id', parsed.data.generation_id)
     .eq('user_id', user.id)
 
+  revalidatePath('/me/creations/all')
   revalidatePath('/me/creations')
 }

@@ -127,6 +127,7 @@ Unblocks: real image generation. Without it, `lib/gemini/client.ts:52` returns a
    pnpm supabase functions deploy generate-image --no-verify-jwt --project-ref <ref>
    ```
 5. Configure the Database Webhook in Supabase Dashboard → Database → Webhooks → **Create a new hook** with the row from the README "Database Webhooks" table for `generate-on-insert`.
+6. **Anonymous-trial pipeline (in-card homepage flow):** create a **SECOND** Database Webhook identical to the first but on table `public.anonymous_attempts` (event `INSERT`) pointing at the same `generate-image` function URL with the same `Authorization: Bearer <WEBHOOK_SECRET>` header. The Edge Function branches on `payload.table` and runs `processAnonymous()` for these rows. **Without this second webhook, the homepage in-card spinner for logged-out visitors never resolves.** Migration `20260606000001_anon_pipeline.sql` must be applied first (adds `anonymous_attempts.input_payload` + the `claim_anonymous_attempt` RPC). After applying any migration, regenerate types: `pnpm supabase:types` (the new columns + RPC are hand-patched in `lib/supabase/database.types.ts` until then).
 
 Verify:
 
@@ -582,7 +583,58 @@ Walk through the funnel manually as a brand-new user:
 - Wait for completion (`GENERATE_COMPLETED`, fired client-side from `ResultView.tsx`).
 - Click any share button (`SHARE_CLICKED`).
 
+### Test 15 — Anonymous in-card trial + claim (new funnel)
+
+Pre-req: both Database Webhooks live (incl. `anonymous_attempts`), Edge Function deployed, migration `20260606000001` applied.
+
+1. In a fresh/incognito browser (logged out), open `/`, upload a photo, pick a style, Generate.
+   - **Expected:** in-card spinner → generated image + Download + Generate more (no redirect).
+   - SQL: `select status, output_image_url, input_payload from public.anonymous_attempts order by created_at desc limit 1;` → `completed` with a URL.
+2. Click **Download** → file is **watermarked** (`Botdog` tag). Source: `app/api/anonymous/[id]/download/route.ts`.
+3. Repeat the generate on the **same device** → `409` → card flips to the email step. (Per-fingerprint + per-IP unique on `anonymous_attempts`.)
+4. Enter email → "check your inbox"; click the magic link → lands `/me/creations?anon=<id>`.
+   - **Expected:** the first headshot appears in the account "Your headshots" strip (claim succeeded).
+   - SQL — claim did NOT consume quota:
+     ```sql
+     select free_used_this_week, credits_balance from public.profiles where id = '<uid>';
+     -- → free_used_this_week unchanged by the claim (the claimed row carries claimed_from_anon)
+     select count(*) from public.generations where claimed_from_anon is not null and user_id = '<uid>';
+     -- → 1
+     ```
+5. **Security regression check (CRIT-1):** as a normal authed client, attempt a direct insert with `claimed_from_anon` set:
+   ```sql
+   -- via the anon/publishable client (RLS-enforced), NOT service role:
+   insert into public.generations (user_id, trend_id, trend_version, idempotency_key, input_payload, claimed_from_anon)
+   values (auth.uid(), '<trend>', 1, gen_random_uuid()::text, '{}', '<any-anon-id>');
+   -- → must be REJECTED by RLS (generations_own_insert requires claimed_from_anon IS NULL)
+   ```
+
 **Expected:** All 5 events visible in PostHog Live tab within a minute. Funnel shows 100% conversion for your test user. Event catalog: `lib/analytics/events.ts`.
+
+---
+
+### Test 16 — Botdog plan subscription (recurring) + allowance
+
+Pre-req: `STRIPE_PRICE_ID_SUB_MONTHLY` set (recurring price), Billing Portal enabled, subscription webhook events enabled, migration `20260606000002` applied.
+
+1. As a signed-in user, open `/me/settings` (or the account page) → click **Get the Botdog plan** → Stripe Checkout (subscription mode) → pay with test card `4242…`.
+   - **Expected:** redirect to `/me/creations?sub=success`; `/me/settings` now shows **Botdog plan · Active** + renew date + **Manage subscription**.
+   - SQL: `select subscription_status, subscription_period_end, sub_allowance, sub_used_this_period, stripe_customer_id, subscription_id from public.profiles where id='<uid>';` → `active`, future period end, `sub_allowance=200`, `sub_used_this_period=0`, customer + sub ids populated.
+2. Generate a headshot → `tier_at_generation='subscription'`, `sub_used_this_period` increments; Download is **watermark-free** (`app/api/download/[id]/route.ts` treats `subscription` as Pro).
+   - Exhaust the allowance (set `sub_used_this_period = sub_allowance` via SQL) → next generate falls through to credits → free → `quota exhausted`.
+3. **Renewal (no stacking):** in Stripe CLI, `stripe trigger invoice.paid` for the sub (or wait a cycle) → `sub_used_this_period` resets to `0`, `subscription_period_end` advances. Allowance does NOT accumulate.
+4. **Cancel:** click **Manage subscription** → cancel in the portal → `customer.subscription.deleted` → `subscription_status='canceled'`; quota reverts to credits/free.
+5. **Failure refund:** mark a `subscription`-tier generation `failed` → `refund_quota_on_failure` decrements `sub_used_this_period`.
+
+### Test 17 — Email-lead capture + acquisition funnel
+
+Pre-req: migration `20260606000003` applied.
+
+1. Logged out, hit the email step and submit an email → SQL: `select count(*) from public.email_leads where lower(email)=lower('<you>');` → exactly **1** row, `source='inline'`, `attempt_id` set when the flow carried `?anon=`.
+2. Submit the **same** email again → still **1** row (upsert on `lower(email)`; `created_at` unchanged).
+3. Click the magic link + claim → SQL: `select converted_user_id, converted_at from public.email_leads where lower(email)=lower('<you>');` → populated.
+4. Open `/admin/acquisition` (admin) → funnel renders real counts; **Emails captured**, **Subscribed** (distinct subscription checkouts), **Active subscribers · MRR** reconcile against `email_leads`, `webhook_events`, and `profiles.subscription_status`. With empty tables the page shows the deterministic **demo data** funnel; `?mockOverride=1` forces it.
+5. Dashboard `/admin` shows the 3 new cards (Emails captured · 7d, Subscribed · 7d, Email → paid · 7d).
 
 ---
 
