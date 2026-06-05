@@ -14,13 +14,21 @@ const passThroughLimiter: Limiter = {
 }
 
 let cachedRedis: Redis | null = null
+let warnedNoRedis = false
 function getRedis(): Redis | null {
   if (cachedRedis) return cachedRedis
   const url = process.env.UPSTASH_REDIS_REST_URL
   const token = process.env.UPSTASH_REDIS_REST_TOKEN
-  if (!url || !token) return null
-  cachedRedis = new Redis({ url, token })
-  return cachedRedis
+  if (!url || !token) {
+    // Fail loud in production: every limiter degrades to a no-op without Redis,
+    // which silently removes the abuse guards on the public anon endpoints.
+    if (!warnedNoRedis && process.env.NODE_ENV === 'production') {
+      warnedNoRedis = true
+      console.error('[rate-limit] Upstash Redis not configured — rate limiters are DISABLED')
+    }
+    return null
+  }
+  return (cachedRedis = new Redis({ url, token }))
 }
 
 function createLimiter(
@@ -43,6 +51,15 @@ export const generationIpLimiter = createLimiter('rl:gen:ip', 20, '1 h')
 
 // 5 anonymous attempts / day / fingerprint — extra guard beyond DB unique
 export const anonymousFingerprintLimiter = createLimiter('rl:anon:fp', 5, '1 d')
+
+// 10 anonymous photo uploads / hour / IP — the upload route is unauthenticated
+// (logged-out visitors can't write to the RLS uploads bucket), so this bounds
+// free-storage spam before the gated generate call runs.
+export const anonymousUploadIpLimiter = createLimiter('rl:anon:upload:ip', 10, '1 h')
+
+// 30 anon result reads / minute / IP — caps UUID enumeration + fetch amplification
+// on the unauthenticated /anonymous/[id]/status + /download endpoints.
+export const anonymousResultIpLimiter = createLimiter('rl:anon:result:ip', 30, '1 m')
 
 // 5 GDPR exports / hour / user — bounds Storage signed-URL bursts + analytics
 export const exportUserLimiter = createLimiter('rl:export:user', 5, '1 h')

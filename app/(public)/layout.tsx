@@ -37,7 +37,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
               href="/#create"
               className="text-primary rounded-full bg-white px-4 py-2 text-sm font-semibold transition-colors hover:bg-white/90"
             >
-              Create headshot
+              Create free headshot
             </Link>
           </div>
         </nav>

@@ -5,6 +5,7 @@ import {
   ArrowLeftRight,
   BarChart3,
   Crown,
+  Filter,
   DollarSign,
   Download,
   Gauge,
@@ -14,6 +15,7 @@ import {
   LogOut,
   Menu,
   Receipt,
+  SlidersHorizontal,
   Sparkles,
   Users,
   X,
@@ -52,6 +54,11 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     title: 'Growth',
     items: [
+      {
+        href: '/admin/acquisition',
+        label: 'Acquisition',
+        icon: <Filter className="size-4" />,
+      },
       {
         href: '/admin/engagement',
         label: 'Engagement',
@@ -117,6 +124,16 @@ const NAV_GROUPS: readonly NavGroup[] = [
         href: '/admin/vip',
         label: 'VIP',
         icon: <Crown className="size-4" />,
+      },
+    ],
+  },
+  {
+    title: 'System',
+    items: [
+      {
+        href: '/admin/settings',
+        label: 'Settings',
+        icon: <SlidersHorizontal className="size-4" />,
       },
     ],
   },

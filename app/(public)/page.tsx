@@ -8,11 +8,12 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { GradientButton } from '@/components/brand/GradientButton'
-import { TrendRunner } from '@/components/trends/TrendRunner'
+import { InlineGenerator } from '@/components/generate/InlineGenerator'
 import { getSocialProof } from '@/lib/analytics/social-proof'
+import { MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
 import { buildFAQJsonLd, buildHowToJsonLd } from '@/lib/seo/json-ld'
-import { createServiceClient } from '@/lib/supabase/server'
-import { HEADSHOT_SEO, HEADSHOT_STYLES } from '@/lib/trends/headshot'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { HEADSHOT_SEO, HEADSHOT_STYLES, findHeadshotStyleBySlug } from '@/lib/trends/headshot'
 import { getActiveTrendBySlug } from '@/lib/trends/repository'
 
 const HEADSHOT_SLUG = 'linkedin-headshot'
@@ -38,10 +39,10 @@ function safeJsonLd(value: unknown): string {
 }
 
 const STEPS = [
-  { name: 'Upload your photo', text: 'Add one clear, front-facing selfie. We accept JPG, PNG, and HEIC.' },
+  { name: 'Upload your photo', text: 'Add one clear, front-facing selfie. JPG, PNG, or HEIC — no account needed.' },
   { name: 'Pick your profession style', text: 'Choose Corporate, Healthcare, Tech, Creative, and more — each sets the right outfit and background.' },
-  { name: 'AI generates your headshot', text: 'Our AI keeps your real face and renders a studio-quality professional photo in seconds.' },
-  { name: 'Download & share', text: 'Save your headshot for LinkedIn, your bio, email signature, and beyond.' },
+  { name: 'Generate your first one free', text: 'Our AI keeps your real face and renders a studio-quality headshot in seconds — right here, no signup.' },
+  { name: 'Sign in to save & get 5 more', text: 'Enter your email, click the link, and keep your headshot plus 5 free every week.' },
 ]
 
 const BENEFITS = [
@@ -64,8 +65,21 @@ function fmt(n: number): string {
   return new Intl.NumberFormat('en-US').format(n)
 }
 
-export default async function HomePage() {
+interface HomePageProps {
+  searchParams?: Promise<{ style?: string }>
+}
+
+export default async function HomePage({ searchParams }: HomePageProps) {
   const trend = await getActiveTrendBySlug(HEADSHOT_SLUG)
+
+  const sp = (await searchParams) ?? {}
+  const selectedStyle =
+    typeof sp.style === 'string' ? findHeadshotStyleBySlug(sp.style) : undefined
+
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   let shippedTotal = 0
   try {
@@ -105,17 +119,17 @@ export default async function HomePage() {
         <div className="mx-auto grid max-w-6xl items-start gap-12 px-6 pt-16 pb-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-24">
           <div className="animate-fade-up flex flex-col gap-6">
             <span className="bg-muted text-primary w-fit rounded-full px-3 py-1 text-xs font-medium tracking-wide">
-              Free AI LinkedIn Headshot Generator
+              Your first headshot is free — no signup
             </span>
             <h1 className="text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
               A professional headshot, <span className="text-primary">without the studio.</span>
             </h1>
             <p className="text-muted-foreground max-w-xl text-lg leading-relaxed">
-              Upload one selfie, pick your profession, and get a polished, true-to-you LinkedIn
-              headshot in seconds — studio lighting and a real workplace background included.
+              Upload one selfie and generate a polished, true-to-you LinkedIn headshot right here —
+              no account, no credit card. Like it? Sign in to save it and get 5 more, free.
             </p>
             <ul className="flex flex-col gap-2.5 text-sm sm:flex-row sm:flex-wrap sm:gap-x-6">
-              {['Keeps your real face', '14 profession styles', '5 free every week'].map((t) => (
+              {["First one's free — no login", 'Keeps your real face', '14 profession styles'].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <Check className="text-success size-4 shrink-0" aria-hidden />
                   <span className="font-medium">{t}</span>
@@ -143,25 +157,19 @@ export default async function HomePage() {
 
           {/* Generator card */}
           <div id="create" className="scroll-mt-24">
-            <div className="border-border bg-card shadow-soft rounded-2xl border p-6 sm:p-8">
-              <header className="mb-6 flex flex-col gap-1.5">
-                <h2 className="text-2xl">Upload your photo</h2>
-                <p className="text-muted-foreground text-sm">
-                  One clear, front-facing photo. Pick a style and we’ll do the rest.
-                </p>
-              </header>
+            <div className="border-border bg-card shadow-soft mx-auto w-full max-w-[26rem] rounded-2xl border p-6 sm:p-8">
               {trend ? (
-                <TrendRunner
+                <InlineGenerator
                   trend={{ slug: trend.slug, input_schema: trend.input_schema, model: trend.model }}
+                  userId={user?.id ?? null}
+                  initialStyleValue={selectedStyle?.value}
+                  mock={MOCK_TRENDS_ENABLED}
                 />
               ) : (
                 <p className="text-muted-foreground text-sm">
                   The generator is warming up — please check back in a moment.
                 </p>
               )}
-              <p className="text-muted-foreground mt-4 text-center text-xs">
-                Sign in to generate · 5 free per week · your photo stays private
-              </p>
             </div>
           </div>
         </div>
@@ -198,21 +206,28 @@ export default async function HomePage() {
             Each style sets a fitting outfit, background, and lighting. Switch anytime.
           </p>
         </div>
-        <ul className="mt-10 flex flex-wrap justify-center gap-3">
+        <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {HEADSHOT_STYLES.map((s) => (
-            <li
-              key={s.label}
-              className="border-border bg-card text-foreground rounded-full border px-4 py-2 text-sm font-medium"
-            >
-              {s.label}
+            <li key={s.slug}>
+              <Link
+                href={`/?style=${s.slug}#create`}
+                className="group focus-visible:ring-ring relative block aspect-[4/5] overflow-hidden rounded-2xl ring-offset-2 transition-transform hover:-translate-y-1 focus-visible:ring-2 focus-visible:outline-none"
+                style={{ backgroundImage: `linear-gradient(135deg, ${s.accent[0]}, ${s.accent[1]})` }}
+              >
+                <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0" />
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-3">
+                  <span className="text-sm font-semibold text-white drop-shadow">{s.label}</span>
+                  <span className="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--primary)] opacity-0 transition-opacity group-hover:opacity-100">
+                    Try
+                  </span>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
-        <div className="mt-10 text-center">
-          <GradientButton size="lg" asChild>
-            <a href="#create">Try your style</a>
-          </GradientButton>
-        </div>
+        <p className="text-muted-foreground mt-6 text-center text-xs">
+          Tap a style to load it into the generator above.
+        </p>
       </section>
 
       {/* ---------------- Why it matters + benefits ---------------- */}
@@ -293,7 +308,9 @@ export default async function HomePage() {
               Create your headshot
             </Link>
           </div>
-          <p className="mt-4 text-sm text-white/70">5 free every week · no credit card to start</p>
+          <p className="mt-4 text-sm text-white/70">
+            Your first one’s free · no signup, no credit card
+          </p>
         </div>
       </section>
     </>

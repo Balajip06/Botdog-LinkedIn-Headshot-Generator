@@ -4,12 +4,18 @@ import { z } from 'zod'
 import { EVENTS, flushServer, trackServer } from '@/lib/analytics/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { findPack, isPackId, requirePackPriceId } from '@/lib/payments/packs'
+import { BOTDOG_PLAN, isSubscriptionPlanId, requireSubPriceId } from '@/lib/payments/subscription'
 
 export const runtime = 'nodejs'
 
-const BodySchema = z.object({
-  pack_id: z.string().refine(isPackId, 'unknown pack_id'),
-})
+// Accepts either a one-time credit pack (`pack_id`) or the recurring
+// "Botdog plan" subscription (`plan`). Exactly one must be present.
+const BodySchema = z
+  .object({
+    pack_id: z.string().optional(),
+    plan: z.string().optional(),
+  })
+  .refine((b) => Boolean(b.pack_id) !== Boolean(b.plan), 'provide exactly one of pack_id or plan')
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY
@@ -34,10 +40,60 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
+  // Subscription branch — the recurring "Botdog plan". Reuses the customer's
+  // stored Stripe customer id when present so renewals + portal stay on one
+  // customer; `subscription_data.metadata.user_id` lets customer.subscription.*
+  // webhook events map back to our user without a customer-id lookup.
+  if (body.plan) {
+    if (!isSubscriptionPlanId(body.plan)) {
+      return NextResponse.json({ error: 'Unknown plan' }, { status: 400 })
+    }
+    const service = createServiceClient()
+    const { data: profile } = await service
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', user.id)
+      .maybeSingle<{ stripe_customer_id: string | null }>()
+
+    try {
+      const stripe = getStripe()
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{ price: requireSubPriceId(), quantity: 1 }],
+        success_url: `${siteUrl}/me/creations?sub=success`,
+        cancel_url: `${siteUrl}/me/settings?sub=cancelled`,
+        client_reference_id: user.id,
+        ...(profile?.stripe_customer_id
+          ? { customer: profile.stripe_customer_id }
+          : { customer_email: user.email ?? undefined }),
+        metadata: { user_id: user.id, kind: 'subscription' },
+        subscription_data: { metadata: { user_id: user.id } },
+      })
+      if (!session.url) {
+        return NextResponse.json({ error: 'Stripe returned no checkout url' }, { status: 502 })
+      }
+      trackServer(user.id, EVENTS.CHECKOUT_STARTED, {
+        credit_pack: 'botdog_plan',
+        price_usd: BOTDOG_PLAN.priceCents / 100,
+      })
+      await flushServer()
+      return NextResponse.json({ checkout_url: session.url, session_id: session.id })
+    } catch (err: unknown) {
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : 'stripe error' },
+        { status: 500 }
+      )
+    }
+  }
+
+  if (!isPackId(body.pack_id)) {
+    return NextResponse.json({ error: 'unknown pack_id' }, { status: 400 })
+  }
   const pack = findPack(body.pack_id)
   if (!pack) return NextResponse.json({ error: 'Unknown pack' }, { status: 400 })
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
   // First-purchase 20%-off coupon. Claim atomically via a service-role
   // UPDATE that sets `first_purchase_discount_used_at = now()` only if it

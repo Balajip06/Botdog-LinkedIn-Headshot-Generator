@@ -2,6 +2,29 @@
 
 Append at end of each session. Newest on top.
 
+## 2026-06-06 — Botdog subscription + acquisition funnel (admin business metrics)
+
+**Done:** Built the two business questions the app couldn't answer ("how many entered email", "how many subscribed") + the monetization behind the second. **(A) Real recurring subscription** = the "Botdog plan" ($9/mo, monthly **allowance** of 200 gens modeled as a per-period counter `sub_used_this_period`/`sub_allowance` — resets on `invoice.paid`, never stacks, independent of `credits_balance`). Migration `20260606000002`: `generation_tier += 'subscription'`, profiles billing columns, `set_subscription_state` RPC, recreated quota trigger (claim → VIP → **sub allowance** → credit → free → blocked), refund trigger (+sub branch), purge trigger (now keys off tier so subscription = forever), and **locked the new columns in `enforce_profiles_self_update_lockdown`** (blacklist — new cols were user-writable = self-grant hole). Checkout gained a `mode:'subscription'` branch (`{plan:'botdog_monthly'}`); webhook handles `checkout.session.completed`/`invoice.paid`/`customer.subscription.updated`/`deleted` via the RPC; new `/api/stripe/portal` (billing portal); BotdogPlanCard → subscription, new ManageSubscriptionButton, settings shows status+manage. Watermark gate treats `subscription` as Pro. Kept credit packs as backend. **(B) Email leads:** migration `20260606000003` `email_leads` (service-role, 1 row/email upsert); best-effort capture in both magic-link actions (never blocks OTP); conversion hook on claim. **(C) Funnel:** `lib/analytics/funnel.ts` (`getAcquisitionFunnel` 6-stage + `getActiveSubscribers`, mirrors margin.ts + mock fallback), new `/admin/acquisition` page (KPI cards + funnel bars + daily chart + conversion table + demo toggle), 3 dashboard KPI cards, Growth nav item. Paid = `webhook_events` subscription checkouts only (no audit-log double-count). Hand-patched `database.types.ts` (enum + profiles cols + `email_leads`). **Gotcha fixed:** Stripe v22 moved `current_period_end` to `subscription.items.data[].current_period_end` and replaced `invoice.subscription` with `invoice.parent.subscription_details.subscription`. Gates: tsc clean, eslint clean, `next build` green (+`/admin/acquisition`, `/api/stripe/portal`), 565 vitest pass (+20 new: funnel 9, subscription 6, subscription-state 5; 2 unrelated track/event-store tests flaky-timeout under full-suite parallel load, pass in isolation).
+
+**Next:** LIVE VERIFY (deferred per scope, needs creds): apply migrations `…02`/`…03`, run `pnpm supabase:types` to replace hand-patched types, create the recurring Stripe price + enable Billing Portal + add the 3 subscription webhook events, set `STRIPE_PRICE_ID_SUB_MONTHLY`. Then RUNBOOK Tests 16 (subscription/allowance/renewal/cancel/refund) + 17 (email_leads + funnel reconcile).
+
+## 2026-06-05 — OpenAI gpt-image-2 as admin-selectable global model
+
+**Ask:** add OpenAI "ChatGPT Image 2" as a second provider; admin picks which model runs live (global, realtime, no redeploy); admin's pick is the default for all customers; customers cannot switch.
+
+**Locked (interview):** global active model (flat list `nano-banana`|`nano-banana-pro`|`gpt-image-2`) · hot DB toggle skipping the eval gate · auto-fallback to the other provider on failure · spike-first · gpt-image-2 ≈ $0.04/img · **dedicated `image_model` enum** (decoupled from `trend_model`) · surgical (`trends.model` + per-trend dropdown + eval left untouched). User then pushed "are you sure?" x5 — each pass found a real issue: scope creep (dropped), workflow gaps (output_format=png / aspect→size / moderation), and the big one — **in-invocation fallback could exceed the Edge wall and orphan rows (no reaper existed)**. User confirmed raw id = `gpt-image-2`.
+
+**Spike (gating):** `scripts/headshot-spike-openai.ts` — mirrors the Gemini spike (same prompt/styles), `images/edits`, outputs `spike-out-openai/` (gitignored). **Smoke ran (1 face × 4 styles, via `npx -y tsx` — `pnpm dlx` is store-drift-broken): 4/4 OK, `gpt-image-2` id valid, ~64-69s/call.** Full 5-face run + identity-fidelity go/no-go still pending user review of `spike-out-openai/` vs `spike-in/`.
+
+**Built + reviewed (code/db/security agents; fixes applied):**
+- Migrations: `20260605000002` (image_model enum + `app_settings` singleton + admin RLS + audit trigger), `20260605000003` (`processing_at` col + `reap_stuck_processing` 5-min pg_cron; reaper uses `coalesce(processing_at, created_at)`).
+- Edge fn `generate-image`: inline `callOpenAI` (SSRF-guarded, output_format=png, aspect→size, moderation=low), `loadActiveModel`, `callModel` dispatch, `generateWithFallback` (other provider once). **Per-MODEL timeouts (gpt-image-2 85s, Gemini 45s) bound the WHOLE call incl. image fetch** (review fix + spike data: smoke showed gpt-image-2 ~67s/call, so 60s would've timed out every call — raised + made per-model since the slow model needs the budget whether active or fallback). Records winning model's cost/model_used; stamps `processing_at`. Removed dead `trends.model`.
+- Admin `/admin/settings` page + `updateActiveModel` action (auth guard, generic error→Sentry, audit) + home tile.
+- `lib/env.ts` OPENAI_API_KEY; `database.types.ts` hand-stopgap (app_settings + image_model + processing_at — `pnpm supabase:types` will reconcile); docs (CREDENTIALS, EDGE_FUNCTION_DEPLOY, CLAUDE.md gotcha).
+- **Gates green: tsc · eslint · 549 tests · next build.** Edge fn not tsc-checked (Deno) — verified by hand.
+
+**User must do (runtime, needs creds):** (1) run the spike → go/no-go; (2) apply migrations + `pnpm supabase:types`; (3) `supabase secrets set OPENAI_API_KEY` on the Edge fn; (4) verify via RUNBOOK — realtime switch, fallback, reaper (plan §Verification). Plan: `~/.claude/plans/i-want-to-integrate-joyful-snowglobe.md`. Nothing committed.
+
 ## 2026-06-05 — Botdog pivot: single-purpose LinkedIn Headshot Generator
 
 **Started:** Trendly multi-trend generator (20 trends, pink/gold TikTok brand). User asked to reskin to the `botdog.co-design.md` system + rebuild the LinkedIn-headshot tool like botdog.co, then "completely for botdog, only the headshot page."
@@ -642,3 +665,11 @@ home grid (ISR 10m) → trend page (ISR 1h) → SchemaForm → upload + sign →
 **Phase:** 0 — Pre-Build
 
 **Blockers:** None (external accounts user-side)
+
+---
+
+## 2026-06-05 — In-card generation funnel + 2-panel account + content rewrite
+
+**Done:** Reworked homepage `/` into an in-card funnel (anonymous try -> result+download+generate-more -> inline email -> magic link), added the missing anonymous backend (Edge Function `processAnonymous` branch, status/upload/watermarked-download API routes, migration `20260606000001` with `input_payload`/claim columns + `claim_anonymous_attempt` RPC + quota-trigger claim short-circuit), reshaped `/me/creations` into a clean 2-panel account (ad rail + `AccountStudio` images-first + Botdog plan + refer-earn) and moved the gallery to `/me/creations/all`, added a clickable profession thumbnail grid (`?style=` deep-link), and rewrote homepage copy to the new funnel. Hardened the two new abuse surfaces (upload IP limiter; inline OTP keeps server-side Turnstile+ToS via `requestMagicLinkInline`). Ran code-reviewer + security-reviewer; fixed 2 CRIT (quota-bypass RLS via `claimed_from_anon`, SSRF on image URLs), 4 HIGH (missing `service_role` grant on claim RPC, no rate-limit on status/download, magic-byte upload validation, MIME allowlist in Edge fetch) + MEDs. Gates green: tsc + eslint + 549 vitest + next build.
+
+**Next:** LIVE VERIFY (blocked on infra): apply migration to the live project, deploy `generate-image` Edge Function, add the SECOND DB webhook on `anonymous_attempts`, set Turnstile + Resend (magic-link email) + Upstash env. Then run RUNBOOK Test 15 (anon trial + claim + CRIT-1 RLS regression). Run `pnpm supabase:types` after the migration to replace the hand-patched types.
