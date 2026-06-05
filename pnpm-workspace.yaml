@@ -1,9 +1,10 @@
+# Not a multi-package workspace — this file only approves which dependency
+# build scripts pnpm (v11) is allowed to run on install. sharp is required at
+# runtime (server-side watermark + image processing), so its native build must
+# run on install, including on Vercel.
 allowBuilds:
-  '@sentry/cli': set this to true or false
-  core-js: set this to true or false
-  protobufjs: set this to true or false
-  sharp: set this to true or false
-  unrs-resolver: set this to true or false
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+  '@sentry/cli': true
+  core-js: true
+  protobufjs: true
+  sharp: true
+  unrs-resolver: true
