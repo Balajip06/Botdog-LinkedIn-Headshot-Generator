@@ -23,10 +23,9 @@ test('happy path: home → login → studio → creations → settings → resul
   await page.goto('/login')
   await expect(page.getByRole('heading', { name: /Sign in/i })).toBeVisible()
 
-  // 3. Studio (authed — MOCK_TRENDS bypasses the auth gate). Pin to the h1 to
-  // avoid colliding with the "Pick a trend" section eyebrow.
+  // 3. /me/studio is retired — it now redirects to creations.
   await page.goto('/me/studio')
-  await expect(page.getByRole('heading', { level: 1, name: /Pick a trend/i })).toBeVisible()
+  await expect(page).toHaveURL(/\/me\/creations/)
 
   // 4. Creations (history)
   await page.goto('/me/creations')

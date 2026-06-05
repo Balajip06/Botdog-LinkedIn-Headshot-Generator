@@ -155,7 +155,7 @@ export default async function CreationsPage({ searchParams }: PageProps) {
           </p>
         </div>
         <GradientButton size="md" asChild>
-          <Link href="/">Pick a new trend</Link>
+          <Link href="/">New headshot</Link>
         </GradientButton>
       </header>
 

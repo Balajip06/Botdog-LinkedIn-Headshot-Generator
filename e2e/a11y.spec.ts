@@ -13,7 +13,6 @@ import { test, expect } from '@playwright/test'
 const ROUTES = [
   '/',
   '/login',
-  '/me/studio',
   '/me/creations',
   '/me/settings',
   '/result/mock-completed',

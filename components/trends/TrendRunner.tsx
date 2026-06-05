@@ -56,9 +56,9 @@ export function TrendRunner({ trend, freeUsedThisWeek = 5 }: TrendRunnerProps) {
           data: { user },
         } = await supabase.auth.getUser()
         if (!user) {
-          // Send post-login users straight into the studio with this trend
-          // pre-selected. Skips the /trend/<slug> → /me/studio hop.
-          router.push(`/login?next=/me/studio?trend=${trend.slug}`)
+          // Single-tool pivot: after login, drop users on their creations
+          // (the retired studio used to pre-select a trend here).
+          router.push('/login?next=/me/creations')
           return
         }
 

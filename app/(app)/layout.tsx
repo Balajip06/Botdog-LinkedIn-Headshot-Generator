@@ -28,10 +28,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </Link>
           <nav className="flex items-center gap-1 text-sm">
             <Link
-              href="/me/studio"
+              href="/"
               className="text-muted-foreground hover:bg-muted hover:text-foreground hidden rounded-full px-3 py-1.5 sm:inline"
             >
-              Studio
+              New headshot
             </Link>
             <Link
               href="/me/creations"

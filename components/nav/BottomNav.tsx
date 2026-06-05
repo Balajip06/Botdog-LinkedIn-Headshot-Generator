@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Clapperboard, ImageIcon, Settings2 } from 'lucide-react'
+import { ImageIcon, Settings2, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
 const tabs = [
-  { href: '/me/studio', label: 'Studio', icon: Clapperboard },
+  { href: '/', label: 'Create', icon: Sparkles },
   { href: '/me/creations', label: 'Creations', icon: ImageIcon },
   { href: '/me/settings', label: 'Settings', icon: Settings2 },
 ]
@@ -24,7 +24,8 @@ export function BottomNav() {
         style={{ paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom))' }}
       >
         {tabs.map(({ href, label, icon: Icon }) => {
-          const active = pathname.startsWith(href)
+          // `/` (Create) leaves the app shell — never mark it active.
+          const active = href !== '/' && pathname.startsWith(href)
           return (
             <li key={href} className="flex-1">
               <Link

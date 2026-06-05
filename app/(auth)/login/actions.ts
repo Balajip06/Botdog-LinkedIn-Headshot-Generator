@@ -22,8 +22,8 @@ async function clientIp(): Promise<string | undefined> {
 }
 
 function resolveNext(raw: string | undefined): string {
-  const normalized = safeNextPath(raw ?? '/me/studio')
-  return normalized === '/' ? '/me/studio' : normalized
+  const normalized = safeNextPath(raw ?? '/me/creations')
+  return normalized === '/' ? '/me/creations' : normalized
 }
 
 export async function signInWithMagicLink(formData: FormData): Promise<void> {
