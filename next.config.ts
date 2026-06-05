@@ -31,6 +31,21 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async redirects() {
+    // Single-purpose Botdog build: old Trendly routes 301 → the headshot page
+    // so existing inbound links / indexed URLs keep their SEO equity.
+    return [
+      { source: '/trend/:slug*', destination: '/', permanent: true },
+      { source: '/free-ghibli-effect-maker', destination: '/', permanent: true },
+      { source: '/free-anime-portrait-generator', destination: '/', permanent: true },
+      { source: '/vs-midjourney', destination: '/', permanent: true },
+      { source: '/submit-trend', destination: '/', permanent: true },
+      { source: '/about', destination: '/', permanent: true },
+      { source: '/contact', destination: '/', permanent: true },
+      { source: '/pricing', destination: '/', permanent: true },
+      { source: '/status', destination: '/', permanent: true },
+    ]
+  },
   images: {
     // Allowlist only the hosts we actually serve images from. Avoids turning
     // /_next/image into an open proxy (SSRF risk against internal metadata

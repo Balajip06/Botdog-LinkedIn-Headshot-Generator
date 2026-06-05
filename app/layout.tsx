@@ -1,24 +1,27 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter, Fraunces } from 'next/font/google'
 import { CookieBanner } from '@/components/consent/CookieBanner'
 import { PostHogProvider } from '@/components/providers/posthog-provider'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+// Editorial display serif. Variable font — axes default; used for headings only.
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
   subsets: ['latin'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Trendly — Trend Image Generator',
-  description: 'Pick a viral trend. Upload your photo. Make the moment everyone is making.',
+  title: 'Free AI LinkedIn Headshot Generator — Botdog',
+  description:
+    'Turn any selfie into a professional LinkedIn headshot in seconds. AI-powered, profession-specific styles, studio quality.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   icons: {
     icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
@@ -26,16 +29,13 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: 'Trendly',
-    statusBarStyle: 'black-translucent',
+    title: 'Botdog',
+    statusBarStyle: 'default',
   },
 }
 
 export const viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
-  ],
+  themeColor: '#ffffff',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -43,13 +43,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body
         className="bg-background text-foreground flex min-h-full flex-col"
         suppressHydrationWarning
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {/* Light-only brand — forcedTheme pins it regardless of OS/stored preference. */}
+        <ThemeProvider attribute="class" forcedTheme="light">
           <PostHogProvider>{children}</PostHogProvider>
           <Toaster richColors position="bottom-right" />
           <CookieBanner />

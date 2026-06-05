@@ -9,6 +9,8 @@ interface ThemeProviderProps {
   defaultTheme?: string
   enableSystem?: boolean
   disableTransitionOnChange?: boolean
+  /** Pin a single theme regardless of OS/stored preference (light-only brand). */
+  forcedTheme?: string
 }
 
 export function ThemeProvider({

@@ -4,7 +4,6 @@ import type { ReactNode } from 'react'
 import { Logo } from '@/components/brand/Logo'
 import { BottomNav } from '@/components/nav/BottomNav'
 import { PushBootstrapper } from '@/components/push/PushBootstrapper'
-import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { createClient } from '@/lib/supabase/server'
 import { signOutAction } from './_actions/sign-out'
 
@@ -24,7 +23,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <PushBootstrapper />
       <header className="border-border/60 bg-background/80 sticky top-0 z-30 border-b backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-6 py-4">
-          <Link href="/" aria-label="Trendly home" className="-m-2 p-2">
+          <Link href="/" aria-label="Botdog home" className="-m-2 p-2">
             <Logo gradient />
           </Link>
           <nav className="flex items-center gap-1 text-sm">
@@ -46,7 +45,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
             >
               Settings
             </Link>
-            <ThemeToggle />
             {email && (
               <div
                 className="border-border/60 bg-card/40 ml-1 hidden items-center gap-2 rounded-full border py-1 pr-1 pl-3 sm:flex"

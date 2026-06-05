@@ -2,6 +2,25 @@
 
 Append at end of each session. Newest on top.
 
+## 2026-06-05 — Botdog pivot: single-purpose LinkedIn Headshot Generator
+
+**Started:** Trendly multi-trend generator (20 trends, pink/gold TikTok brand). User asked to reskin to the `botdog.co-design.md` system + rebuild the LinkedIn-headshot tool like botdog.co, then "completely for botdog, only the headshot page."
+
+**Interviewed to lock 8 decisions:** full reskin + new page · brand "Botdog" (trademark caveat accepted) · keep real product model + honest copy · one page + 14-profession style picker · delete other trends · light-only · illustrative testimonials · test identity-fidelity first.
+
+**Phase 0 (gating spike):** Wrote `scripts/headshot-spike.ts` (reuses `lib/image-provider/gemini.ts`), ran the identity-locked prompt on 5 real faces × 4 styles on **Gemini 3.1 Flash Image (Nano Banana 2 = `gemini-3.1-flash-image`)**. Verified ~90% identity preservation across young/older/bald/varied subjects with real lifestyle backgrounds + profession wardrobe. Honest ceiling = ~90%, not 100%. One benign photo (off-shoulder) hard-blocked `finishReason: OTHER` — not fixable via safetySettings.
+
+**Built (A–E):**
+- **A** Design system: rewrote `globals.css` to Botdog blue/white tokens + radii + minimal shadows, `@custom-variant dark` + `forcedTheme="light"` to neutralize all `dark:` no-edit; Inter+Fraunces in `layout.tsx`; Botdog `Logo` (dog badge); pill navbar + footer; removed ThemeToggle from public/app/admin chrome.
+- **B** Data: `lib/trends/headshot.ts` (14 styles + base prompt + schema + FAQ + SEO, single source). Model `nano-banana`→`gemini-3.1-flash-image`. Rewrote `mock-data.ts` (single trend, fixed gen refs), `seed-trends.ts`; deleted `seed-trends-more/new` + `seed-trend-thumbnails`. `SchemaForm` now seeds state from field defaults.
+- **C** `/` = the headshot landing (hero+generator, how-it-works, 14-style showcase, why-it-matters, illustrative testimonials, FAQ, CTA, JSON-LD). Deleted `trend/[slug]` + about/contact/pricing/status/vs-midjourney/free-* ; 301 redirects in `next.config.ts`; trimmed sitemap.
+- **D** Updated tests (Logo, mock-data, AdminShell). **Green: tsc · eslint · 556 tests · `next build`.** Visually confirmed the page in MOCK mode (Playwright screenshot).
+- **E** This doc round.
+
+**Next:** real-DB migration of the existing `linkedin-headshot` row to the new prompt+schema (creds + admin eval flow — prompt-edit trips the eval-gate trigger); `pnpm approve-builds` for `sharp` (watermark runtime); confirm Nano Banana 2 pricing in `lib/gemini/cost.ts`; consider safety-block UX + multi-photo upload for higher fidelity. Nothing committed yet (user commits when ready).
+
+**Env note:** node_modules was partially broken (dotenv missing, pnpm store drift); healed with `$env:CI='true'; pnpm install`. `pnpm run <script>` still fails its deps pre-flight on unapproved native builds — ran tools directly via `node_modules\.bin\*.CMD` to verify.
+
 ## 2026-05-29 — sellable plan execution (W0 through W5 code-complete)
 
 **Started:** existing 343/343 test asset with admin dashboard but no listing strategy. CLAUDE.md and todo.md current as of the docs-refresh session earlier in the day. Three plan documents existed (amended plan, original plan, wiggly-cloud expansion plan with 22 proposed features) but no sellable-asset triage and no acquisition timeline.

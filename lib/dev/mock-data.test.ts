@@ -8,28 +8,8 @@ import {
 } from './mock-data'
 import { TrendInputSchema } from '@/lib/trends/input-schema'
 
-const EXPECTED_SLUGS = [
-  'ghibli-portrait',
-  'pixar-3d-character',
-  'anime-portrait',
-  'vintage-polaroid',
-  'marble-statue',
-  'stranger-things-poster',
-  'action-figure-box',
-  'funko-pop-figure',
-  'lego-minifigure',
-  'wes-anderson-pastel',
-  'renaissance-oil-painting',
-  'south-park-cartoon',
-  'cyberpunk-neon',
-  'y2k-digicam-flash',
-  'linkedin-headshot',
-  'claymation-selfie',
-  'barbie-box',
-  'vintage-magazine-cover',
-  'manga-panel',
-  'ai-passport-photo',
-] as const
+// Single-purpose Botdog build — the headshot is the only trend.
+const EXPECTED_SLUGS = ['linkedin-headshot'] as const
 
 const VALID_MODELS = new Set(['nano-banana', 'nano-banana-pro'])
 const VALID_ASPECTS = new Set(['1:1', '3:4', '16:9', '9:16'])
@@ -38,8 +18,8 @@ const VALID_ASPECTS = new Set(['1:1', '3:4', '16:9', '9:16'])
 const UUID_V4_SHAPE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 describe('MOCK_TRENDS', () => {
-  it('contains exactly 20 entries', () => {
-    expect(MOCK_TRENDS).toHaveLength(20)
+  it('contains exactly 1 entry (single-purpose headshot)', () => {
+    expect(MOCK_TRENDS).toHaveLength(1)
   })
 
   it('matches the canonical seed slug set in order', () => {
@@ -153,7 +133,7 @@ describe('findMockGeneration', () => {
 describe('findMockTrendById', () => {
   it('returns the trend row for a known id', () => {
     const id = MOCK_TRENDS[0].id
-    expect(findMockTrendById(id)?.slug).toBe('ghibli-portrait')
+    expect(findMockTrendById(id)?.slug).toBe('linkedin-headshot')
   })
 
   it('returns null for an unknown id', () => {

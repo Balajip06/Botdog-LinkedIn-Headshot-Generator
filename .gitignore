@@ -19,6 +19,9 @@
 /.playwright-mcp/
 /terms-page-verify.png
 *-verify.png
+# Local QA / review screenshots — scratch, never commit
+*-check*.jpeg
+*-check*.jpg
 
 # next.js
 /.next/
@@ -69,3 +72,11 @@ graphify-out/
 
 # Scratch
 .claude/draft/
+
+.vercel
+.env*
+
+# Phase 0 identity spike — reference selfies are biometric data; outputs are generated.
+# NEVER commit either.
+/spike-in/
+/spike-out/

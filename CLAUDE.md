@@ -1,21 +1,19 @@
-# Trend Image Generator — Project Instructions
+# Botdog — AI LinkedIn Headshot Generator — Project Instructions
 
-Viral-trend image generator. Next.js 16 + Supabase + Gemini Nano Banana. Consumer-facing, IG + TikTok distribution.
+Single-purpose **Botdog AI LinkedIn Headshot Generator** (pivoted 2026-06-05 from the multi-trend "Trendly"). Next.js 16 + Supabase + Gemini **Nano Banana 2** (`gemini-3.1-flash-image`). One trend (`linkedin-headshot`) with a 14-profession **style picker**; the homepage `/` IS the generator. **Botdog blue/white editorial** design system (Fraunces + Inter, royal blue `#0025AA`), light-only. The product model is unchanged (login, 5 free/week, watermark on free, 30-day storage).
 
 ---
 
-## Current state (2026-05-29)
+## Current state (2026-06-05 — Botdog pivot)
 
-- **Branch:** `main` (renamed from `master` post-bootstrap)
-- **Remote:** `origin` → https://github.com/Balajip06/Trend-Image-Generator
-- **HEAD:** `ae01833` docs: refresh CLAUDE.md + todo.md + runbook to current state
-- **Total commits on `origin/main`:** 89+ (push pending)
-- **Routes (`pnpm build`):** 30 — consumer (`/`, `/trend/[slug]`, `/result/[id]`, `/me/{creations,settings}`, `/login`), admin (`/admin/{trends,trends/[id]/{edit,eval},suggestions,audit}`), public legal (`/terms`, `/privacy`), dev-only (`/styleguide` — prod-stripped via `notFound()` + dynamic-import), 9 API routes, sitemap + robots + auth callback
-- **Test gate:** Vitest **31 files / 283 tests — 283/283 passing**
-- **Static gates:** `pnpm typecheck` clean, `pnpm lint` clean, `pnpm build` clean (18 static + 12 dynamic)
-- **MOCK_TRENDS=true** still toggleable for screenshot work; production never sets it (proxy.ts + repository.ts short-circuit auth + data when on)
-- **Phase status:** 0 ✅ resolved, 1 ✅ except blocked-on-creds items, 2 ✅ shipped (admin CRUD + eval workflow + SSR trend pages + sitemap/robots), 3 ✅ shipped (Edge Function + Realtime + push/email fallback), 4 ✅ shipped (watermark + share + referrals + history + data export + branded OG), 5 prep ✅ + checkout UI ✅ (blocked on Stripe creds), 6 prep ✅ + approve/reject ✅ (blocked on real proposer + sources)
-- **Outstanding work:** see [.claude/todo.md](.claude/todo.md) "Post-redesign hygiene" + the un-checked items per phase
+- **Branch:** `main` · **Remote:** `origin` → https://github.com/Balajip06/Trend-Image-Generator
+- **Pivot:** Reskinned to the Botdog design system + collapsed to a single LinkedIn-headshot tool at `/`. Deleted the other 19 trends + the Trendly marketing pages (`/trend/[slug]`, `/about`, `/contact`, `/pricing`, `/status`, `/vs-midjourney`, `/free-ghibli-effect-maker`, `/free-anime-portrait-generator`, `/submit-trend`) — all 301-redirect to `/` via `next.config.ts`.
+- **Model:** `lib/image-provider/gemini.ts` maps `nano-banana` → `gemini-3.1-flash-image` (Nano Banana 2). The headshot trend uses `nano-banana`. Pro id corrected to `gemini-3-pro-image`.
+- **Styles:** single source of truth in [lib/trends/headshot.ts](lib/trends/headshot.ts) — 14 profession styles (`HEADSHOT_STYLES`), base prompt (`HEADSHOT_PROMPT_TEMPLATE` with `{{style}}`), schema (image + required `style` select), FAQ, SEO. Imported by `lib/dev/mock-data.ts` + `scripts/seed-trends.ts` so MOCK + real never drift.
+- **Identity spike (Phase 0, gated):** validated on Nano Banana 2 — ~90% face fidelity across 4/4 real faces incl. an older bald/grey subject (age preserved). Throwaway harness at `scripts/headshot-spike.ts` (reads `spike-in/`, writes `spike-out/`, both gitignored — biometric). Ceiling is ~90%, NOT 100%; bigger levers = multi-photo upload or a face-restore post-step.
+- **Static gates (this session):** `tsc --noEmit` clean · eslint clean · **Vitest 60 files / 556 tests passing** · `next build` clean. Build route table: `/` (dynamic generator), legal, auth, `/me/*`, `/result/*`, admin, 9 API routes — no `/trend/*`.
+- **MOCK_TRENDS=true** still works for screenshots (single headshot trend).
+- **Outstanding:** real-DB seed/migration to update the existing `linkedin-headshot` row to the new prompt+schema (needs creds + admin eval flow); approve `sharp` build for watermark runtime; confirm Nano Banana 2 pricing in `lib/gemini/cost.ts`; optional safety-block UX (some benign photos hit `finishReason: OTHER`).
 
 ---
 

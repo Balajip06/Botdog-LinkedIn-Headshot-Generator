@@ -22,7 +22,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Logo } from '@/components/brand/Logo'
-import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils/cn'
 
@@ -233,7 +232,6 @@ function Sidebar({
           >
             <ArrowLeftRight className="size-3.5" aria-hidden="true" />← App
           </Link>
-          <ThemeToggle />
         </div>
       </div>
     </div>

@@ -34,7 +34,16 @@ type LocalState = {
   fieldErrors: Record<string, string | undefined>
 }
 
-const emptyState: LocalState = { values: {}, files: {}, fieldErrors: {} }
+// Seed values from each non-image field's `default` so a required select/text
+// with a default validates + interpolates even if the user never touches it.
+function initialState(schema: TrendInput): LocalState {
+  const values: TrendInputValues = {}
+  for (const field of schema.fields) {
+    if (field.type === 'image') continue
+    if (field.default !== undefined) values[field.name] = field.default
+  }
+  return { values, files: {}, fieldErrors: {} }
+}
 
 export function SchemaForm({
   schema,
@@ -43,7 +52,7 @@ export function SchemaForm({
   ctaLabel = 'Generate',
   className,
 }: SchemaFormProps) {
-  const [state, setState] = useState<LocalState>(emptyState)
+  const [state, setState] = useState<LocalState>(() => initialState(schema))
 
   const setText = useCallback((name: string, value: string) => {
     setState((s) => ({

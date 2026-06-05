@@ -1,10 +1,26 @@
-# Trend Image Generator — Task Tracker
+# Botdog — AI LinkedIn Headshot Generator — Task Tracker
 
-**Authoritative plan:** [../../.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md](../../../.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md)
-**Current phase:** Post-MVP polish — phases 1–6 implementation landed in repo; waiting on user-side creds for the 14-test runbook
-**Last updated:** 2026-05-29
+**Active plan:** [../../../.claude/plans/lets-change-our-application-zippy-rabin.md](../../../.claude/plans/lets-change-our-application-zippy-rabin.md) (Botdog pivot)
+**Prior plan:** [../../../.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md](../../../.claude/plans/check-this-plan-c-users-balaj-projects-t-luminous-prism.md)
+**Current phase:** Botdog pivot shipped (code-complete, all static gates green); pending real-DB seed + user-side creds
+**Last updated:** 2026-06-05
 
 Mark `[x]` only with proof (see CLAUDE.md → Workflow → Verification).
+
+---
+
+## Botdog Pivot (2026-06-05) — shipped this session
+
+- [x] Phase 0 — identity-fidelity spike on Nano Banana 2 (~90% verified, gated the build) — `scripts/headshot-spike.ts`
+- [x] Phase A — Botdog design system (globals tokens, Inter+Fraunces, light-only, Logo, pill navbar/footer, toggles removed)
+- [x] Phase B — single headshot trend + 14-profession style picker + base prompt + model→`gemini-3.1-flash-image` + `SchemaForm` default-seed — `lib/trends/headshot.ts`
+- [x] Phase C — `/` headshot landing page; deleted trend + Trendly marketing pages; 301 redirects; sitemap trimmed
+- [x] Phase D — tests updated (Logo/mock-data/AdminShell); `tsc` + eslint + **556 tests** + `next build` green; visual MOCK check
+- [x] Phase E — CLAUDE.md + todo + session-log + lessons + memory updated
+- [ ] Real-DB: update existing `linkedin-headshot` row to new prompt+schema via admin eval flow (prompt edit trips eval-gate trigger; needs `GEMINI_API_KEY`)
+- [ ] `pnpm approve-builds` for `sharp` (watermark runtime) + confirm Nano Banana 2 pricing in `lib/gemini/cost.ts`
+- [ ] Decide: multi-photo upload / face-restore for >90% fidelity; safety-block (`finishReason: OTHER`) UX + auto-crop
+- [ ] Commit + push (not done — user commits when ready)
 
 ---
 

@@ -190,3 +190,35 @@ Format:
 **Trigger:** Default reaction to deferred features was "delete the plan files so they don't clutter the repo." Correct move was to keep them, mark each item as Absorbed / Deferred / Shipped, and reference them in the press kit roadmap section.
 **Lesson:** Don't delete old expansion plans. Annotate them in place with triage status, and they become "documented post-sale direction" — a value-add for the acquirer that costs nothing to produce. The buyer gets a roadmap they can negotiate against; the seller gets evidence the asset had a future, not just a present.
 **Apply when:** Any time a plan document is about to be deleted because "the features won't ship pre-listing". Triage the items instead and surface the file in the data room.
+
+---
+
+## 2026-06-05 — Validate AI identity fidelity on the REAL model before building (eval-first for likeness products)
+
+**Trigger:** User pushed back twice on a headshot-generator plan ("are you sure", "will it convert without changing facial features… need 100% accurate face"). The real concern was output quality, not the plan structure.
+**Lesson:** For any product whose value IS the AI output (face likeness, voice clone, style transfer), gate the whole build on a throwaway spike that runs the actual model on real inputs FIRST. No prompt guarantees 100% — Gemini Nano Banana 2 held ~90% identity across varied faces (incl. age/baldness preserved) but Google's own model card says consistency "is not always perfect." Set the honest ceiling with the user (multi-photo upload or a face-restore post-step are the levers beyond ~90%) before writing the product around it. Spike harness: `scripts/headshot-spike.ts` (reads `spike-in/`, writes `spike-out/`, both gitignored — reference selfies are biometric, never commit).
+**Apply when:** Any feature where model output quality is the product. Build the eval spike before the UI/data/teardown.
+
+---
+
+## 2026-06-05 — Required `select` with a `default` needs form-state seeding
+
+**Trigger:** Added a required `style` select (with a `default`) to the headshot trend. `SchemaForm`'s `emptyState.values = {}` meant an untouched dropdown showed the default visually but `values[name]` stayed `undefined` → `validate()` failed AND `interpolatePrompt` would throw "Required field missing".
+**Lesson:** When a schema-driven form has non-image fields with defaults, seed initial state from those defaults (`useState(() => initialState(schema))` walking `field.default`). A visible default that isn't in form state is a silent validation/interpolation bug.
+**Apply when:** Any schema-driven form gains a `select`/`text` field with `default` + `required`. Verify the default actually enters submit state, not just the rendered value.
+
+---
+
+## 2026-06-05 — Light-only: gate `dark:` centrally, don't edit every file
+
+**Trigger:** Botdog pivot is light-only, but 77 files used `dark:` utilities + the theme toggle. Editing all of them would be huge.
+**Lesson:** Add `@custom-variant dark (&:where(.dark, .dark *));` to globals.css so `dark:` only fires under an explicit `.dark` class, then force light via next-themes `forcedTheme="light"` (no `.dark` ever applied). Every `dark:` utility becomes an inert no-op — zero per-file edits. Only remove the visible `ThemeToggle` from the chrome (public layout, app layout, AdminShell). Also: Nano Banana 2 = `gemini-3.1-flash-image` (mapped in `lib/image-provider/gemini.ts` under the `nano-banana` enum); Nano Banana Pro = `gemini-3-pro-image`.
+**Apply when:** Collapsing a theme-toggled app to a single theme, or wiring a new Gemini image model id.
+
+---
+
+## 2026-06-05 — "Botdog" is a real company — trademark caveat on the brand clone
+
+**Trigger:** Reskinned this app to the Botdog brand + cloned the structure of botdog.co/tools/linkedin-headshot-generator. Botdog.co is a real LinkedIn-automation company.
+**Lesson:** Using a real company's exact name/logo/page for an unrelated product is a trademark/passing-off risk if you're not them. User accepted the caveat for this build. Before any PUBLIC deploy: confirm authorization/ownership or rename; never reuse their real testimonials (we used clearly-labeled "Illustrative examples") or verbatim marketing copy (we wrote original copy).
+**Apply when:** Any rebrand that adopts an existing company's name/identity. Surface the trademark risk; don't copy real testimonials/claims.

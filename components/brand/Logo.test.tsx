@@ -3,25 +3,26 @@ import { render, screen } from '@testing-library/react'
 import { Logo } from './Logo'
 
 describe('Logo', () => {
-  it('renders the gradient glyph SVG', () => {
+  it('renders the glyph SVG', () => {
     const { container } = render(<Logo />)
     const svg = container.querySelector('svg')
     expect(svg).not.toBeNull()
   })
 
-  it('renders the linearGradient defs for the glyph fill', () => {
+  it('renders the dog-badge shapes (head rect + feature circles)', () => {
     const { container } = render(<Logo />)
-    expect(container.querySelector('linearGradient#logo-grad')).not.toBeNull()
+    expect(container.querySelector('rect')).not.toBeNull()
+    expect(container.querySelectorAll('circle').length).toBeGreaterThanOrEqual(3)
   })
 
-  it('shows the Trendly wordmark by default', () => {
+  it('shows the Botdog wordmark by default', () => {
     render(<Logo />)
-    expect(screen.getByText('Trendly')).toBeInTheDocument()
+    expect(screen.getByText('Botdog')).toBeInTheDocument()
   })
 
   it('hides the wordmark when wordmark={false}', () => {
     render(<Logo wordmark={false} />)
-    expect(screen.queryByText('Trendly')).not.toBeInTheDocument()
+    expect(screen.queryByText('Botdog')).not.toBeInTheDocument()
   })
 
   it('renders a 32px-square SVG at the default md size', () => {
@@ -38,21 +39,21 @@ describe('Logo', () => {
     expect(svg.getAttribute('height')).toBe('24')
   })
 
-  it('renders a 48px-square SVG at size="lg"', () => {
+  it('renders a 44px-square SVG at size="lg"', () => {
     const { container } = render(<Logo size="lg" />)
     const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('48')
-    expect(svg.getAttribute('height')).toBe('48')
+    expect(svg.getAttribute('width')).toBe('44')
+    expect(svg.getAttribute('height')).toBe('44')
   })
 
-  it('applies text-gradient-hero to the wordmark when gradient={true}', () => {
+  it('tints the wordmark with text-primary when gradient={true}', () => {
     render(<Logo gradient />)
-    expect(screen.getByText('Trendly')).toHaveClass('text-gradient-hero')
+    expect(screen.getByText('Botdog')).toHaveClass('text-primary')
   })
 
-  it('does not apply text-gradient-hero by default', () => {
+  it('does not tint the wordmark by default', () => {
     render(<Logo />)
-    expect(screen.getByText('Trendly')).not.toHaveClass('text-gradient-hero')
+    expect(screen.getByText('Botdog')).not.toHaveClass('text-primary')
   })
 
   it('merges a custom className onto the wrapping span via cn()', () => {
@@ -70,11 +71,11 @@ describe('Logo', () => {
 
   it('uses text-base sizing class at size="sm"', () => {
     render(<Logo size="sm" />)
-    expect(screen.getByText('Trendly')).toHaveClass('text-base')
+    expect(screen.getByText('Botdog')).toHaveClass('text-base')
   })
 
   it('uses text-2xl sizing class at size="lg"', () => {
     render(<Logo size="lg" />)
-    expect(screen.getByText('Trendly')).toHaveClass('text-2xl')
+    expect(screen.getByText('Botdog')).toHaveClass('text-2xl')
   })
 })

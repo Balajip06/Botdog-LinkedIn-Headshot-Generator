@@ -94,16 +94,6 @@ describe('AdminShell', () => {
     expect(screen.getByRole('link', { name: '← App' })).toHaveAttribute('href', '/')
   })
 
-  it('renders the ThemeToggle in the nav', () => {
-    render(
-      <AdminShell {...DEFAULT_PROPS}>
-        <p>child</p>
-      </AdminShell>
-    )
-    // ThemeToggle exposes its button with one of these aria-labels depending on theme.
-    expect(screen.getByRole('button', { name: /switch to (dark|light) mode/i })).toBeInTheDocument()
-  })
-
   it('renders children inside the <main> content region', () => {
     render(
       <AdminShell {...DEFAULT_PROPS}>

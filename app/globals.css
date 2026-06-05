@@ -1,55 +1,72 @@
 @import 'tailwindcss';
 
 /*
- * TikTok-native design tokens.
+ * Botdog design system — editorial B2B SaaS.
  *
- * Surface scale: warm off-white in light, deep ink in dark.
- * Accent: hot-pink → orange → gold gradient (CapCut energy).
- * Secondary: electric cyan for status/processing.
- * Radii are generous (chip-like). Motion uses a springy ease.
+ * Royal blue (#0025AA) + white, warm off-white section fills, gold accent.
+ * Display: Fraunces (regular weight, editorial). Body/UI: Inter.
+ * Light-only — no dark palette (see the dark-variant note below).
  *
  * shadcn primitives consume the standard --background/--foreground/--card/...
- * channel vars; brand tokens (--gradient-hero, --color-brand-*) layer on top.
+ * channel vars. Legacy brand-accent vars (--brand-grad-*, --brand-cyan, ...)
+ * are kept (repointed to the Botdog palette) so existing call sites that read
+ * them via var() keep working without edits.
  */
 
+/*
+ * Dark variant gated to an explicit `.dark` class. The app forces the light
+ * theme (no `.dark` is ever applied), so every legacy `dark:` utility scattered
+ * across components becomes an inert no-op — we neutralize dark mode centrally
+ * instead of editing dozens of files.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  /* Light surfaces */
-  --background: oklch(0.99 0.005 80); /* #fafaf7 warm off-white */
-  --foreground: oklch(0.18 0.01 280); /* near-black ink */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.01 280);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.01 280);
-  --muted: oklch(0.96 0.005 80);
-  --muted-foreground: oklch(0.5 0.01 280);
-  --accent: oklch(0.95 0.02 220);
-  --accent-foreground: oklch(0.18 0.01 280);
-  --border: oklch(0.92 0.005 280);
-  --input: oklch(0.92 0.005 280);
-  --ring: oklch(0.65 0.2 10); /* hot-pink ring on focus */
-  --destructive: oklch(0.58 0.22 25);
-  --destructive-foreground: oklch(0.99 0 0);
+  /* Surfaces */
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --muted: #f7f5ef; /* warm off-white section fills */
+  --muted-foreground: #6b7280; /* mid gray */
+  --accent: #eef2ff; /* soft blue tint */
+  --accent-foreground: #0025aa;
+  --border: #d1d5db;
+  --input: #d1d5db;
+  --ring: #0025aa; /* blue focus ring */
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
 
-  /* Brand — primary is hot pink, then gradient via brand-grad-* */
-  --primary: oklch(0.65 0.24 10); /* hot pink */
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.78 0.16 215); /* electric cyan */
-  --secondary-foreground: oklch(0.18 0.01 280);
+  /* Brand */
+  --primary: #0025aa; /* royal blue */
+  --primary-foreground: #ffffff;
+  --primary-hover: #0a33c7;
+  --secondary: #e5e7eb; /* neutral */
+  --secondary-foreground: #111827;
+  --success: #22c55e;
+  --tertiary: #f4b63f; /* warm gold accent */
 
-  /* Gradient stops */
-  --brand-grad-1: #ff2e63;
-  --brand-grad-2: #ff8c42;
-  --brand-grad-3: #ffd93d;
-  --brand-cyan: #00d4ff;
-  --brand-violet: #a855f7;
+  /*
+   * Legacy brand-accent vars — kept so existing var() consumers (SchemaForm
+   * required-asterisk, dropzone accent, status dots, etc.) don't break.
+   * Repointed from the old pink→gold palette to Botdog blue + gold.
+   */
+  --brand-grad-1: #0025aa;
+  --brand-grad-2: #0a33c7;
+  --brand-grad-3: #f4b63f;
+  --brand-cyan: #0a33c7;
+  --brand-violet: #0025aa;
+  --brand-gold: #f4b63f;
 
-  /* Radii */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1.25rem;
-  --radius-xl: 1.75rem;
-  --radius-2xl: 2.5rem;
-  --radius: var(--radius-lg);
+  /* Radii — Botdog scale (4 / 8 / 16 / 24 / 32) */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius: var(--radius-md);
 
   /* Motion */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -58,37 +75,12 @@
   --duration-base: 250ms;
   --duration-slow: 400ms;
 
-  /* Shadows — soft glow tuned for warm surface */
-  --shadow-glow-pink: 0 18px 50px -12px rgba(255, 46, 99, 0.45);
-  --shadow-glow-cyan: 0 18px 50px -12px rgba(0, 212, 255, 0.45);
-  --shadow-soft: 0 12px 32px -16px rgba(15, 15, 30, 0.18);
-  --shadow-pop: 0 24px 48px -20px rgba(15, 15, 30, 0.32);
-}
-
-.dark {
-  --background: oklch(0.13 0.025 280); /* deep ink with violet tilt */
-  --foreground: oklch(0.96 0.005 80);
-  --card: oklch(0.18 0.02 280);
-  --card-foreground: oklch(0.96 0.005 80);
-  --popover: oklch(0.18 0.02 280);
-  --popover-foreground: oklch(0.96 0.005 80);
-  --muted: oklch(0.22 0.02 280);
-  --muted-foreground: oklch(0.7 0.02 280);
-  --accent: oklch(0.25 0.05 280);
-  --accent-foreground: oklch(0.96 0.005 80);
-  --border: oklch(0.28 0.02 280);
-  --input: oklch(0.28 0.02 280);
-  --ring: oklch(0.7 0.24 10);
-
-  --primary: oklch(0.72 0.24 10);
-  --primary-foreground: oklch(0.13 0.025 280);
-  --secondary: oklch(0.78 0.16 215);
-  --secondary-foreground: oklch(0.13 0.025 280);
-
-  --shadow-glow-pink: 0 20px 60px -12px rgba(255, 46, 99, 0.55);
-  --shadow-glow-cyan: 0 20px 60px -12px rgba(0, 212, 255, 0.55);
-  --shadow-soft: 0 14px 40px -16px rgba(0, 0, 0, 0.6);
-  --shadow-pop: 0 28px 60px -20px rgba(0, 0, 0, 0.75);
+  /* Shadows — minimal, editorial (no heavy elevation) */
+  --shadow-soft: 0 1px 2px rgba(17, 24, 39, 0.04), 0 10px 30px -16px rgba(17, 24, 39, 0.12);
+  --shadow-pop: 0 18px 40px -20px rgba(17, 24, 39, 0.18);
+  --shadow-nav: 0 10px 30px -10px rgba(0, 37, 170, 0.25); /* floating blue nav pill */
+  --shadow-glow-pink: 0 10px 30px -10px rgba(0, 37, 170, 0.3); /* legacy name → blue */
+  --shadow-glow-cyan: 0 10px 30px -10px rgba(0, 37, 170, 0.22);
 }
 
 @theme inline {
@@ -111,7 +103,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-tertiary: var(--tertiary);
 
+  /* Legacy color-utility keys kept (repointed) so `bg-brand-*` etc. still resolve. */
   --color-brand-pink: var(--brand-grad-1);
   --color-brand-orange: var(--brand-grad-2);
   --color-brand-gold: var(--brand-grad-3);
@@ -124,8 +119,9 @@
   --radius-xl: var(--radius-xl);
   --radius-2xl: var(--radius-2xl);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
@@ -138,56 +134,39 @@
     font-family: var(--font-sans), system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
+  /* Editorial display headings — Fraunces, regular weight (not bold). */
   h1,
   h2,
   h3 {
-    letter-spacing: -0.035em;
-  }
-  h1 {
-    font-weight: 800;
+    font-family: var(--font-display), Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
   }
 }
 
 @layer utilities {
-  /* Brand surface utilities */
+  /* Brand surface utilities — names preserved; recolored to Botdog blue. */
   .bg-gradient-hero {
-    background-image: linear-gradient(
-      135deg,
-      var(--brand-grad-1) 0%,
-      var(--brand-grad-2) 50%,
-      var(--brand-grad-3) 100%
-    );
+    background-image: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
   }
   .brand-grad {
-    background-image: linear-gradient(
-      135deg,
-      var(--brand-grad-1) 0%,
-      var(--brand-grad-2) 50%,
-      var(--brand-grad-3) 100%
-    );
+    background-color: var(--primary);
   }
   .brand-glow {
     box-shadow: var(--shadow-glow-pink);
   }
   .bg-gradient-cool {
-    background-image: linear-gradient(135deg, var(--brand-violet) 0%, var(--brand-cyan) 100%);
+    background-image: linear-gradient(135deg, #0025aa 0%, #0a33c7 100%);
   }
   .bg-gradient-spotlight {
     background-image:
-      radial-gradient(120% 80% at 50% 0%, var(--brand-grad-1) 0%, transparent 55%),
-      radial-gradient(120% 80% at 100% 100%, var(--brand-grad-3) 0%, transparent 55%),
-      radial-gradient(120% 80% at 0% 100%, var(--brand-violet) 0%, transparent 55%);
+      radial-gradient(120% 80% at 50% 0%, rgba(0, 37, 170, 0.1) 0%, transparent 55%),
+      radial-gradient(120% 80% at 100% 100%, rgba(244, 182, 63, 0.1) 0%, transparent 55%),
+      radial-gradient(120% 80% at 0% 100%, rgba(0, 37, 170, 0.08) 0%, transparent 55%);
   }
+  /* Was a clipped gradient; now a solid blue accent for headline emphasis words. */
   .text-gradient-hero {
-    background-image: linear-gradient(
-      135deg,
-      var(--brand-grad-1) 0%,
-      var(--brand-grad-2) 50%,
-      var(--brand-grad-3) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--primary);
   }
   .shadow-glow-pink {
     box-shadow: var(--shadow-glow-pink);
@@ -201,9 +180,12 @@
   .shadow-pop {
     box-shadow: var(--shadow-pop);
   }
+  .shadow-nav {
+    box-shadow: var(--shadow-nav);
+  }
 
   .ring-brand {
-    --tw-ring-color: var(--brand-grad-1);
+    --tw-ring-color: var(--primary);
   }
 
   /* Animations */
@@ -256,10 +238,10 @@
   @keyframes pulse-glow {
     0%,
     100% {
-      box-shadow: 0 0 0 0 rgba(255, 46, 99, 0.45);
+      box-shadow: 0 0 0 0 rgba(0, 37, 170, 0.4);
     }
     50% {
-      box-shadow: 0 0 0 16px rgba(255, 46, 99, 0);
+      box-shadow: 0 0 0 16px rgba(0, 37, 170, 0);
     }
   }
   @keyframes shimmer {
