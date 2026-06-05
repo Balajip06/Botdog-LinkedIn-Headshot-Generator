@@ -12,7 +12,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Your free try — Trendly',
+  title: 'Your free try — Botdog',
   description: 'A one-off generation from the no-signup trial flow.',
   robots: { index: false, follow: false },
 }

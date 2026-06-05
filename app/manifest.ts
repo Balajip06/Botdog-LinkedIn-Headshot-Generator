@@ -10,15 +10,15 @@ import type { MetadataRoute } from 'next'
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Trendly — Trend Image Generator',
-    short_name: 'Trendly',
-    description: 'Pick a viral trend. Upload your photo. Make the moment everyone is making.',
+    name: 'Botdog — AI LinkedIn Headshot Generator',
+    short_name: 'Botdog',
+    description: 'Turn any selfie into a professional LinkedIn headshot in seconds.',
     start_url: '/',
     scope: '/',
     display: 'standalone',
     orientation: 'portrait',
-    background_color: '#0a0a0a',
-    theme_color: '#ff2e63',
+    background_color: '#ffffff',
+    theme_color: '#0025aa',
     icons: [
       {
         src: '/icon.svg',

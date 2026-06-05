@@ -235,14 +235,14 @@ export function SeoSection({ initial }: SectionProps) {
             rows={4}
             maxLength={300}
             defaultValue={initial.share_caption_template ?? ''}
-            placeholder="Made my {trend_title} on Trendly — {site_url}"
+            placeholder="Made my {trend_title} on Botdog — {site_url}"
             className={cn(textareaClasses, 'min-h-24')}
           />
           <p className="text-muted-foreground/80 text-[11px]">
             Pre-filled when users tap Share. Supports{' '}
             <code className="bg-muted rounded px-1 py-0.5">{`{trend_title}`}</code> and{' '}
             <code className="bg-muted rounded px-1 py-0.5">{`{site_url}`}</code> substitution. Leave
-            blank for default &ldquo;Made my X on Trendly&rdquo;.
+            blank for default &ldquo;Made my X on Botdog&rdquo;.
           </p>
         </Field>
       </CardContent>

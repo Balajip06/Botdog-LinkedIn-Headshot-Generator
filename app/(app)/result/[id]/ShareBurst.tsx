@@ -29,7 +29,7 @@ function buildCaption(
   siteUrl: string
 ): string {
   if (!template) {
-    return `Made my ${trendTitle} on Trendly — try yours`
+    return `Made my ${trendTitle} on Botdog — try yours`
   }
   return template.split('{trend_title}').join(trendTitle).split('{site_url}').join(siteUrl)
 }

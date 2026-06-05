@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import { LegalArticle, loadLegalMarkdown } from '../_legal/renderDoc'
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — Trendly',
+  title: 'Terms of Service — Botdog',
   description:
-    'Personal-use license, prohibited content, style-reference takedown protocol, and AI-quality disclaimer for the Trendly trend image generator.',
+    'Personal-use license, prohibited content, style-reference takedown protocol, and AI-quality disclaimer for the Botdog AI LinkedIn headshot generator.',
   robots: { index: true, follow: true },
 }
 
