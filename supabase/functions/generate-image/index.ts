@@ -68,8 +68,8 @@ const COST_USD: Record<TrendRow['model'], number> = {
   'nano-banana-pro': 0.024,
 }
 const MODEL_ID: Record<TrendRow['model'], string> = {
-  'nano-banana': 'gemini-2.5-flash-image',
-  'nano-banana-pro': 'gemini-3.0-pro-image',
+  'nano-banana': 'gemini-3.1-flash-image', // Nano Banana 2 — validated for headshot identity fidelity
+  'nano-banana-pro': 'gemini-3-pro-image', // Nano Banana Pro
 }
 
 Deno.serve(async (req: Request) => {
