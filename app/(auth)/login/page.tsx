@@ -5,13 +5,10 @@ type SearchParams = Promise<{ next?: string; sent?: string; error?: string }>
 
 const ERROR_COPY: Record<string, string> = {
   invalid_email: 'Please enter a valid email.',
-  password_too_short: 'Password must be at least 8 characters.',
-  wrong_password: 'Wrong password. Try again or create a new account with a different password.',
-  signup_failed: 'Could not create your account. Try again.',
   bot_check_failed: 'Bot check failed. Refresh and try again.',
-  oauth_failed: 'Google sign-in failed. Try again.',
-  missing_code: 'Confirmation link expired. Try again.',
-  exchange_failed: 'Could not finish sign-in. Try again.',
+  magic_link_failed: 'Could not send the magic link. Try again in a minute.',
+  missing_code: 'Magic link expired. Request a new one.',
+  exchange_failed: 'Could not finish sign-in. Request a new link.',
   tos_required: 'Please check the box to accept our terms + privacy policy before continuing.',
 }
 
@@ -34,8 +31,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
         <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300">
           <p className="font-medium">Check your inbox.</p>
           <p className="opacity-80">
-            We sent a confirmation link. Click it once, then sign in with your password — no more
-            emails needed.
+            We sent you a magic link. Click it to finish signing in — no password needed.
           </p>
         </div>
       )}
