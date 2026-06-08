@@ -3,15 +3,19 @@
 Date: 2026-05-29
 Status: Accepted
 
+> Note: Botdog is now a single-purpose LinkedIn-headshot tool; the multi-trend workflow below is retained for historical context / potential future multi-style expansion.
+
 ## Context
 
-Each trend in Trendly has its own input shape:
+In the original multi-trend design, each trend had its own input shape:
 
 - "Action figure in box" needs 1 user photo + an optional style hint.
 - "Cyberpunk passport" needs 1 photo + a country dropdown.
 - "Pet to anime portrait" needs 1 photo of a pet + an optional name caption.
 
-If trends shipped as hardcoded React forms, every new trend (we plan ~1/week per the Friday cadence in the SOP runbooks) would require a code deploy + Vercel build + Tailwind regeneration + cache invalidation. That's a 15–30 minute deployment overhead per trend launch, and it gates the operator on technical work to push content.
+Botdog today ships a single `linkedin-headshot` trend whose schema is 1 user selfie + a required 14-profession style select. The schema-driven approach still backs that form and keeps the door open to adding more styles or trends without a code deploy.
+
+If trends shipped as hardcoded React forms, every new trend or style would require a code deploy + Vercel build + Tailwind regeneration + cache invalidation. That's a 15–30 minute deployment overhead per launch, and it gates the operator on technical work to push content.
 
 ## Decision
 

@@ -5,7 +5,7 @@ import { ReferralCopyButton } from '@/app/(app)/me/settings/ReferralCopyButton'
 import { AccountStudio, type RecentCreation } from '@/components/account/AccountStudio'
 import { AdPlaceholder } from '@/components/account/AdPlaceholder'
 import { BotdogPlanCard } from '@/components/account/BotdogPlanCard'
-import { MOCK_GENERATIONS, MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
+import { MOCK_GENERATIONS, MOCK_PROFILE, MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
 import { getCurrentProfile } from '@/lib/profiles/server'
 import { buildReferralUrl } from '@/lib/referrals/links'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
@@ -38,11 +38,12 @@ export default async function AccountPage({ searchParams }: PageProps) {
   let data: AccountData
 
   if (MOCK_TRENDS_ENABLED) {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
     data = {
       userId: 'mock-user',
       credits: 0,
       freeUsedThisWeek: 0,
-      referralUrl: 'http://localhost:3000/?ref=000000000000',
+      referralUrl: buildReferralUrl(siteUrl, MOCK_PROFILE.referral_code),
       recent: MOCK_GENERATIONS.slice(0, RECENT_LIMIT).map((g) => ({
         id: g.id,
         output_image_url: g.output_image_url,
@@ -104,7 +105,7 @@ export default async function AccountPage({ searchParams }: PageProps) {
         </p>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
         <AdPlaceholder />
 
         <div className="flex flex-col gap-6">

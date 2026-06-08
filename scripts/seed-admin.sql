@@ -1,4 +1,4 @@
--- Trendly — Seed initial admin
+-- Botdog — Seed initial admin
 --
 -- PREFERRED: use the TypeScript helper instead — it accepts the email as an arg
 -- and does the lookup + upsert in one shot:

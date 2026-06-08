@@ -1,4 +1,4 @@
-import { ArrowLeft, ImageIcon, Star } from 'lucide-react'
+import { AlertCircle, ArrowLeft, ImageIcon, Loader2, RotateCw, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -36,6 +36,35 @@ const STATUS_BADGE: Record<CreationRow['status'], { label: string; cls: string }
     cls: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
   },
   failed: { label: 'Failed', cls: 'bg-destructive/15 text-destructive' },
+}
+
+/**
+ * Placeholder shown in a tile when the generation has no image yet (queued /
+ * cooking / retrying / failed). Gives each non-completed state an icon + a
+ * line of copy so the tile reads as intentional, not a broken empty box.
+ * In-progress states get a soft pulse; failed gets a retry hint.
+ */
+function StatusPlaceholder({ status }: { status: CreationRow['status'] }) {
+  const inProgress = status === 'pending' || status === 'processing' || status === 'failed_retryable'
+  const failed = status === 'failed'
+
+  let icon = <Loader2 className="size-6 animate-spin text-[var(--brand-cyan)]" aria-hidden />
+  if (status === 'failed_retryable')
+    icon = <RotateCw className="size-6 animate-spin text-amber-600 dark:text-amber-300" aria-hidden />
+  if (failed) icon = <AlertCircle className="text-destructive size-6" aria-hidden />
+
+  return (
+    <div
+      className={`flex h-full w-full flex-col items-center justify-center gap-2 px-3 text-center ${
+        inProgress ? 'bg-muted/40 animate-pulse' : 'bg-destructive/5'
+      }`}
+    >
+      {icon}
+      <span className="text-foreground/80 text-xs font-medium">{STATUS_BADGE[status].label}</span>
+      {inProgress && <span className="text-muted-foreground text-[10px]">Usually under 30s</span>}
+      {failed && <span className="text-muted-foreground text-[10px]">Tap to try again</span>}
+    </div>
+  )
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -303,9 +332,7 @@ export default async function AllCreationsPage({ searchParams }: PageProps) {
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="bg-gradient-hero/30 text-foreground flex h-full w-full items-center justify-center text-xs">
-                      {STATUS_BADGE[c.status].label}
-                    </div>
+                    <StatusPlaceholder status={c.status} />
                   )}
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     <Badge

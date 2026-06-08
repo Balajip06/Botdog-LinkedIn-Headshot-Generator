@@ -83,7 +83,7 @@ export function LoginForms({ next }: LoginFormsProps) {
         </div>
         <GradientButton type="submit" size="lg" disabled={!ready} className="w-full">
           <Mail className="size-4" />
-          Send magic link
+          Send login link
         </GradientButton>
       </form>
     </div>

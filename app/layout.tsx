@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     'Turn any selfie into a professional LinkedIn headshot in seconds. AI-powered, profession-specific styles, studio quality.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/icon.svg' }],
+    icon: [{ url: '/favicon.png', type: 'image/png' }],
+    apple: [{ url: '/favicon.png' }],
   },
   appleWebApp: {
     capable: true,

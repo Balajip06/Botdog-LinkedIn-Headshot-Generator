@@ -1,6 +1,6 @@
-# Contributing to Trendly
+# Contributing to Botdog
 
-Trendly is a proprietary solo project today. This document still exists for two reasons: (1) so a new owner inheriting the codebase can ramp without re-deriving the conventions, and (2) so any future invited contributor has a fixed-target process to follow.
+Botdog is a proprietary solo project today. This document still exists for two reasons: (1) so a new owner inheriting the codebase can ramp without re-deriving the conventions, and (2) so any future invited contributor has a fixed-target process to follow.
 
 If you're reading this as a buyer's engineering lead — start with [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for the system map, then come back here for the working process.
 
@@ -8,7 +8,7 @@ If you're reading this as a buyer's engineering lead — start with [`docs/ARCHI
 
 ## Who can contribute
 
-Trendly is currently solo (founder + sole maintainer). External pull requests are not accepted at this time. Future contributors will be invited by the project owner — if that's you, this document is the entry checklist.
+Botdog is currently solo (founder + sole maintainer). External pull requests are not accepted at this time. Future contributors will be invited by the project owner — if that's you, this document is the entry checklist.
 
 The `LICENSE` file is the binding constraint: this code is proprietary, no fork-and-PR workflow exists, and any contribution made by an invited collaborator is governed by a separate written contributor agreement signed before the first commit.
 

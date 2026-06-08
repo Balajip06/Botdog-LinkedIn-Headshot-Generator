@@ -1,6 +1,5 @@
 'use client'
 
-import { Check } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -9,6 +8,13 @@ import { requestMagicLinkInline } from '@/app/(auth)/login/actions'
 import { GradientButton } from '@/components/brand/GradientButton'
 import { TurnstileWidget } from '@/components/auth/TurnstileWidget'
 import { SchemaForm } from '@/components/upload/SchemaForm'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { analytics, EVENTS } from '@/lib/analytics/client'
 import { getFingerprintHash } from '@/lib/anon/fingerprint'
@@ -30,6 +36,11 @@ interface InlineGeneratorProps {
   /** MOCK_TRENDS dev mode — short-circuit the whole flow with a fixture image
    *  so the UI states are walkable without a live Gemini/Supabase pipeline. */
   mock?: boolean
+  /** Remove the max-w-[22rem] cap so the generator fills its container width. */
+  fullWidth?: boolean
+  /** Fired when a generation completes (authed path) so a parent can refresh
+   *  server data — e.g. the account studio repopulating its gallery strip. */
+  onResult?: () => void
 }
 
 type Phase =
@@ -37,8 +48,6 @@ type Phase =
   | { k: 'generating' }
   | { k: 'result'; imageUrl: string; id: string; anon: boolean }
   | { k: 'error'; message: string }
-  | { k: 'email' }
-  | { k: 'sent'; email: string }
 
 const SIGNED_URL_TTL_SECONDS = 3600
 const POLL_INTERVAL_MS = 2500
@@ -52,10 +61,16 @@ export function InlineGenerator({
   initialStyleValue,
   loginNext = '/me/creations',
   mock = false,
+  fullWidth = false,
+  onResult,
 }: InlineGeneratorProps) {
   const [phase, setPhase] = useState<Phase>({ k: 'idle' })
   const [submitting, setSubmitting] = useState(false)
   const [anonAttemptId, setAnonAttemptId] = useState<string | null>(null)
+  // Email-capture modal (anon path). Driven separately from `phase` so the
+  // result image (or upload card) stays rendered behind the overlay.
+  const [emailOpen, setEmailOpen] = useState(false)
+  const [sentEmail, setSentEmail] = useState<string | null>(null)
   const turnstileToken = useRef<string>('')
   // Guards against a second generate firing while one is in flight (ref, not
   // state, so the check is synchronous and free of stale-closure risk).
@@ -103,8 +118,10 @@ export function InlineGenerator({
       const body = (await res.json()) as { anonymous_attempt_id?: string; error?: string }
       if (res.status === 409) {
         // Device already spent its one free trial — push them to sign up.
+        // No result to keep behind the modal, so fall back to the upload card.
         toast.message('You already used your free try — sign in for 5 more.')
-        setPhase({ k: 'email' })
+        setPhase({ k: 'idle' })
+        setEmailOpen(true)
         return
       }
       if (!res.ok || !body.anonymous_attempt_id) {
@@ -166,8 +183,9 @@ export function InlineGenerator({
       cleanupRef.current = wait.cancel
       const imageUrl = await wait.promise
       setPhase({ k: 'result', imageUrl, id: body.generation_id, anon: false })
+      onResult?.()
     },
-    [trend.slug, userId]
+    [onResult, trend.slug, userId]
   )
 
   const handleSubmit = useCallback(
@@ -186,6 +204,7 @@ export function InlineGenerator({
           // Dev MOCK mode — skip the real pipeline, show a fixture after a beat.
           await sleep(MOCK_DELAY_MS)
           setPhase({ k: 'result', imageUrl: MOCK_RESULT_IMAGE, id: 'demo', anon: !userId })
+          if (userId) onResult?.() // keep the account-studio gallery in parity with the authed path
           return
         }
         if (userId) await onAuthedGenerate(payload.values, payload.files)
@@ -200,36 +219,30 @@ export function InlineGenerator({
         setSubmitting(false)
       }
     },
-    [mock, onAnonGenerate, onAuthedGenerate, trend.model, trend.slug, userId]
+    [mock, onAnonGenerate, onAuthedGenerate, onResult, trend.model, trend.slug, userId]
   )
 
   // ---- render per phase ----
+  const layout = fullWidth ? 'split' : 'stack'
   let body: React.ReactNode
   if (phase.k === 'generating') {
-    body = <GeneratingState />
+    body = <GeneratingState layout={layout} />
   } else if (phase.k === 'result') {
     body = (
       <ResultState
         phase={phase}
         mock={mock}
+        layout={layout}
         onGenerateMore={() => {
-          if (phase.anon) setPhase({ k: 'email' })
+          // Anon: pop the email-capture modal but keep the result behind it.
+          // Authed: just reset to a fresh upload.
+          if (phase.anon) setEmailOpen(true)
           else setPhase({ k: 'idle' })
         }}
       />
     )
   } else if (phase.k === 'error') {
     body = <ErrorState message={phase.message} onRetry={() => setPhase({ k: 'idle' })} />
-  } else if (phase.k === 'email') {
-    body = (
-      <EmailState
-        mock={mock}
-        loginNext={anonAttemptId ? `${loginNext}?anon=${anonAttemptId}` : loginNext}
-        onSent={(email) => setPhase({ k: 'sent', email })}
-      />
-    )
-  } else if (phase.k === 'sent') {
-    body = <SentState email={phase.email} />
   } else {
     body = (
       <>
@@ -241,17 +254,58 @@ export function InlineGenerator({
           schema={effectiveSchema}
           onSubmit={handleSubmit}
           submitting={submitting}
-          ctaLabel="Generate"
+          ctaLabel="Generate my headshot"
           square
+          layout={layout}
+          tips={layout === 'split' ? HEADSHOT_TIPS : undefined}
         />
       </>
     )
   }
 
-  // Cap the square stage so the card height stays contained (≈ the hero text
-  // height) instead of filling a wide column. Centered within whatever card holds it.
-  return <div className="mx-auto flex w-full max-w-[22rem] flex-col gap-5">{body}</div>
+  const emailLoginNext = anonAttemptId ? `${loginNext}?anon=${anonAttemptId}` : loginNext
+
+  return (
+    <>
+      <div className="mx-auto flex w-full flex-col gap-5">
+        {body}
+      </div>
+
+      <Dialog
+        open={emailOpen}
+        onOpenChange={(o) => {
+          setEmailOpen(o)
+          if (!o) setSentEmail(null)
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          {sentEmail ? (
+            <DialogHeader>
+              <DialogTitle>Check your email</DialogTitle>
+              <DialogDescription>
+                Your login link is available in the email. Click it to claim your headshot.
+              </DialogDescription>
+            </DialogHeader>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle>Enter your email</DialogTitle>
+                <DialogDescription>Save your headshot and unlock 5 free this week.</DialogDescription>
+              </DialogHeader>
+              <EmailFormBody mock={mock} loginNext={emailLoginNext} onSent={setSentEmail} />
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  )
 }
+
+const HEADSHOT_TIPS = [
+  'Face a window or soft light',
+  'Plain, uncluttered background',
+  'Frame head-and-shoulders',
+]
 
 interface CancelToken {
   cancelled: boolean
@@ -325,12 +379,30 @@ function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms))
 }
 
-function GeneratingState() {
-  return (
-    <div className="flex aspect-square w-full flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-muted/30 px-6 text-center">
+type StageLayout = 'stack' | 'split'
+
+// In `split` (the account studio) the image stage is capped and sits on the
+// left of a two-column grid; in `stack` (homepage) it fills the narrow card.
+const STAGE_CLS = 'relative aspect-[2/1] w-full overflow-hidden rounded-2xl'
+const SPLIT_GRID = 'grid gap-6 sm:grid-cols-[minmax(0,360px)_1fr] sm:items-start'
+
+function GeneratingState({ layout }: { layout: StageLayout }) {
+  const stage = (
+    <div
+      className={`${STAGE_CLS} flex flex-col items-center justify-center gap-4 border border-dashed border-border bg-muted/30 px-6 text-center`}
+    >
       <span className="size-10 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
       <p className="text-sm font-medium">Creating your headshot…</p>
       <p className="text-muted-foreground text-xs">Usually under 30 seconds. Keeping your real face.</p>
+    </div>
+  )
+  if (layout === 'stack') return stage
+  return (
+    <div className={SPLIT_GRID}>
+      {stage}
+      <p className="text-muted-foreground self-center text-sm">
+        Hang tight — we’re rendering your headshot.
+      </p>
     </div>
   )
 }
@@ -338,10 +410,12 @@ function GeneratingState() {
 function ResultState({
   phase,
   mock,
+  layout,
   onGenerateMore,
 }: {
   phase: { imageUrl: string; id: string; anon: boolean }
   mock: boolean
+  layout: StageLayout
   onGenerateMore: () => void
 }) {
   const onDownload = useCallback(async () => {
@@ -366,30 +440,45 @@ function ResultState({
     }
   }, [mock, phase.anon, phase.id, phase.imageUrl])
 
+  const figure = (
+    <figure className={`${STAGE_CLS} bg-muted border-border/60 shadow-pop border`}>
+      <Image
+        src={phase.imageUrl}
+        alt="Your generated headshot"
+        fill
+        priority
+        sizes="(max-width: 768px) 100vw, 480px"
+        className="object-contain"
+      />
+    </figure>
+  )
+  const actions = (
+    <div className={layout === 'split' ? 'flex flex-col gap-3' : 'flex flex-wrap gap-3'}>
+      <button
+        type="button"
+        onClick={onDownload}
+        className="border-border hover:bg-muted flex-1 rounded-full border px-6 py-3 text-sm font-medium transition-colors"
+      >
+        Download
+      </button>
+      <GradientButton type="button" size="lg" className="flex-1" onClick={onGenerateMore}>
+        Generate more
+      </GradientButton>
+    </div>
+  )
+
+  if (layout === 'split') {
+    return (
+      <div className={SPLIT_GRID}>
+        {figure}
+        {actions}
+      </div>
+    )
+  }
   return (
     <div className="flex flex-col gap-5">
-      <figure className="border-border/60 shadow-pop relative aspect-square overflow-hidden rounded-2xl border">
-        <Image
-          src={phase.imageUrl}
-          alt="Your generated headshot"
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 480px"
-          className="object-cover"
-        />
-      </figure>
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={onDownload}
-          className="border-border hover:bg-muted flex-1 rounded-full border px-6 py-3 text-sm font-medium transition-colors"
-        >
-          Download
-        </button>
-        <GradientButton type="button" size="lg" className="flex-1" onClick={onGenerateMore}>
-          Generate more
-        </GradientButton>
-      </div>
+      {figure}
+      {actions}
     </div>
   )
 }
@@ -397,7 +486,7 @@ function ResultState({
 function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
   const outOfCredits = message === 'out-of-credits'
   return (
-    <div className="flex aspect-square w-full flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-muted/30 px-6 text-center">
+    <div className="flex aspect-[2/1] w-full flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-muted/30 px-6 text-center">
       <p className="text-sm font-medium">
         {outOfCredits ? 'You’re out of credits for now.' : 'Something went sideways.'}
       </p>
@@ -426,7 +515,13 @@ const EMAIL_ERROR_COPY: Record<string, string> = {
   magic_link_failed: 'Could not send the link — try again in a moment.',
 }
 
-function EmailState({
+/**
+ * The email-capture form, rendered inside the anon Dialog. Submitting it
+ * requests a login link, then calls `onSent(email)` so the parent swaps the
+ * dialog to its "check your email" confirmation. Errors surface in an in-dialog
+ * `role="alert"` region (Sonner toasts portal outside the modal).
+ */
+function EmailFormBody({
   mock,
   loginNext,
   onSent,
@@ -438,13 +533,15 @@ function EmailState({
   const [email, setEmail] = useState('')
   const [tos, setTos] = useState(false)
   const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const token = useRef<string>('')
 
   const submit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault()
+      setError(null)
       if (!tos) {
-        toast.error('Please accept the Terms to continue.')
+        setError('Please accept the Terms to continue.')
         return
       }
       setBusy(true)
@@ -462,13 +559,13 @@ function EmailState({
           tosAccepted: tos,
         })
         if (!res.ok) {
-          toast.error(EMAIL_ERROR_COPY[res.error ?? 'magic_link_failed'])
+          setError(EMAIL_ERROR_COPY[res.error ?? 'magic_link_failed'])
           setBusy(false)
           return
         }
         onSent(email)
       } catch {
-        toast.error('Could not send the link — check your email and try again.')
+        setError('Could not send the link — check your email and try again.')
         setBusy(false)
       }
     },
@@ -477,57 +574,49 @@ function EmailState({
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
-      {/* Same square footprint as the upload/result stage so the card height
-          doesn't change between steps; fields sit centered in it. */}
-      <div className="flex aspect-square w-full flex-col justify-center gap-4">
-        <h3 className="text-lg">Enter your email</h3>
-        <TurnstileWidget onToken={(t) => (token.current = t)} theme="light" />
+      <TurnstileWidget onToken={(t) => (token.current = t)} theme="light" />
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="anon-email" className="text-sm font-medium">
+          Email
+        </label>
         <Input
+          id="anon-email"
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
+          aria-invalid={error ? true : undefined}
           className="h-12 rounded-xl"
         />
-        <label className="text-muted-foreground flex items-start gap-2 text-xs">
-          <input
-            type="checkbox"
-            checked={tos}
-            onChange={(e) => setTos(e.target.checked)}
-            className="mt-0.5"
-          />
-          <span>
-            I agree to the{' '}
-            <Link href="/terms" className="underline">
-              Terms
-            </Link>{' '}
-            and{' '}
-            <Link href="/privacy" className="underline">
-              Privacy Policy
-            </Link>
-            .
-          </span>
-        </label>
       </div>
+      <label className="text-muted-foreground flex items-start gap-2 text-xs">
+        <input
+          type="checkbox"
+          checked={tos}
+          onChange={(e) => setTos(e.target.checked)}
+          className="mt-0.5"
+        />
+        <span>
+          I agree to the{' '}
+          <Link href="/terms" className="underline">
+            Terms
+          </Link>{' '}
+          and{' '}
+          <Link href="/privacy" className="underline">
+            Privacy Policy
+          </Link>
+          .
+        </span>
+      </label>
+      {error && (
+        <p role="alert" className="text-destructive text-xs">
+          {error}
+        </p>
+      )}
       <GradientButton type="submit" size="lg" disabled={busy} className="h-12">
         {busy ? 'Sending…' : 'Continue'}
       </GradientButton>
     </form>
-  )
-}
-
-function SentState({ email }: { email: string }) {
-  return (
-    <div className="flex aspect-square w-full flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-muted/30 px-6 text-center">
-      <div className="bg-primary text-primary-foreground grid size-12 place-items-center rounded-full">
-        <Check className="size-6" aria-hidden />
-      </div>
-      <h3 className="text-lg">Check your email</h3>
-      <p className="text-muted-foreground max-w-sm text-sm">
-        We sent a login link to <strong className="text-foreground">{email}</strong>. Click it to
-        claim your headshot and unlock 5 more.
-      </p>
-    </div>
   )
 }

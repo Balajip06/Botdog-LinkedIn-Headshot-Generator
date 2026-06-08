@@ -4,7 +4,7 @@
 **Owner:** Operator (you, while solo)
 **Time budget:** 5 min/day, 30 min/Sunday, 1 hr/month
 
-This is the operational heartbeat for Trendly. The morning check is the only daily ritual that matters — everything else escalates from there. Keep `/admin` open in a tab while you drink coffee.
+This is the operational heartbeat for Botdog. The morning check is the only daily ritual that matters — everything else escalates from there. Keep `/admin` open in a tab while you drink coffee.
 
 ---
 
@@ -101,7 +101,7 @@ Open `/admin` → cohort retention card (added W3). Look at the 7d / 30d retenti
 
 1. Open [https://dashboard.stripe.com/payouts](https://dashboard.stripe.com/payouts).
 2. Filter to last month, click **Export** → CSV.
-3. Drop into `~/Documents/trendly-accounting/YYYY-MM-payouts.csv`. Forward to whoever does your books.
+3. Drop into `~/Documents/botdog-accounting/YYYY-MM-payouts.csv`. Forward to whoever does your books.
 
 ### Archive the 12-month financial model
 
@@ -151,7 +151,7 @@ Open your domain registrar + trademark filings (if any). USPTO trademark renewal
 
 ## Operating mental model
 
-Three things must keep flowing for Trendly to stay healthy:
+Three things must keep flowing for Botdog to stay healthy:
 
 1. **Credits in.** Stripe payouts on schedule, refund rate under control.
 2. **Generations out.** Gemini key valid, Edge Function healthy, no quota leaks.

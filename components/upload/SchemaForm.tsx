@@ -1,6 +1,6 @@
 'use client'
 
-import { ImagePlus, Upload, X } from 'lucide-react'
+import { Check, ImagePlus, Upload, X } from 'lucide-react'
 import { useCallback, useEffect, useState, type ChangeEvent } from 'react'
 import { toast } from 'sonner'
 import { GradientButton } from '@/components/brand/GradientButton'
@@ -27,8 +27,14 @@ interface SchemaFormProps {
   ctaLabel?: string
   className?: string
   /** Render single-image uploads as a big square "stage" (dropzone + preview
-   *  fill an aspect-square) so the generator card stays a consistent size. */
+   *  fill a fixed aspect box) so the generator card stays a consistent size. */
   square?: boolean
+  /** `stack` (default): image on top, controls + CTA below (narrow homepage card).
+   *  `split`: image on the left, controls + tips + CTA in a right rail (wide
+   *  account studio). */
+  layout?: 'stack' | 'split'
+  /** Short "great photo" bullets shown above the CTA in `split` layout. */
+  tips?: string[]
 }
 
 type LocalState = {
@@ -55,6 +61,8 @@ export function SchemaForm({
   ctaLabel = 'Generate',
   className,
   square = false,
+  layout = 'stack',
+  tips,
 }: SchemaFormProps) {
   const [state, setState] = useState<LocalState>(() => initialState(schema))
 
@@ -124,26 +132,57 @@ export function SchemaForm({
     />
   )
 
-  // Image fields render full-width on their own rows; the remaining controls
-  // share a row with the submit button so the CTA sits beside the last input.
   const imageFields = schema.fields.filter((f) => f.type === 'image')
   const controlFields = schema.fields.filter((f) => f.type !== 'image')
 
+  const submitButton = (
+    <GradientButton type="submit" disabled={submitting} size="xl" className="h-14 flex-1 whitespace-nowrap px-8 text-base">
+      {submitting ? (
+        <span className="inline-flex items-center gap-2">
+          <span className="size-2 animate-pulse rounded-full bg-white" />
+          Generating…
+        </span>
+      ) : (
+        ctaLabel
+      )}
+    </GradientButton>
+  )
+
+  // Split layout (wide account studio): image stage on the left, controls +
+  // photo tips + CTA stacked in a right rail. Stacks to one column on mobile.
+  if (layout === 'split') {
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className={cn('grid gap-6 sm:grid-cols-[minmax(0,360px)_1fr] sm:items-start', className)}
+      >
+        <div className="flex flex-col gap-2">{imageFields.map(renderField)}</div>
+        <div className="flex flex-col gap-4">
+          {controlFields.map(renderField)}
+          {tips && tips.length > 0 && (
+            <ul className="flex flex-col gap-1.5">
+              {tips.map((tip) => (
+                <li key={tip} className="text-muted-foreground flex items-start gap-2 text-sm">
+                  <Check className="text-success mt-0.5 size-4 shrink-0" aria-hidden />
+                  <span>{tip}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex">{submitButton}</div>
+        </div>
+      </form>
+    )
+  }
+
+  // Stack layout (default, narrow homepage card): image on top; the remaining
+  // controls share a row with the submit button so the CTA sits beside them.
   return (
     <form onSubmit={handleSubmit} className={cn('flex flex-col gap-5', className)}>
       {imageFields.map(renderField)}
       <div className="flex flex-wrap items-end gap-3">
         {controlFields.map(renderField)}
-        <GradientButton type="submit" disabled={submitting} size="lg" className="h-12 flex-1">
-          {submitting ? (
-            <span className="inline-flex items-center gap-2">
-              <span className="size-2 animate-pulse rounded-full bg-white" />
-              Generating…
-            </span>
-          ) : (
-            ctaLabel
-          )}
-        </GradientButton>
+        {submitButton}
       </div>
     </form>
   )
@@ -278,7 +317,7 @@ function SingleImageField({ field, files, error, onFiles, square }: ImageFieldPr
         // and the empty dropzone is the same square — so the generator card stays
         // a consistent size from upload → result.
         previews.length > 0 ? (
-          <div className="group border-border bg-muted relative aspect-square w-full overflow-hidden rounded-2xl border">
+          <div className="group border-border bg-muted relative aspect-[2/1] w-full overflow-hidden rounded-2xl border">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={previews[0]} alt="Preview" className="h-full w-full object-cover" />
             <button
@@ -304,7 +343,7 @@ function SingleImageField({ field, files, error, onFiles, square }: ImageFieldPr
               if (e.dataTransfer.files?.length) handleFileList(e.dataTransfer.files)
             }}
             className={cn(
-              'flex aspect-square w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 text-center transition-colors',
+              'flex aspect-[2/1] w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 text-center transition-colors',
               dragOver
                 ? 'border-[var(--brand-grad-1)] bg-[var(--brand-grad-1)]/5'
                 : 'border-border bg-muted/40 hover:border-foreground/30'

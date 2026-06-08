@@ -89,3 +89,7 @@ graphify-out/
 /mock-*.png
 /visual-*.png
 /prod-*.png
+/home-*.png
+/aligned-*.png
+/clean-*.png
+/fixed-*.png

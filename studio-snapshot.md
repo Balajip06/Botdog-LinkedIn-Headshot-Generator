@@ -2,11 +2,11 @@
   - generic [ref=e2]:
     - banner [ref=e3]:
       - generic [ref=e4]:
-        - link "Trendly home" [ref=e5] [cursor=pointer]:
+        - link "Botdog home" [ref=e5] [cursor=pointer]:
           - /url: /
           - generic [ref=e6]:
             - img [ref=e7]
-            - generic [ref=e11]: Trendly
+            - generic [ref=e11]: Botdog
         - navigation [ref=e12]:
           - link "Studio" [ref=e13] [cursor=pointer]:
             - /url: /me/studio

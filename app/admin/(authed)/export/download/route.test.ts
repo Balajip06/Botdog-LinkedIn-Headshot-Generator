@@ -165,7 +165,7 @@ describe('GET /admin/export/download — customers dataset', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('content-type')).toMatch(/^text\/csv/)
     const disposition = res.headers.get('content-disposition') ?? ''
-    expect(disposition).toMatch(/attachment; filename="trendly-customers-\d{4}-\d{2}-\d{2}\.csv"/)
+    expect(disposition).toMatch(/attachment; filename="botdog-customers-\d{4}-\d{2}-\d{2}\.csv"/)
 
     const text = await res.text()
     const lines = text.split('\n')

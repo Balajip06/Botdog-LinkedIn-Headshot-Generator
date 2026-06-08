@@ -1,4 +1,4 @@
-# Trendly — Architecture
+# Botdog — Architecture
 
 **Last updated:** 2026-05-29
 **Owner:** `balaji@kimp.xyz` (pre-acquisition)
@@ -10,7 +10,7 @@ This is the single-page system map. Read this first, then drop into the linked A
 
 ## At a glance
 
-Trendly is a Next.js 16 App Router application deployed on Vercel, backed by a Supabase project that supplies Postgres + Auth + Storage + Edge Functions + `pg_cron`. The product turns a user-uploaded photo into a viral-trend image (Ghibli portrait, plushie maker, Pixar-style, etc.) by calling Google Gemini's Nano Banana / Pro image model. Image generation runs out-of-band on a Supabase Edge Function triggered by a Database Webhook, so the user-facing API responds in <1s while the actual model call (5-30s) happens asynchronously and the result page polls/subscribes for completion.
+Botdog is a Next.js 16 App Router application deployed on Vercel, backed by a Supabase project that supplies Postgres + Auth + Storage + Edge Functions + `pg_cron`. The product turns a user-uploaded selfie into a LinkedIn-ready professional headshot — the user picks one of 14 profession styles from a style picker — by calling Google Gemini's Nano Banana 2 image model. Image generation runs out-of-band on a Supabase Edge Function triggered by a Database Webhook, so the user-facing API responds in <1s while the actual model call (5-30s) happens asynchronously and the result page polls/subscribes for completion.
 
 Payment is one-time **credit packs** (no subscription) sold through Stripe Checkout — three SKUs at $4.99 / $14.99 / $39.99 (50 / 200 / 600 credits). The free tier is **5 generations per week**, refilled by a `pg_cron` job every Sunday at 00:00 UTC. The anonymous trial gives **one** generation per `(fingerprint_hash, ip_hash)` pair, ever, with a global $20/day cost ceiling enforced server-side.
 

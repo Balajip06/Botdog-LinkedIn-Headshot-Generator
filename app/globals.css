@@ -43,10 +43,28 @@
   --primary: #0025aa; /* royal blue */
   --primary-foreground: #ffffff;
   --primary-hover: #0a33c7;
+  --primary-dark: #001d88;
+  --primary-light: #1a3db8;
   --secondary: #e5e7eb; /* neutral */
   --secondary-foreground: #111827;
   --success: #22c55e;
   --tertiary: #f4b63f; /* warm gold accent */
+
+  /* Design system palette (design.md) */
+  --cream: #f5f5eb;
+  --accent-yellow: #f7c04a;
+  --accent-orange: #ffbf53;
+  --accent-purple: #d5c5e8;
+  --darktext: #101725;
+  --paragraphcolor: #4b5563;
+  --lightprimary: #a59cc3;
+  --darkprimary: #a79dcb;
+
+  /* Radius */
+  --radius-pill: 9999px;
+
+  /* Shadow */
+  --shadow-button: 0 4px 4px rgba(0, 0, 0, 0.25);
 
   /*
    * Legacy brand-accent vars — kept so existing var() consumers (SchemaForm
@@ -113,11 +131,28 @@
   --color-brand-cyan: var(--brand-cyan);
   --color-brand-violet: var(--brand-violet);
 
+  /* Design system palette aliases */
+  --color-cream: var(--cream);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-purple: var(--accent-purple);
+  --color-darktext: var(--darktext);
+  --color-paragraphcolor: var(--paragraphcolor);
+  --color-lightprimary: var(--lightprimary);
+  --color-darkprimary: var(--darkprimary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-2xl: var(--radius-2xl);
+  --radius-pill: var(--radius-pill);
+
+  --shadow-button: var(--shadow-button);
+
+  --breakpoint-nav: 1000px;
 
   --font-sans: var(--font-inter);
   --font-display: var(--font-fraunces);
@@ -182,6 +217,16 @@
   }
   .shadow-nav {
     box-shadow: var(--shadow-nav);
+  }
+
+  .rounded-pill {
+    border-radius: var(--radius-pill);
+  }
+  .shadow-button {
+    box-shadow: var(--shadow-button);
+  }
+  .text-accent-yellow {
+    color: var(--accent-yellow);
   }
 
   .ring-brand {

@@ -8,9 +8,9 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
 import { GradientButton } from '@/components/brand/GradientButton'
 import { Button } from '@/components/ui/button'
 
-const STORAGE_KEY = 'trendly.consent'
-const GRANTED_EVENT = 'trendly:consent-granted'
-const DECLINED_EVENT = 'trendly:consent-declined'
+const STORAGE_KEY = 'botdog.consent'
+const GRANTED_EVENT = 'botdog:consent-granted'
+const DECLINED_EVENT = 'botdog:consent-declined'
 
 export type ConsentState = 'granted' | 'declined' | 'unknown'
 

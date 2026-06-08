@@ -122,6 +122,160 @@ export const HEADSHOT_STYLES: readonly HeadshotStyle[] = [
     value:
       'The subject wears eco-conscious smart-casual in muted earth tones, photographed in a light-filled space surrounded by softly blurred lush greenery and large windows; calm, natural, nurturing diffused light.',
   },
+  {
+    label: 'Sales / Account Executive',
+    slug: 'sales',
+    accent: ['#0025aa', '#22d3ee'],
+    value:
+      'The subject wears a sharp business-casual blazer over a crisp collared shirt, photographed in a bright modern open-plan office with softly blurred glass partitions and warm overhead lighting; energetic, warm, trustworthy professional lighting.',
+  },
+  {
+    label: 'Nurse',
+    slug: 'nurse',
+    accent: ['#0d9488', '#f0fdf4'],
+    value:
+      'The subject wears clean scrubs in a solid muted color, photographed in a modern clinical corridor with softly blurred equipment and bright overhead lighting; calm, compassionate, clean professional atmosphere.',
+  },
+  {
+    label: 'Financial Advisor',
+    slug: 'financial-advisor',
+    accent: ['#1e3a5f', '#ca8a04'],
+    value:
+      'The subject wears a formal navy or charcoal suit with a subtle pocket square, photographed in a refined wealth-management office with blurred mahogany furniture and soft directional lighting; competent, trustworthy, approachable mood.',
+  },
+  {
+    label: 'Therapist',
+    slug: 'therapist',
+    accent: ['#7c3aed', '#86efac'],
+    value:
+      'The subject wears calm, smart-casual attire in soft neutral tones, photographed in a warm private practice room with blurred soft furnishings, a bookshelf and gentle window light; calming, safe, approachable mood.',
+  },
+  {
+    label: 'Teacher / Educator',
+    slug: 'teacher',
+    accent: ['#f59e0b', '#a3e635'],
+    value:
+      'The subject wears smart-casual attire in warm tones, photographed in a bright modern classroom or library setting with blurred bookshelves and large windows behind them; warm, welcoming, knowledgeable daylight.',
+  },
+  {
+    label: 'Startup Founder',
+    slug: 'startup-founder',
+    accent: ['#6366f1', '#0ea5e9'],
+    value:
+      'The subject wears a confident smart-casual look — a well-fitted dark crew neck or open-collar shirt — photographed in a modern loft office with exposed concrete, blurred whiteboards and warm Edison lighting; bold, visionary, energetic mood.',
+  },
+  {
+    label: 'Life Coach / Speaker',
+    slug: 'life-coach',
+    accent: ['#f59e0b', '#db2777'],
+    value:
+      'The subject wears an expressive, polished smart-casual outfit with a standout color or accessory, photographed in a bright modern stage or studio setting with softly blurred audience or studio lights behind; dynamic, inspiring, charismatic lighting.',
+  },
+  {
+    label: 'Freelancer / Solopreneur',
+    slug: 'freelancer',
+    accent: ['#0891b2', '#a3e635'],
+    value:
+      'The subject wears relaxed-but-polished smart-casual attire, photographed in a clean modern home office or co-working space with warm natural window light and softly blurred plants and shelves; authentic, approachable, independent mood.',
+  },
+  {
+    label: 'Nonprofit / Social Impact',
+    slug: 'nonprofit',
+    accent: ['#16a34a', '#0025aa'],
+    value:
+      'The subject wears approachable business-casual attire in warm mid-tones, photographed in a bright community or modern office setting with blurred collaborative furniture and natural light; genuine, warm, mission-driven mood.',
+  },
+  {
+    label: 'HR / Recruiter',
+    slug: 'hr-recruiter',
+    accent: ['#0025aa', '#db2777'],
+    value:
+      'The subject wears polished business-casual with a structured blazer, photographed in a welcoming modern HR or office environment with softly blurred open-plan desks and daylight; friendly, professional, people-first lighting.',
+  },
+  {
+    label: 'Dentist',
+    slug: 'dentist',
+    accent: ['#0ea5e9', '#f0fdf4'],
+    value:
+      'The subject wears a clean white dental coat or scrubs, photographed in a bright modern dental practice with blurred clinical equipment and soft overhead lighting; warm, trustworthy, clean professional atmosphere.',
+  },
+  {
+    label: 'Physical Therapist',
+    slug: 'physical-therapist',
+    accent: ['#0d9488', '#f59e0b'],
+    value:
+      'The subject wears clean clinical scrubs or athletic professional attire, photographed in a bright rehabilitation or clinic setting with blurred treatment tables and natural light; energetic, caring, professional mood.',
+  },
+  {
+    label: 'Architect / Designer',
+    slug: 'architect',
+    accent: ['#64748b', '#f59e0b'],
+    value:
+      'The subject wears smart-casual attire with a creative edge — a structured jacket or design-forward layering — photographed in a modern studio with blurred architectural models, large drawing tables and skylights; precise, creative, confident daylight.',
+  },
+  {
+    label: 'Pharmacist',
+    slug: 'pharmacist',
+    accent: ['#0d9488', '#1e3a5f'],
+    value:
+      'The subject wears a clean white pharmacy coat over professional attire, photographed in a modern pharmacy setting with softly blurred shelving and warm overhead lighting; trustworthy, knowledgeable, calm professional atmosphere.',
+  },
+  {
+    label: 'Engineer',
+    slug: 'engineer',
+    accent: ['#475569', '#0ea5e9'],
+    value:
+      'The subject wears business-casual attire or a company-branded polo, photographed in a modern industrial or technical workspace with blurred equipment, whiteboards and clean overhead lighting; precise, reliable, confident professional mood.',
+  },
+  {
+    label: 'Journalist / Writer',
+    slug: 'journalist',
+    accent: ['#1e3a5f', '#ca8a04'],
+    value:
+      'The subject wears smart-casual attire with a thoughtful, expressive detail, photographed in a warm editorial newsroom or library setting with blurred books and ambient desk lamps; authentic, inquisitive, intellectual mood.',
+  },
+  {
+    label: 'Personal Trainer',
+    slug: 'personal-trainer',
+    accent: ['#15803d', '#f59e0b'],
+    value:
+      'The subject wears fitted performance activewear in a bold solid color, photographed in a clean modern gym with blurred equipment and motivating overhead lighting; energetic, confident, healthy, approachable mood.',
+  },
+  {
+    label: 'Chef / Restaurateur',
+    slug: 'chef-restaurateur',
+    accent: ['#dc2626', '#1e3a5f'],
+    value:
+      'The subject wears a tailored black chef jacket or a sharp owner blazer, photographed in a warm upscale restaurant setting with blurred ambient candlelight, exposed brick and elegant table settings; passionate, refined, welcoming lighting.',
+  },
+  {
+    label: 'Artist',
+    slug: 'artist',
+    accent: ['#db2777', '#f59e0b'],
+    value:
+      'The subject wears an expressive, paint-stained or artisan outfit with interesting texture, photographed in a warm art studio with blurred canvases, natural skylights and wooden easels; natural diffused light, bold creative mood.',
+  },
+  {
+    label: 'Politician / Public Official',
+    slug: 'politician',
+    accent: ['#1e3a5f', '#dc2626'],
+    value:
+      'The subject wears a formal dark suit with a solid-colored tie or scarf, photographed in a dignified government building or civic setting with blurred flags or architectural details; authoritative, composed, trustworthy directional lighting.',
+  },
+  {
+    label: 'Military / Veteran',
+    slug: 'military',
+    accent: ['#4d7c0f', '#64748b'],
+    value:
+      'The subject wears dress uniform or a structured formal blazer with a service-branch pin, photographed against a clean neutral backdrop with dramatic side lighting; disciplined, proud, composed professional portrait.',
+  },
+  {
+    label: 'Medical Resident',
+    slug: 'medical-resident',
+    accent: ['#0ea5e9', '#0d9488'],
+    value:
+      'The subject wears a short white coat over professional attire with a name badge, photographed in a modern hospital corridor or clinical space with softly blurred medical equipment; confident, competent, clean professional lighting suitable for ERAS and residency applications.',
+  },
 ] as const
 
 /** Default style applied when the picker is untouched (also used at eval time). */

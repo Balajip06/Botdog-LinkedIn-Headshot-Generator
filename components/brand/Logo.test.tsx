@@ -2,58 +2,39 @@ import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { Logo } from './Logo'
 
+// The Logo renders the baked brand wordmark as a single <Image> (next/image →
+// an <img> in the test env) with alt="Botdog". The `wordmark`/`gradient` props
+// are kept for API compatibility but no longer change the output.
 describe('Logo', () => {
-  it('renders the glyph SVG', () => {
-    const { container } = render(<Logo />)
-    const svg = container.querySelector('svg')
-    expect(svg).not.toBeNull()
-  })
-
-  it('renders the dog-badge shapes (head rect + feature circles)', () => {
-    const { container } = render(<Logo />)
-    expect(container.querySelector('rect')).not.toBeNull()
-    expect(container.querySelectorAll('circle').length).toBeGreaterThanOrEqual(3)
-  })
-
-  it('shows the Botdog wordmark by default', () => {
+  it('renders the Botdog wordmark image with accessible alt text', () => {
     render(<Logo />)
-    expect(screen.getByText('Botdog')).toBeInTheDocument()
+    expect(screen.getByAltText('Botdog')).toBeInTheDocument()
   })
 
-  it('hides the wordmark when wordmark={false}', () => {
-    render(<Logo wordmark={false} />)
-    expect(screen.queryByText('Botdog')).not.toBeInTheDocument()
-  })
-
-  it('renders a 32px-square SVG at the default md size', () => {
-    const { container } = render(<Logo />)
-    const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('32')
-    expect(svg.getAttribute('height')).toBe('32')
-  })
-
-  it('renders a 24px-square SVG at size="sm"', () => {
-    const { container } = render(<Logo size="sm" />)
-    const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('24')
-    expect(svg.getAttribute('height')).toBe('24')
-  })
-
-  it('renders a 44px-square SVG at size="lg"', () => {
-    const { container } = render(<Logo size="lg" />)
-    const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('44')
-    expect(svg.getAttribute('height')).toBe('44')
-  })
-
-  it('tints the wordmark with text-primary when gradient={true}', () => {
-    render(<Logo gradient />)
-    expect(screen.getByText('Botdog')).toHaveClass('text-primary')
-  })
-
-  it('does not tint the wordmark by default', () => {
+  it('points at the brand SVG asset', () => {
     render(<Logo />)
-    expect(screen.getByText('Botdog')).not.toHaveClass('text-primary')
+    expect(screen.getByAltText('Botdog')).toHaveAttribute('src', '/botdog-logo.svg')
+  })
+
+  it('renders at the default md size (112x34)', () => {
+    render(<Logo />)
+    const img = screen.getByAltText('Botdog')
+    expect(img).toHaveAttribute('width', '112')
+    expect(img).toHaveAttribute('height', '34')
+  })
+
+  it('renders at size="sm" (80x24)', () => {
+    render(<Logo size="sm" />)
+    const img = screen.getByAltText('Botdog')
+    expect(img).toHaveAttribute('width', '80')
+    expect(img).toHaveAttribute('height', '24')
+  })
+
+  it('renders at size="lg" (148x45)', () => {
+    render(<Logo size="lg" />)
+    const img = screen.getByAltText('Botdog')
+    expect(img).toHaveAttribute('width', '148')
+    expect(img).toHaveAttribute('height', '45')
   })
 
   it('merges a custom className onto the wrapping span via cn()', () => {
@@ -63,19 +44,8 @@ describe('Logo', () => {
     expect(wrapper).toHaveClass('inline-flex')
   })
 
-  it('marks the SVG as aria-hidden so screen readers skip it', () => {
-    const { container } = render(<Logo />)
-    const svg = container.querySelector('svg')!
-    expect(svg.getAttribute('aria-hidden')).toBe('true')
-  })
-
-  it('uses text-base sizing class at size="sm"', () => {
-    render(<Logo size="sm" />)
-    expect(screen.getByText('Botdog')).toHaveClass('text-base')
-  })
-
-  it('uses text-2xl sizing class at size="lg"', () => {
-    render(<Logo size="lg" />)
-    expect(screen.getByText('Botdog')).toHaveClass('text-2xl')
+  it('accepts the legacy gradient/wordmark props without changing output', () => {
+    render(<Logo gradient wordmark />)
+    expect(screen.getByAltText('Botdog')).toHaveAttribute('src', '/botdog-logo.svg')
   })
 })

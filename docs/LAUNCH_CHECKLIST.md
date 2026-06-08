@@ -1,4 +1,4 @@
-# Trendly — Launch Checklist (Pre-Production)
+# Botdog — Launch Checklist (Pre-Production)
 
 Single-pass swap list of every placeholder string, hardcoded mock, empty
 env var, and dev-only flag that needs to be set before the site goes
@@ -17,18 +17,18 @@ This doc is a list, not a patch. Code changes happen in a separate pass.
 
 ## Brand identity
 
-### Wordmark "Trendly" + gradient ^ glyph
+### Wordmark "Botdog" + gradient ^ glyph
 
-**Currently:** "Trendly" + pink→orange→gold gradient `^` glyph
+**Currently:** "Botdog" + pink→orange→gold gradient `^` glyph
 (`components/brand/Logo.tsx:51`). The name + glyph predate any
 brand-naming decision and were chosen as a working title in early
 sessions.
 
-**Decision needed:** confirm "Trendly" is the launch name. If not,
+**Decision needed:** confirm "Botdog" is the launch name. If not,
 swap every touch point below in one pass. If yes, the only blocker
-becomes domain registration (see "Domain + URLs" below) — `trendly.app`
+becomes domain registration (see "Domain + URLs" below) — `botdog-headshot.vercel.app`
 referenced in `lib/utils/export.ts:85` + `docs/CREDENTIALS.md:17`
-implies that's the intended TLD but it's not registered yet.
+implies that's the intended host but it's not finalized yet.
 
 **Touch points** (every spot that hardcodes the wordmark):
 
@@ -36,18 +36,18 @@ implies that's the intended TLD but it's not registered yet.
 - `app/layout.tsx:19` — root `<title>` metadata
 - `app/(public)/layout.tsx:12,37` — public header `aria-label` + footer copyright
 - `app/(app)/layout.tsx:15` — authed header `aria-label`
-- `app/(public)/trend/[slug]/page.tsx:45` — SEO `<title>` fallback `"${title} — Trendly"`
+- `app/(public)/trend/[slug]/page.tsx:45` — SEO `<title>` fallback `"${title} — Botdog"`
 - `app/(public)/trend/[slug]/opengraph-image.tsx:7,21,115` — OG card alt + wordmark literal
 - `app/(public)/terms/page.tsx:5,6` — ToS metadata + description
 - `app/(public)/privacy/page.tsx:5` — Privacy metadata
 - `lib/dev/mock-data.ts:249` — `seo_title` template (dev-only, still leaks if MOCK_TRENDS ever flipped on in prod)
 - `docs/TERMS_OF_SERVICE.md:1,11,15,29,35,43,51,63` (8 hits)
 - `docs/PRIVACY_POLICY.md:1,11,98` (3 hits)
-- `docs/RUNBOOK.md:152` — example `RESEND_FROM_EMAIL=Trendly <…>`
-- `e2e/home.spec.ts:12` — `toHaveTitle(/Trendly/)` assertion (update or rebrand-proof)
+- `docs/RUNBOOK.md:152` — example `RESEND_FROM_EMAIL=Botdog <…>`
+- `e2e/home.spec.ts:12` — `toHaveTitle(/Botdog/)` assertion (update or rebrand-proof)
 - `components/brand/Logo.test.tsx:19,24,50,55,73,78` (6 hits) — test snapshots
 
-**Breaks if missed:** brand consistency across header, footer, OG cards, page titles, legal documents, and email. If the launch name is not "Trendly", every social card and trend page will ship with the wrong wordmark.
+**Breaks if missed:** brand consistency across header, footer, OG cards, page titles, legal documents, and email. If the launch name is not "Botdog", every social card and style page will ship with the wrong wordmark.
 
 ---
 
@@ -55,7 +55,7 @@ implies that's the intended TLD but it's not registered yet.
 
 ### Support / legal email
 
-**Currently:** `support@trendly.example` + `legal@trendly.example` (explicit placeholders, `.example` is RFC 2606 reserved — safe to grep).
+**Currently:** `support@botdog.ai` + `legal@botdog.ai`.
 **Where:**
 
 - `docs/TERMS_OF_SERVICE.md:98`
@@ -63,12 +63,12 @@ implies that's the intended TLD but it's not registered yet.
 - `LICENSE:21`
 
 **Change to:** real `support@<real-domain>` + `legal@<real-domain>` once domain registered + inbox provisioned.
-**Sweep command:** `git grep -l 'trendly\.example'` returns the full list — one search-and-replace handles all hits.
+**Sweep command:** `git grep -l 'botdog\.ai'` returns the full list — one search-and-replace handles all hits.
 **Breaks if missed:** user takedown requests, billing disputes, and privacy emails bounce. Legal contact unreachable — GDPR Article 12 violation risk + DMCA notice goes unread = buyer-side IP exposure.
 
 ### GDPR privacy contact (data export)
 
-**Currently:** `privacy@trendly.app` is hardcoded in the GDPR Article 15 export payload.
+**Currently:** `privacy@botdog.ai` is hardcoded in the GDPR Article 15 export payload.
 **Where:** `lib/utils/export.ts:85`
 **Change to:** real `privacy@<real-domain>` mailbox (or reuse support@).
 **Breaks if missed:** users who download their data and email the listed address get bounces. Article 15 disclosure technically becomes invalid.
@@ -77,7 +77,7 @@ implies that's the intended TLD but it's not registered yet.
 
 **Currently:** `RESEND_FROM_EMAIL=` empty in `.env.local.example:29`.
 **Where:** `lib/email/send.ts:32-33` (early-returns `{ ok: false }` when missing).
-**Change to:** `Trendly <noreply@<real-domain>>` after Resend domain DNS records (SPF + DKIM + DMARC) verify.
+**Change to:** `Botdog <noreply@<real-domain>>` after Resend domain DNS records (SPF + DKIM + DMARC) verify.
 **Breaks if missed:** every result-ready email fallback short-circuits silently. Users with disabled / expired push subscriptions get no notification at all when their image finishes.
 
 ### VAPID subject
@@ -99,7 +99,7 @@ for brand consistency.
 
 ### Styleguide email placeholder
 
-**Currently:** `placeholder="you@trendly.app"` in the internal /styleguide.
+**Currently:** `placeholder="you@botdog.ai"` in the internal /styleguide.
 **Where:** `app/(dev)/styleguide/Sections.tsx:350`
 **Note:** `/styleguide` body is excluded from prod bundle (commit `2f59467`). Cosmetic, dev-only.
 **Risk:** LOW (never ships).
@@ -264,7 +264,7 @@ output. Same fallback for the OG image at
 
 ### Mock fixtures (lib/dev/mock-data.ts)
 
-**Currently:** `demo@trendly.dev` (line 24) + 15 trend fixtures + 4 generation fixtures. Only loaded when `MOCK_TRENDS=true`.
+**Currently:** `demo@botdog.dev` (line 24) + 15 trend fixtures + 4 generation fixtures. Only loaded when `MOCK_TRENDS=true`.
 **Status:** dev-only, no leakage path **as long as MOCK_TRENDS is unset in prod**. Pair this audit with the MOCK_TRENDS gate above.
 
 ---
@@ -315,15 +315,15 @@ Search commands run by this audit. Re-run after every change to spot regressions
 
 | Search                                          | Files matched                                                                              | Notes                                                                                     |
 | ----------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| `trendly\.example`                              | 3 (TERMS, PRIVACY x2)                                                                      | All in docs; 0 in source.                                                                 |
+| `botdog\.ai`                                    | 3 (TERMS, PRIVACY x2)                                                                      | All in docs; 0 in source.                                                                 |
 | `you@example\.com`                              | 3 (.env template, LoginForms placeholder, CREDENTIALS doc)                                 | LoginForms is a UX placeholder — fine.                                                    |
-| `Trendly` (across `.ts`/`.tsx`)                 | 14 source files                                                                            | Wordmark is the centerpiece — see Brand identity above.                                   |
+| `Botdog` (across `.ts`/`.tsx`)                  | 14 source files                                                                            | Wordmark is the centerpiece — see Brand identity above.                                   |
 | `localhost:3000`                                | 9 source fallbacks + CI workflow + README + 1 doc                                          | All 9 source hits are env-fallback strings.                                               |
 | `localhost:54321`                               | CI workflow + 1 README example                                                             | Both intentional.                                                                         |
 | `example\.com` (broad)                          | 1 source (`lib/push/send.ts:15` fallback subject), 1 env template, plus many test fixtures | Test fixtures intentional; src fallback is a placeholder that should be a real `mailto:`. |
 | `MOCK_TRENDS`                                   | 26 hits across 17 files                                                                    | Every read path traced — gated correctly **when flag is false**. Prod must unset.         |
 | `support@`                                      | 3 (all in docs)                                                                            | All explicit placeholders.                                                                |
-| `trendly\.app` / `trendly\.com` / `trendly\.io` | 4 (one source: `lib/utils/export.ts:85`; one styleguide; one doc; one test)                | Implies `trendly.app` is the intended TLD — not registered yet.                           |
+| `botdog` (host refs)                            | 4 (one source: `lib/utils/export.ts:85`; one styleguide; one doc; one test)                | Implies `botdog-headshot.vercel.app` is the intended host — not finalized yet.            |
 | `yourdomain\.com` / `your-domain`               | 5 doc placeholders                                                                         | RUNBOOK template strings.                                                                 |
 | `sample-\d`                                     | 1 source (`lib/dev/mock-data.ts`)                                                          | Mock-only.                                                                                |
 | `/mock/sample`                                  | 1 file                                                                                     | Same.                                                                                     |

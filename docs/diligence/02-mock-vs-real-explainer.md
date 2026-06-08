@@ -4,7 +4,7 @@
 **Audience:** seller (you), preparing for the buyer question "are these dashboard numbers real?"
 **Short answer:** real revenue rows always win; the mock fallback only kicks in when the database returns zero rows (pre-launch / dev / a brand-new buyer's test env).
 
-This one-pager exists because Trendly's admin dashboards (`/admin`, `/admin/margin`, `/admin/users`, `/admin/referrals`) have a deterministic mock fallback in [`lib/analytics/margin.ts`](../../lib/analytics/margin.ts). Buyers should know exactly when they're looking at real numbers and when they're looking at synthetic shape data.
+This one-pager exists because Botdog's admin dashboards (`/admin`, `/admin/margin`, `/admin/users`, `/admin/referrals`) have a deterministic mock fallback in [`lib/analytics/margin.ts`](../../lib/analytics/margin.ts). Buyers should know exactly when they're looking at real numbers and when they're looking at synthetic shape data.
 
 ---
 

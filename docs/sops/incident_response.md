@@ -35,7 +35,7 @@ The playbook for the first 15 minutes is fixed. Don't improvise; the order is wh
 
 ### Minute 2-5 — Status page banner
 
-Trendly has no dedicated status page pre-acquisition; the banner lives in the main app via the `site_banner` row in the `site_config` table (W6 placeholder — until that ships, the banner is a hardcoded fallback in `app/(public)/layout.tsx`).
+Botdog has no dedicated status page pre-acquisition; the banner lives in the main app via the `site_banner` row in the `site_config` table (W6 placeholder — until that ships, the banner is a hardcoded fallback in `app/(public)/layout.tsx`).
 
 ```sql
 update public.site_config
@@ -110,7 +110,7 @@ See "Minute 2-5" above. The banner is your single source of public-facing truth.
 If specific users were hit (e.g., generations failed during a Gemini outage), email them via Resend. Template below.
 
 ```
-Subject: We had an issue with your Trendly generation
+Subject: We had an issue with your Botdog generation
 
 Hi,
 
@@ -118,7 +118,7 @@ Earlier today we had a brief issue with our image generation service that may ha
 
 If your image still hasn't loaded, please reply to this email and we'll take another look.
 
-— Trendly
+— Botdog
 ```
 
 To send to a list of impacted users, use the Resend audience API. If you don't have an audience set up, plain `to: '<comma-separated emails>'` works for batches up to 50.
@@ -128,7 +128,7 @@ To send to a list of impacted users, use the Resend audience API. If you don't h
 Keep it short, acknowledge, give an ETA.
 
 ```
-heads up: we're investigating an issue with image generation on Trendly.
+heads up: we're investigating an issue with image generation on Botdog.
 working on it now — will update when resolved.
 ```
 

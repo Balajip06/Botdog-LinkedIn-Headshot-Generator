@@ -318,7 +318,7 @@ export function FormPrimitivesSection() {
         <Label htmlFor="sg-email">
           Email <span className="text-destructive">*</span>
         </Label>
-        <Input id="sg-email" type="email" placeholder="you@trendly.app" />
+        <Input id="sg-email" type="email" placeholder="you@botdog.ai" />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="sg-number">Number</Label>

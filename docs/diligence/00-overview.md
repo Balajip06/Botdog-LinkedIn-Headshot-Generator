@@ -1,4 +1,4 @@
-# Trendly — Diligence Pack Overview
+# Botdog — Diligence Pack Overview
 
 **Last refreshed:** 2026-05-29
 **Owner:** `balaji@kimp.xyz` (seller)
@@ -10,7 +10,7 @@ This folder is the **fast-response layer** for buyer diligence. When a buyer ask
 
 ## Asset 1-pager
 
-**Trendly** is a viral-trend image generator. A user picks a trend (e.g. "Pixar-style portrait", "vintage Polaroid"), uploads a photo or fills a schema-driven form, and gets back a generated image they can download or share. Free tier: 5 generations / week (server-watermarked). Paid: one-time credit packs ($4.99 / $14.99 / $39.99).
+**Botdog** is an AI LinkedIn-headshot generator. A user uploads a selfie, picks one of 14 profession styles from the style picker, and gets back a LinkedIn-ready professional headshot they can download or share. Free tier: 5 generations / week (server-watermarked). Paid: one-time credit packs ($4.99 / $14.99 / $39.99).
 
 **Stack (locked, no exotic dependencies):**
 
@@ -22,7 +22,7 @@ This folder is the **fast-response layer** for buyer diligence. When a buyer ask
 - Observability: PostHog + Sentry.
 - Hosting: Vercel.
 
-**Tech defensibility — one paragraph.** Trendly is portable. The image model is abstracted behind `lib/image-provider/index.ts` (Gemini default, OpenAI Images stub already in place). Supabase usage is standard Postgres + RLS + Storage — portable to Neon/S3 in 1–2 weeks. The only deep lock-in is Stripe (customer card data does not transfer between Stripe accounts), which is addressed via LLC formation Day 1 + a pre-built re-auth email cadence — see [03-stripe-card-non-transfer.md](03-stripe-card-non-transfer.md). Test stack is Vitest + Playwright (open-source, no SaaS subscription). 283/283 tests passing on `main`.
+**Tech defensibility — one paragraph.** Botdog is portable. The image model is abstracted behind `lib/image-provider/index.ts` (Gemini default, OpenAI Images stub already in place). Supabase usage is standard Postgres + RLS + Storage — portable to Neon/S3 in 1–2 weeks. The only deep lock-in is Stripe (customer card data does not transfer between Stripe accounts), which is addressed via LLC formation Day 1 + a pre-built re-auth email cadence — see [03-stripe-card-non-transfer.md](03-stripe-card-non-transfer.md). Test stack is Vitest + Playwright (open-source, no SaaS subscription). 283/283 tests passing on `main`.
 
 ---
 
@@ -34,8 +34,8 @@ Grouped by diligence workstream. Each row links to the canonical answer. If the 
 
 | #   | Question                                 | Answer source                                                                                                                                    |
 | --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | What does Trendly actually do?           | [Asset 1-pager](#asset-1-pager) above + [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md)                                                             |
-| 2   | How many trends are live? Which perform? | [`docs/data-room/02-customers/top-trends.csv`](../data-room/README.md#02-customers--user-base-retention-support) (accrual-dependent post-launch) |
+| 1   | What does Botdog actually do?            | [Asset 1-pager](#asset-1-pager) above + [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md)                                                             |
+| 2   | How many styles are live? Which perform? | [`docs/data-room/02-customers/top-trends.csv`](../data-room/README.md#02-customers--user-base-retention-support) (accrual-dependent post-launch) |
 | 3   | What's the user journey end-to-end?      | [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) §Request flow                                                                                       |
 | 4   | What's the moderation / abuse story?     | [`docs/sops/takedown.md`](../sops/takedown.md) + [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md)                                                  |
 | 5   | What's planned next (roadmap)?           | [`docs/data-room/03-product/roadmap.md`](../data-room/README.md#03-product--architecture-roadmap-retention-proof)                                |

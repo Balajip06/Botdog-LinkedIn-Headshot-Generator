@@ -1,11 +1,13 @@
 # Weekly Trend Cadence SOP
 
+> Note: Botdog is now a single-purpose LinkedIn-headshot tool; the multi-trend workflow below is retained for historical context / potential future multi-style expansion.
+
 **Last updated:** 2026-05-29
 **Owner:** Operator (you, while solo); post-acquisition: buyer's content operator.
 **Cadence:** One new trend shipped every Friday. ~2-3 hours of focused work per cycle.
 **Authority:** Operationalizes the KPI gate in the sellable-asset plan ("fresh trend per week is the content moat").
 
-This is the single thing that keeps Trendly's catalog alive. The product can survive a missed Sunday operations check; it cannot survive a four-week stretch with no new trend. Customers come back when there's something new — without a new trend, the home grid grows stale and repeat-purchase rate collapses inside 30 days.
+This is the single thing that keeps Botdog's catalog alive. The product can survive a missed Sunday operations check; it cannot survive a four-week stretch with no new trend. Customers come back when there's something new — without a new trend, the home grid grows stale and repeat-purchase rate collapses inside 30 days.
 
 ---
 
@@ -49,7 +51,7 @@ For each candidate, ask: is the same visual hook appearing across two or more pl
 The winning trend must have all three:
 
 1. **Visual hook** — at a glance, before reading any caption, you can tell what the trend is doing. If a user has to read to understand, it doesn't ship.
-2. **Clear "X applied to your photo" formula** — Trendly only ships trends that consume a user-uploaded photo + apply a transformation. Trends that require text-only prompts or text+photo bilingual inputs are out of scope.
+2. **Clear "X applied to your photo" formula** — Botdog only ships trends that consume a user-uploaded photo + apply a transformation. Trends that require text-only prompts or text+photo bilingual inputs are out of scope.
 3. **No franchise-IP exposure** — cross-reference against [`docs/TREND_BANLIST.md`](../TREND_BANLIST.md). If the trend names a studio (Pixar, Ghibli, etc.), a character (Mario, Mickey, Pokémon), or a celebrity, either re-prompt to drop the name (acceptable-phrasing rules in the banlist) or reject the trend entirely.
 
 If no candidate clears all three, **don't ship a weak trend.** Skip the auto-detector inbox and pick from your evergreen backlog (action figure, portrait styles, era transforms). Better to repeat a proven trend than to ship a flat one.
@@ -274,11 +276,11 @@ Replace `<>` placeholders before posting. Trend titles and hooks vary; the struc
 ### X / Twitter (hashtag-heavy, thread-friendly)
 
 ```
-new trend on Trendly: <trend title>
+new trend on Botdog: <trend title>
 
 drop your photo → get a <one-line aesthetic descriptor>
 
-try it free → trendly.app/trend/<slug>
+try it free → botdog-headshot.vercel.app/trend/<slug>
 
 #aiart #<trendname> #<aesthetic-hashtag> #midjourney #chatgpt
 ```
@@ -292,7 +294,7 @@ For higher engagement, fork into a 3-tweet thread:
 ### Instagram (vibey, emoji-light, single image or carousel)
 
 ```
-the <trend title> trend just dropped on Trendly
+the <trend title> trend just dropped on Botdog
 
 drop a photo, get this back in 60 seconds.
 free to try — link in bio.
@@ -305,7 +307,7 @@ Stay light on emoji — the brand is "polished consumer SaaS", not "hyperactive 
 ### TikTok (urgency / POV style, 15-60s video)
 
 ```
-POV: you just discovered Trendly
+POV: you just discovered Botdog
 it turns any photo into <one-line aesthetic descriptor>
 this is wild — link in bio
 ```
@@ -315,7 +317,7 @@ Video structure (proven format):
 - **0-2s** — hook: a clean input photo on screen, no text.
 - **2-8s** — transformation reveal: cut to the output, text overlay "this is just from a photo".
 - **8-15s** — second example, different subject (group, pet, child).
-- **15-30s** — voiceover or text: "trendly.app, free for 5 a week".
+- **15-30s** — voiceover or text: "botdog-headshot.vercel.app, free for 5 a week".
 - **End frame** — "try yours, link in bio".
 
 TikTok rewards in-app editing (CapCut → upload) over fully pre-rendered video. Add captions in TikTok itself, not in the video file.

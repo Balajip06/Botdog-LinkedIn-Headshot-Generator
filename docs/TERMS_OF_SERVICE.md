@@ -1,18 +1,16 @@
-# Trendly — Terms of Service (Draft)
+# Botdog — Terms of Service
 
-**Status:** Draft. Not yet hosted on the live site. Once `app/(public)/terms/page.tsx` is built, this file becomes the canonical source and the page renders from it.
-
-**Last updated:** 2026-05-29.
+**Last updated:** 2026-06-08.
 
 ---
 
 ## 1. Acceptance
 
-By using Trendly, you agree to these Terms. If you do not agree, do not use the service.
+By using Botdog, you agree to these Terms. If you do not agree, do not use the service.
 
 ## 2. The service
 
-Trendly is a viral-trend image generator. You provide a photo. The service runs a curated text prompt against an AI image-generation model and returns a new image. The catalog of trends is operated by Trendly.
+Botdog is an AI LinkedIn headshot generator. You upload a photo and pick a profession style; the service runs a curated prompt against an AI image-generation model and returns a professional, LinkedIn-ready headshot that keeps your real face. The service is operated by Botdog.
 
 ## 3. Personal use only
 
@@ -26,29 +24,29 @@ You may **not**:
 
 - Resell generated outputs as merchandise, prints, NFTs, stock images, or downloadable assets.
 - Redistribute generated outputs as part of a commercial product or service.
-- Train other machine-learning models on Trendly outputs.
+- Train other machine-learning models on Botdog outputs.
 - Claim generated outputs as your original artwork in any commercial context.
 - Use generated outputs in advertising for any third-party brand.
 
 ## 4. Style references and intellectual property
 
-Trendly's trend prompts may reference specific artistic styles, named productions, or creator names (e.g. "in the visual language of Studio Ghibli", "in the style of a Pixar 3D character", "Stranger Things-style poster lighting"). These references are stylistic — they describe a look and feel — and the outputs are intended to evoke that aesthetic, not to recreate copyrighted characters, scenes, logos, or trade dress.
+Botdog's profession styles (Corporate, Healthcare, Tech, Creative, and the like) describe a generic look and feel — an appropriate outfit, background, and lighting for a field. They are stylistic and do not reproduce any specific company's logo, uniform, trade dress, or branded environment.
 
 You are responsible for how you use any output:
 
-- Do not pass off an output as official artwork from any named studio, brand, or creator.
-- Do not use outputs in any commercial context that implies endorsement by or affiliation with a referenced franchise, studio, or creator.
+- Do not pass off an output as an official photo taken by or for any named company, studio, or brand.
+- Do not use outputs in any commercial context that implies endorsement by or affiliation with any third party.
 - Do not use outputs in any context that violates trademark or right-of-publicity law in your jurisdiction.
 
-If a rights-holder of a referenced franchise contacts Trendly with a takedown, we will:
+If a rights-holder believes a style reference infringes their rights and contacts Botdog with a takedown, we will:
 
-1. Remove the affected trend within 24 hours.
-2. Re-prompt the trend to drop the named reference.
-3. Notify users who generated outputs under that trend that their downloads remain personal-use only and they should not redistribute.
+1. Adjust or remove the affected style within 24 hours.
+2. Re-prompt the style to drop the contested reference.
+3. Notify users who generated outputs under that style that their downloads remain personal-use only and they should not redistribute.
 
 ## 5. Photo content
 
-You retain all rights to the photos you upload. Trendly does not claim ownership of your uploads. Uploaded photos are stored privately for 24 hours then permanently deleted (free tier) or as long as your account is active (Pro tier).
+You retain all rights to the photos you upload. Botdog does not claim ownership of your uploads. Uploaded photos are stored privately for 24 hours then permanently deleted (free tier) or as long as your account is active (Pro tier).
 
 You may only upload photos you have the right to upload. Specifically:
 
@@ -60,7 +58,7 @@ You may only upload photos you have the right to upload. Specifically:
 
 ## 6. Prohibited content
 
-You may not use Trendly to generate:
+You may not use Botdog to generate:
 
 - Sexually explicit imagery of any person.
 - Imagery of minors in any sexualized or harmful context.
@@ -95,7 +93,7 @@ We may update these Terms. Material changes will be announced via email and on t
 
 ## 11. Contact
 
-For takedowns, billing disputes, or any other concerns: support@trendly.example (placeholder — wire to real email before launch).
+For takedowns, billing disputes, or any other concerns: support@botdog.ai.
 
 ---
 

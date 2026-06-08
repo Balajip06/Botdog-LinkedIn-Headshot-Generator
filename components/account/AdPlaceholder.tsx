@@ -7,7 +7,7 @@ export function AdPlaceholder() {
   return (
     <aside
       aria-label="Sponsored"
-      className="border-border/60 bg-muted/40 hidden min-h-[420px] flex-col items-center justify-center gap-2 rounded-3xl border border-dashed p-8 text-center lg:flex"
+      className="border-border/60 bg-muted/40 hidden min-h-[420px] flex-col items-center justify-center gap-2 rounded-3xl border border-dashed p-8 text-center lg:flex lg:sticky lg:top-6 lg:self-start"
     >
       <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
         Ad space

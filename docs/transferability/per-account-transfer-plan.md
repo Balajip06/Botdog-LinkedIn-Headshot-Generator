@@ -4,7 +4,7 @@
 **Authority:** Operationalizes the transferability section of the sellable-asset plan.
 **Cross-reference:** [`docs/CREDENTIALS.md`](../CREDENTIALS.md) — for each env var that an account underwrites, what the var unlocks, and what breaks if it is missing during the cutover.
 
-This document is the per-account playbook for transferring every credential, account, and external asset that Trendly depends on from the seller (`balaji@kimp.xyz`) to the buyer. It assumes a friendly cooperative transfer — both parties want this to go smoothly. For each account it lists: the transfer mechanism, the realistic ETA in calendar days, known risks and gotchas, and what the buyer needs to have ready before the transfer can begin.
+This document is the per-account playbook for transferring every credential, account, and external asset that Botdog depends on from the seller (`balaji@kimp.xyz`) to the buyer. It assumes a friendly cooperative transfer — both parties want this to go smoothly. For each account it lists: the transfer mechanism, the realistic ETA in calendar days, known risks and gotchas, and what the buyer needs to have ready before the transfer can begin.
 
 Pair this with [`docs/transferability/post-acquisition-timeline.md`](./post-acquisition-timeline.md) for the day-by-day sequencing across all accounts.
 
@@ -85,7 +85,7 @@ Pair this with [`docs/transferability/post-acquisition-timeline.md`](./post-acqu
   - The `pg_cron` jobs continue running across the transfer; no action needed unless the database is paused mid-transfer.
   - Authentication providers (Google OAuth) are configured at the project level. The redirect URI references the project-ref (which is preserved in Option 1), so no Google Cloud Console change is required if the project-ref doesn't change.
 - **Buyer pre-requisites:**
-  - Supabase organization with billing set up (Trendly runs on Supabase Pro — buyer's org needs the Pro plan to inherit production limits).
+  - Supabase organization with billing set up (Botdog runs on Supabase Pro — buyer's org needs the Pro plan to inherit production limits).
   - Decision on whether to rotate the service-role key during transfer (recommended) or after (acceptable if the cutover window is < 24 hours).
 
 ### Google Cloud / Gemini API
@@ -239,7 +239,7 @@ Pair this with [`docs/transferability/post-acquisition-timeline.md`](./post-acqu
 
 Social handles are the highest-risk transfer category. Once a handle is vacated for more than ~48 hours, squatters and impersonators are likely to take it. Sequence these last in the cutover, but execute them quickly.
 
-### X (Twitter) — `@trendlyapp` (or equivalent registered handle)
+### X (Twitter) — `@botdogapp` (or equivalent registered handle)
 
 - **Currently held by:** Seller's personal X account (pending — handle not yet registered as of 2026-05-29; assume registered shortly before sale).
 - **Transfer mechanism:**
@@ -255,7 +255,7 @@ Social handles are the highest-risk transfer category. Once a handle is vacated 
   - Email + phone ready for the new credentials.
   - X account exists (the receiving end of the transfer is just changing email/auth on the existing account, not creating a new one).
 
-### Instagram — `@trendlyapp`
+### Instagram — `@botdogapp`
 
 - **Currently held by:** Seller's IG account (pending registration; assume registered shortly before sale; should be a Business account for analytics).
 - **Transfer mechanism:**
@@ -270,7 +270,7 @@ Social handles are the highest-risk transfer category. Once a handle is vacated 
   - Email + phone for the new credentials.
   - Facebook page (if the IG is linked) ready under the buyer's control.
 
-### TikTok — `@trendlyapp`
+### TikTok — `@botdogapp`
 
 - **Currently held by:** Seller's TikTok account.
 - **Transfer mechanism:**
@@ -284,7 +284,7 @@ Social handles are the highest-risk transfer category. Once a handle is vacated 
 - **Buyer pre-requisites:**
   - Email + phone for the new credentials.
 
-### Threads — `@trendlyapp`
+### Threads — `@botdogapp`
 
 - **Currently held by:** Linked to the Instagram account (Threads is a Meta product, tied 1:1 to an IG handle).
 - **Transfer mechanism:** Tied to Instagram. When IG transfers, Threads transfers with it. No separate action.
@@ -309,7 +309,7 @@ Before any account is transferred, the seller (you) should:
 - [ ] Take screenshots of all sub-processor settings (DKIM records, webhook endpoints, rate-limit settings) for buyer reference.
 - [ ] Confirm 2FA is enabled on every account being transferred — and that the buyer has a plan for taking over the second factor (phone, authenticator, recovery codes).
 - [ ] Confirm no accounts use `balaji@kimp.xyz` as the sole recovery email after the transfer is complete.
-- [ ] Document any "balaji@kimp.xyz received this OAuth grant from Trendly users" type relationships — none should exist (users sign in directly to Supabase, not to seller's email), but verify.
+- [ ] Document any "balaji@kimp.xyz received this OAuth grant from Botdog users" type relationships — none should exist (users sign in directly to Supabase, not to seller's email), but verify.
 
 ---
 

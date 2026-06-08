@@ -1,4 +1,4 @@
-# Trendly — Founder Bio Templates
+# Botdog — Founder Bio Templates
 
 **Last updated:** 2026-05-29
 **Use:** Press kit, Product Hunt maker page, About page, LinkedIn / X bio, journalist outreach.
@@ -10,13 +10,13 @@ All factual claims below are bracketed as `[PLACEHOLDER]` until the founder back
 
 ## Version A — One-sentence (under 220 chars, for X / LinkedIn bio + footer credits)
 
-`[FOUNDER_NAME]` is the founder of Trendly, a curated viral-trend image generator — previously `[PRIOR_ROLE_OR_PROJECT]`.
+`[FOUNDER_NAME]` is the founder of Botdog, an AI LinkedIn-headshot generator — previously `[PRIOR_ROLE_OR_PROJECT]`.
 
 ---
 
 ## Version B — One-paragraph (for press kit, about page, Product Hunt)
 
-`[FOUNDER_NAME]` is the founder of Trendly. Before Trendly, `[PRIOR_ROLE_AND_DURATION]`. The thesis behind Trendly came from `[ORIGIN_STORY — one specific moment, not "I noticed people wanted to..."]`. `[FOUNDER_NAME]` is based in `[CITY, COUNTRY]` and writes about `[TOPIC]` at `[PERSONAL_SITE_OR_NEWSLETTER]`. Contact: `[FOUNDER_EMAIL]`.
+`[FOUNDER_NAME]` is the founder of Botdog. Before Botdog, `[PRIOR_ROLE_AND_DURATION]`. The thesis behind Botdog came from `[ORIGIN_STORY — one specific moment, not "I noticed people wanted to..."]`. `[FOUNDER_NAME]` is based in `[CITY, COUNTRY]` and writes about `[TOPIC]` at `[PERSONAL_SITE_OR_NEWSLETTER]`. Contact: `[FOUNDER_EMAIL]`.
 
 ---
 
@@ -24,7 +24,7 @@ All factual claims below are bracketed as `[PLACEHOLDER]` until the founder back
 
 ### Background
 
-`[FOUNDER_NAME]` is the founder and sole operator of Trendly, a curated viral-trend image generator built between `[BUILD_START_DATE]` and `[BUILD_END_DATE]`.
+`[FOUNDER_NAME]` is the founder and sole operator of Botdog, an AI LinkedIn-headshot generator built between `[BUILD_START_DATE]` and `[BUILD_END_DATE]`.
 
 ### Prior work
 
@@ -32,13 +32,13 @@ All factual claims below are bracketed as `[PLACEHOLDER]` until the founder back
 - `[PRIOR_PROJECT_2]` — `[ONE_SENTENCE_OUTCOME]`. (`[YEAR_RANGE]`)
 - `[PRIOR_ROLE_1]` at `[COMPANY]` — `[ONE_SENTENCE_OUTCOME]`. (`[YEAR_RANGE]`)
 
-### Why Trendly
+### Why Botdog
 
-`[ORIGIN_PARAGRAPH — 2 to 4 sentences. Anchor in a specific incident. Avoid "I noticed that..." and "I realized..." — instead, name the trend, the date, the tool that failed, and what you wanted to exist.]`
+`[ORIGIN_PARAGRAPH — 2 to 4 sentences. Anchor in a specific incident. Avoid "I noticed that..." and "I realized..." — instead, name the problem, the date, the tool that failed, and what you wanted to exist.]`
 
 ### Approach to the build
 
-Trendly was built in roughly 14 days of focused implementation against an amended plan. Decisions that defined the asset: credit packs over subscription (the buying motion matches the bursty content), schema-driven trend inputs (every trend is a database row rather than hardcoded form logic), and an eval gate enforced at the Postgres-trigger level (a trend cannot go live until it passes a documented eval). The full set of architectural decisions is recorded in `docs/adr/`.
+Botdog was built in roughly 14 days of focused implementation against an amended plan. Decisions that defined the asset: credit packs over subscription (the buying motion matches one-off headshot needs), schema-driven inputs (the style picker is a database row rather than hardcoded form logic), and an eval gate enforced at the Postgres-trigger level (a style cannot go live until it passes a documented eval). The full set of architectural decisions is recorded in `docs/adr/`.
 
 ### Public writing and links
 

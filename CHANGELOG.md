@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Trendly are documented here.
+All notable changes to Botdog are documented here. (Entries before the 2026-06-05 pivot reference the project's prior name, "Trendly".)
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: pre-release; no semver guarantees until `1.0.0`. Dates are in ISO 8601 (`YYYY-MM-DD`).
 

@@ -11,7 +11,7 @@ Compounding social proof channel. No ad spend, but high-touch — every DM is a 
 
 ## Credentials needed (Day 0)
 
-- 3 cleared social accounts (X, TikTok, Instagram) — minimum: profile photo + bio mentioning Trendly + pinned post linking to homepage. New accounts < 7 days old get rate-limited on DMs; warm them with 3-5 organic posts first
+- 3 cleared social accounts (X, TikTok, Instagram) — minimum: profile photo + bio mentioning Botdog + pinned post linking to homepage. New accounts < 7 days old get rate-limited on DMs; warm them with 3-5 organic posts first
 - Threads + Bluesky accounts (optional but doubles surface area at zero extra cost)
 - Referral code provisioning for outreach: each accepted creator gets a custom-mapped code via [`lib/referrals/links.ts`](../../lib/referrals/links.ts) `buildReferralUrl(siteUrl, referralCode)`. Manual code issuance for now — auto-issuance is a W4 task
 - A pinned tracking sheet (Google Sheets template — schema below)
@@ -49,7 +49,7 @@ Keep openers under 30 words. The first sentence is the only thing that decides i
 ### X / Twitter (DM)
 
 ```
-Saw your <specific post — e.g. "Ghibli portrait thread last Tuesday">. Built Trendly — same vibe, one upload, no prompt engineering.
+Saw your <specific post — e.g. "headshot makeover thread last Tuesday">. Built Botdog — LinkedIn-ready headshot from one selfie, no prompt engineering.
 
 Offer: free 100-credit pack ($14.99 value) + your own branded link. Your audience gets 20% off their first pack via your code.
 
@@ -59,7 +59,7 @@ Sound interesting? Reply yes and I'll send the link.
 ### TikTok (DM)
 
 ```
-Your <#aiart / #ghiblifilter — pick the actual hashtag they use most> stuff is the exact lane we built Trendly for.
+Your <#aiart / #headshot — pick the actual hashtag they use most> stuff is the exact lane we built Botdog for.
 
 Offer: free 100-credit pack to test it, plus a branded link. 20% off for anyone who comes from your code.
 
@@ -79,7 +79,7 @@ Drop a reply if you want to try it.
 ### Threads (post-reply or DM)
 
 ```
-Building Trendly — same lane as your <recent post>. One photo, no prompt, ~60s.
+Building Botdog — same lane as your <recent post>. One selfie, no prompt, ~60s to a LinkedIn-ready headshot.
 
 Offer: 100 free credits + a branded link with 20% off for your audience.
 
@@ -96,7 +96,7 @@ When they reply, the same 4-5 questions surface. Have these saved as text snippe
 
 ### "Is this safe? What about my photos?"
 
-> Uploads encrypt in transit + at rest. We auto-delete free-tier outputs after 30 days, paid Pro outputs are forever-retained but private. Photos never go to a training set — we use Gemini's API, no fine-tuning. Privacy doc: trendly.app/privacy
+> Uploads encrypt in transit + at rest. We auto-delete free-tier outputs after 30 days, paid Pro outputs are forever-retained but private. Photos never go to a training set — we use Gemini's API, no fine-tuning. Privacy doc: botdog-headshot.vercel.app/privacy
 
 ### "How much can I earn?"
 
@@ -104,11 +104,11 @@ When they reply, the same 4-5 questions surface. Have these saved as text snippe
 
 ### "Do I need to disclose this as a sponsorship?"
 
-> Yes. FTC requires `#ad` or "in partnership with @trendly" in any post that links your branded code. Disclosure boilerplate below — copy/paste verbatim. We don't engage with creators who don't disclose. (This is a non-negotiable — a single non-disclosed post can earn FTC fines for both sides.)
+> Yes. FTC requires `#ad` or "in partnership with @botdog" in any post that links your branded code. Disclosure boilerplate below — copy/paste verbatim. We don't engage with creators who don't disclose. (This is a non-negotiable — a single non-disclosed post can earn FTC fines for both sides.)
 
-### "Can I customize the trend / get an exclusive style?"
+### "Can I customize the style / get an exclusive style?"
 
-> Not yet — every Trendly user sees the same trend catalog. Custom trends are roadmapped for W8+. What we _can_ offer top creators: 48-hour early access to new trends before they go live to the public, so your audience gets the "first to try" angle.
+> Not yet — every Botdog user sees the same 14-profession style picker. Custom styles are roadmapped for W8+. What we _can_ offer top creators: 48-hour early access to new styles before they go live to the public, so your audience gets the "first to try" angle.
 
 ---
 
@@ -126,7 +126,7 @@ One row per creator. Recompute conversions weekly from the `referrals` table via
 | `conversions` | int     | Successful invites attributed to their code (purchase OR 3+ generations)                |
 | `LTV_so_far`  | decimal | Sum of `cost_usd` × pack margin for converted users (eyeball — formal LTV is a W6 task) |
 
-Tracking sheet template lives in `~/Documents/trendly-ops/creator-outreach-tracking.xlsx` (you create on Day 1).
+Tracking sheet template lives in `~/Documents/botdog-ops/creator-outreach-tracking.xlsx` (you create on Day 1).
 
 ---
 
@@ -163,7 +163,7 @@ Send to every accepted creator. Require them to include in any post that uses th
 ```
 #ad
 or
-in partnership with @trendly
+in partnership with @botdog
 ```
 
 Position requirements (per FTC 16 CFR Part 255):

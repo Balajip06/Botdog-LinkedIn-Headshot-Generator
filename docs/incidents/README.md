@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-05-29
 
-This folder holds postmortems for production incidents on Trendly. One file per incident. The folder exists in git so the directory layout is stable before the first incident, and so the seller — and later the buyer — has a discoverable place to start.
+This folder holds postmortems for production incidents on Botdog. One file per incident. The folder exists in git so the directory layout is stable before the first incident, and so the seller — and later the buyer — has a discoverable place to start.
 
 ---
 

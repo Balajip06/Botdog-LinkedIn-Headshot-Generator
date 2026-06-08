@@ -93,10 +93,10 @@ One-time setup in Supabase Dashboard → Authentication → Email Templates:
 **Magic Link** template — replace the body with:
 
 ```html
-<h2>Sign in to Trendly</h2>
+<h2>Sign in to Botdog</h2>
 <p>Tap the button below to sign in. The link is one-time and expires in 1 hour.</p>
 <p>
-  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/me/studio"
+  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/me/creations"
     >Sign in</a
   >
 </p>
@@ -181,7 +181,7 @@ Unblocks: push-expired email fallback (`app/api/push/dispatch/route.ts`).
 3. Fill `.env.local`:
    ```
    RESEND_API_KEY=re_...
-   RESEND_FROM_EMAIL=Trendly <noreply@yourdomain.com>
+   RESEND_FROM_EMAIL=Botdog <noreply@yourdomain.com>
    ```
 
 Verify:

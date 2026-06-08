@@ -2,7 +2,7 @@
 /**
  * post-deploy-smoke.ts
  *
- * Lightweight HTTP-only smoke tests for a freshly deployed Trendly instance.
+ * Lightweight HTTP-only smoke tests for a freshly deployed Botdog instance.
  * Runs a subset of the docs/RUNBOOK.md 14-test verification matrix that does
  * NOT require DB writes or authenticated state.
  *
@@ -221,7 +221,7 @@ async function main(): Promise<void> {
   const rawArg = process.argv[2]
   if (!rawArg) {
     console.error('Usage: pnpm tsx scripts/post-deploy-smoke.ts <BASE_URL>')
-    console.error('Example: pnpm tsx scripts/post-deploy-smoke.ts https://trendly.example.com')
+    console.error('Example: pnpm tsx scripts/post-deploy-smoke.ts https://botdog-headshot.vercel.app')
     process.exit(2)
   }
   const base = rawArg.replace(/\/+$/, '')

@@ -41,7 +41,7 @@ The Stripe payouts CSV ships ~20 columns. Most are noise. The four that matter:
 | `gross_amount` | Sum of charges paid out, before Stripe fees. Decimal in account currency. | The top-line revenue number.                 |
 | `fee`          | Stripe's processing fee for the payout.                                   | Buyer subtracts this to get net.             |
 | `net_amount`   | `gross_amount − fee`. The actual deposit to your bank.                    | The number that matches your bank statement. |
-| `currency`     | Account currency (`usd` for Trendly).                                     | Sanity check — should always be `usd`.       |
+| `currency`     | Account currency (`usd` for Botdog).                                      | Sanity check — should always be `usd`.       |
 
 **Other columns to keep** in the export but de-emphasize:
 
@@ -101,7 +101,7 @@ Every successful Stripe `checkout.session.completed` event lands as a row in our
 
 ## Refund-rate calculation
 
-Buyers always ask for refund rate. Trailing 90 days is the standard window.
+Buyers always ask for refund rate. Trailing 90 days is the standard window. (Botdog ships a single headshot style trend today, so per-trend drill-down below is a no-op until more styles ship.)
 
 ### From Stripe Dashboard
 
@@ -134,7 +134,7 @@ SELECT
 FROM window_refunds, window_charges;
 ```
 
-**Acceptable refund rate** for a consumer image-gen product: < 5% is healthy, 5–10% is normal, > 10% is a yellow flag (usually a quality issue with one trend — drill into per-trend refund rate next).
+**Acceptable refund rate** for a consumer image-gen product: < 5% is healthy, 5–10% is normal, > 10% is a yellow flag (usually a quality issue with the headshot output — drill into per-style refund rate if more styles ship).
 
 ---
 

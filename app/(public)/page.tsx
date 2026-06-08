@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { GradientButton } from '@/components/brand/GradientButton'
+import { StyleGrid } from '@/components/brand/StyleGrid'
 import { InlineGenerator } from '@/components/generate/InlineGenerator'
 import { getSocialProof } from '@/lib/analytics/social-proof'
 import { MOCK_TRENDS_ENABLED } from '@/lib/dev/mock-data'
@@ -49,7 +50,7 @@ const BENEFITS = [
   { title: 'True to you', body: 'Anchored to your photo — your face, age, and features are preserved, not replaced.' },
   { title: 'Seconds, not weeks', body: 'No studio booking, no photographer. A polished headshot in under a minute.' },
   { title: 'Built for LinkedIn', body: 'Square, sharp, and framed head-and-shoulders — exactly how the platform wants it.' },
-  { title: 'A style for your field', body: '14 profession looks, from Corporate to Healthcare to Creative, each with a fitting background.' },
+  { title: 'A style for your field', body: '36 profession styles, from Corporate to Healthcare to Creative — each with a fitting outfit and background.' },
   { title: 'Studio quality', body: 'Soft key light, real skin texture, natural depth of field — no plastic AI sheen.' },
   { title: 'Private by design', body: 'Your upload is only used to make your headshot, never shown publicly, and deletable anytime.' },
 ]
@@ -116,23 +117,23 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           aria-hidden
           className="bg-gradient-spotlight pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] opacity-70"
         />
-        <div className="mx-auto grid max-w-6xl items-start gap-12 px-6 pt-16 pb-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pt-24">
+        <div className="mx-auto grid max-w-7xl items-start gap-12 px-6 pt-8 pb-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:pt-12">
           <div className="animate-fade-up flex flex-col gap-6">
             <span className="bg-muted text-primary w-fit rounded-full px-3 py-1 text-xs font-medium tracking-wide">
               Your first headshot is free — no signup
             </span>
-            <h1 className="text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl leading-[1.05] text-darktext sm:text-5xl lg:text-6xl">
               A professional headshot, <span className="text-primary">without the studio.</span>
             </h1>
-            <p className="text-muted-foreground max-w-xl text-lg leading-relaxed">
+            <p className="text-paragraphcolor max-w-xl text-lg leading-relaxed">
               Upload one selfie and generate a polished, true-to-you LinkedIn headshot right here —
               no account, no credit card. Like it? Sign in to save it and get 5 more, free.
             </p>
             <ul className="flex flex-col gap-2.5 text-sm sm:flex-row sm:flex-wrap sm:gap-x-6">
-              {["First one's free — no login", 'Keeps your real face', '14 profession styles'].map((t) => (
+              {["First one's free — no login", 'Keeps your real face', '36 profession styles'].map((t) => (
                 <li key={t} className="flex items-center gap-2">
                   <Check className="text-success size-4 shrink-0" aria-hidden />
-                  <span className="font-medium">{t}</span>
+                  <span className="text-paragraphcolor font-medium">{t}</span>
                 </li>
               ))}
             </ul>
@@ -142,7 +143,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               </GradientButton>
               <a
                 href="#how-it-works"
-                className="border-border hover:bg-muted rounded-full border px-6 py-3 text-sm font-medium transition-colors"
+                className="border-border text-foreground/70 hover:text-foreground hover:bg-muted rounded-full border px-6 py-3 text-sm font-medium transition-colors"
               >
                 See how it works
               </a>
@@ -157,7 +158,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           {/* Generator card */}
           <div id="create" className="scroll-mt-24">
-            <div className="border-border bg-card shadow-soft mx-auto w-full max-w-[26rem] rounded-2xl border p-6 sm:p-8">
+            <div className="border-border bg-card shadow-soft mx-auto w-full max-w-[36rem] rounded-2xl border p-6 sm:p-8">
+              <div className="mb-5">
+                <h2 className="text-lg font-semibold text-darktext">Upload your photo</h2>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  One clear, front-facing photo. Your first headshot is free — no signup needed.
+                </p>
+              </div>
               {trend ? (
                 <InlineGenerator
                   trend={{ slug: trend.slug, input_schema: trend.input_schema, model: trend.model }}
@@ -177,10 +184,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       {/* ---------------- How it works ---------------- */}
       <section id="how-it-works" className="scroll-mt-24 bg-muted">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl sm:text-4xl">How it works</h2>
-            <p className="text-muted-foreground mt-3 text-lg">
+            <h2 className="text-3xl text-darktext sm:text-4xl">How it works</h2>
+            <p className="text-paragraphcolor mt-3 text-lg">
               A LinkedIn-ready headshot in four simple steps.
             </p>
           </div>
@@ -199,43 +206,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       </section>
 
       {/* ---------------- Style showcase ---------------- */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl sm:text-4xl">A style for every profession</h2>
-          <p className="text-muted-foreground mt-3 text-lg">
+          <h2 className="text-3xl text-darktext sm:text-4xl">A style for every profession</h2>
+          <p className="text-paragraphcolor mt-3 text-lg">
             Each style sets a fitting outfit, background, and lighting. Switch anytime.
           </p>
         </div>
-        <ul className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {HEADSHOT_STYLES.map((s) => (
-            <li key={s.slug}>
-              <Link
-                href={`/?style=${s.slug}#create`}
-                className="group focus-visible:ring-ring relative block aspect-[4/5] overflow-hidden rounded-2xl ring-offset-2 transition-transform hover:-translate-y-1 focus-visible:ring-2 focus-visible:outline-none"
-                style={{ backgroundImage: `linear-gradient(135deg, ${s.accent[0]}, ${s.accent[1]})` }}
-              >
-                <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0" />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 p-3">
-                  <span className="text-sm font-semibold text-white drop-shadow">{s.label}</span>
-                  <span className="rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--primary)] opacity-0 transition-opacity group-hover:opacity-100">
-                    Try
-                  </span>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <p className="text-muted-foreground mt-6 text-center text-xs">
-          Tap a style to load it into the generator above.
-        </p>
+        <StyleGrid styles={HEADSHOT_STYLES} />
       </section>
 
       {/* ---------------- Why it matters + benefits ---------------- */}
-      <section className="bg-muted">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+      <section className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-20">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl sm:text-4xl">Why your LinkedIn photo matters</h2>
-            <p className="text-muted-foreground mt-3 text-lg leading-relaxed">
+            <h2 className="text-3xl text-darktext sm:text-4xl">Why your LinkedIn photo matters</h2>
+            <p className="text-paragraphcolor mt-3 text-lg leading-relaxed">
               Your profile photo is the first impression you make on recruiters, clients, and
               collaborators. A clear, professional headshot earns more profile views and more
               replies — but a studio shoot costs time and money. This gets you there in a minute.
@@ -254,19 +240,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       </section>
 
       {/* ---------------- Testimonials (illustrative) ---------------- */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <h2 className="text-center text-3xl sm:text-4xl">What people make with it</h2>
-        <ul className="mt-10 grid gap-6 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <li key={t.role} className="border-border bg-card rounded-2xl border p-6">
-              <p className="text-lg leading-relaxed">“{t.quote}”</p>
-              <p className="text-muted-foreground mt-4 text-sm font-medium">— {t.role}</p>
-            </li>
-          ))}
-        </ul>
-        <p className="text-muted-foreground mt-6 text-center text-xs">
-          Illustrative examples representative of typical use.
-        </p>
+      <section className="bg-cream">
+        <div className="mx-auto max-w-7xl px-6 py-20">
+          <h2 className="text-center text-3xl text-darktext sm:text-4xl">What people make with it</h2>
+          <ul className="mt-10 grid gap-6 sm:grid-cols-3">
+            {TESTIMONIALS.map((t) => (
+              <li key={t.role} className="border-border bg-card shadow-soft rounded-2xl border p-6">
+                <div className="text-accent-yellow mb-3 text-base" aria-hidden="true">{'★★★★★'}</div>
+                <p className="text-darktext text-lg leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                <p className="text-paragraphcolor mt-4 text-sm font-medium">&mdash; {t.role}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="text-paragraphcolor mt-6 text-center text-xs">
+            Illustrative examples representative of typical use.
+          </p>
+        </div>
       </section>
 
       {/* ---------------- FAQ ---------------- */}
@@ -291,10 +280,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       )}
 
       {/* ---------------- Final CTA ---------------- */}
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="bg-primary text-primary-foreground relative overflow-hidden rounded-2xl px-8 py-14 text-center">
           <h2 className="text-primary-foreground text-3xl sm:text-4xl">
-            Ready for a headshot you’ll actually use?
+            Ready for a headshot you&rsquo;ll actually use?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base text-white/85">
             Upload a selfie, pick your profession, and download your professional LinkedIn headshot
@@ -303,13 +292,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <div className="mt-8 flex justify-center">
             <Link
               href="#create"
-              className="text-primary rounded-full bg-white px-7 py-3 text-base font-semibold transition-colors hover:bg-white/90"
+              className="rounded-pill bg-accent-yellow px-7 py-3 text-base font-bold text-darktext shadow-button transition-colors hover:bg-accent-yellow/90"
             >
               Create your headshot
             </Link>
           </div>
           <p className="mt-4 text-sm text-white/70">
-            Your first one’s free · no signup, no credit card
+            Your first one&rsquo;s free · no signup, no credit card
           </p>
         </div>
       </section>

@@ -1,11 +1,11 @@
-# Trendly — Data Room
+# Botdog — Data Room
 
 **Last refreshed:** 2026-05-29 (placeholder — refresh date is updated each time files inside are touched)
 **Owner:** `balaji@kimp.xyz` (seller, pre-acquisition)
 **Encryption:** customer PII files inside this folder are anonymized (SHA-256 8-char prefix on user_id / email). The de-anonymization key (mapping the prefix back to the raw user id) is held separately by the seller and handed to the buyer **after NDA + LOI** — never inside this folder.
 **Access control:** Google Drive shared folder, explicit-share-only (no public link). Per-recipient share grants are tracked in `seller-notes/access-log.md` (not part of this index).
 
-This is the master index for everything a buyer's diligence team needs to evaluate Trendly. The folder structure mirrors the standard SaaS data-room layout — financial, customer, product, infrastructure, ownership, legal, runbooks, transferability. Each subfolder has its own `README.md` (one per section) plus the artifacts listed below.
+This is the master index for everything a buyer's diligence team needs to evaluate Botdog. The folder structure mirrors the standard SaaS data-room layout — financial, customer, product, infrastructure, ownership, legal, runbooks, transferability. Each subfolder has its own `README.md` (one per section) plus the artifacts listed below.
 
 Some files are placeholders today. They accrue between now and the W14 listing date — buyer can request the latest snapshot at any point in the diligence cycle.
 
@@ -143,7 +143,7 @@ Some files are placeholders today. They accrue between now and the W14 listing d
 | `ip-ownership-statement.md` | Seller's representation that 100% of source code in the repository was authored by the seller, free of prior-employer IP claims, no contracting agreement covers the work.                           |
 | `contributors.md`           | List of every Git contributor to `main`. Today: 1 (`balaji@kimp.xyz`). If contractors are added pre-listing, their IP-assignment agreement is filed alongside.                                       |
 | `oss-licenses.md`           | Inventory of all open-source dependencies + their licenses (auto-generated via `pnpm licenses list`). Flags any non-permissive licenses (none expected; the stack is MIT / Apache / BSD throughout). |
-| `trademark-status.md`       | Trademark filing status for "Trendly" and any associated marks. Pre-listing: not filed.                                                                                                              |
+| `trademark-status.md`       | Trademark filing status for "Botdog" and any associated marks. Pre-listing: not filed.                                                                                                              |
 | `domain-ownership.md`       | Domain registrar + WHOIS record (with privacy enabled).                                                                                                                                              |
 | `contractor-agreements/`    | (Accrual-dependent.) Signed IP-assignment + NDA for any contractor work.                                                                                                                             |
 

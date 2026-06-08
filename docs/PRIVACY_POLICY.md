@@ -1,14 +1,12 @@
-# Trendly — Privacy Policy (Draft)
+# Botdog — Privacy Policy
 
-**Status:** Draft. Not yet hosted on the live site. Once `app/(public)/privacy/page.tsx` is built, this file becomes the canonical source and the page renders from it.
-
-**Last updated:** 2026-05-29.
+**Last updated:** 2026-06-08.
 
 ---
 
 ## 1. Who we are
 
-Trendly ("we", "us", "the service") operates this viral-trend image generator. Contact: support@trendly.example (placeholder — wire to real email before launch).
+Botdog ("we", "us", "the service") operates an AI LinkedIn headshot generator. Contact: support@botdog.ai.
 
 ## 2. What we collect
 
@@ -17,7 +15,7 @@ Trendly ("we", "us", "the service") operates this viral-trend image generator. C
 - **Email address.** When you sign in (Google OAuth or magic link), we collect the email associated with your account.
 - **Name and avatar.** If you sign in with Google, we receive your display name and profile picture.
 - **Photos you upload.** Stored privately while the generation is in flight.
-- **Optional text inputs.** Free-text fields some trends expose (e.g. a "power name" for the anime trend).
+- **Style selection.** The profession style you pick for your headshot (e.g. Corporate, Healthcare, Tech).
 
 ### 2.2 We observe automatically
 
@@ -95,7 +93,7 @@ We do not sell personal information.
 
 ## 6. International transfers
 
-Trendly runs on Vercel + Supabase, which may store and process data in the United States. By using the service from outside the United States, you consent to this transfer. We rely on the Standard Contractual Clauses for EU-to-US transfers where applicable.
+Botdog runs on Vercel + Supabase, which may store and process data in the United States. By using the service from outside the United States, you consent to this transfer. We rely on the Standard Contractual Clauses for EU-to-US transfers where applicable.
 
 ## 7. Cookies
 
@@ -123,7 +121,7 @@ We commit to giving at least **30 days' advance notice** by email to paid custom
 
 ## 11. Contact + complaints
 
-For privacy questions: support@trendly.example.
+For privacy questions: support@botdog.ai.
 
 EU residents may lodge a complaint with their national supervisory authority. UK residents may contact the ICO.
 

@@ -4,13 +4,13 @@
 **Audience:** seller, answering "what's your single-provider exposure?" — the standard tech-diligence question.
 **Bottom line:** Gemini, Supabase, and Vercel are all replaceable in 1–4 weeks of work. Stripe is the deep lock-in; see [03-stripe-card-non-transfer.md](03-stripe-card-non-transfer.md).
 
-Trendly's stack has four named vendor dependencies. This file walks through each one: what the dependency is, how exposed we are, and what the migration path looks like if a buyer ever needed to leave.
+Botdog's stack has four named vendor dependencies. This file walks through each one: what the dependency is, how exposed we are, and what the migration path looks like if a buyer ever needed to leave.
 
 ---
 
 ## Gemini dependency — DEFUSED
 
-**The risk.** Trendly's image generation runs on Google's Gemini Nano Banana Pro. If Google deprecates the model, raises pricing 10×, or imposes new content policies that conflict with Trendly's product surface, the business is exposed.
+**The risk.** Botdog's image generation runs on Google's Gemini Nano Banana 2. If Google deprecates the model, raises pricing 10×, or imposes new content policies that conflict with Botdog's product surface, the business is exposed.
 
 **The mitigation.** Image generation sits behind a provider abstraction at [`lib/image-provider/`](../../lib/image-provider/). The relevant files:
 
@@ -31,7 +31,7 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 **The risk.** Supabase runs Postgres + Auth + Storage + Realtime + Edge Functions + pg_cron. A buyer might prefer their own infrastructure or have an existing Postgres+Auth0+S3 stack.
 
-**The mitigation.** Trendly's Supabase usage is **standard Postgres**, not Supabase-proprietary syntax:
+**The mitigation.** Botdog's Supabase usage is **standard Postgres**, not Supabase-proprietary syntax:
 
 | Supabase feature         | Underlying tech             | Portable to                                              |
 | ------------------------ | --------------------------- | -------------------------------------------------------- |
@@ -60,7 +60,7 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 ## Vercel dependency — TRIVIAL replacement
 
-**The risk.** Trendly's hosting is on Vercel. If Vercel's pricing changes, the buyer prefers their own infra, or there's a region/uptime concern, the buyer needs to move off.
+**The risk.** Botdog's hosting is on Vercel. If Vercel's pricing changes, the buyer prefers their own infra, or there's a region/uptime concern, the buyer needs to move off.
 
 **The mitigation.** Next.js 16 App Router runs anywhere Node 22 runs. The Vercel-specific bits:
 
@@ -78,7 +78,7 @@ Trendly's stack has four named vendor dependencies. This file walks through each
 
 ## Stripe dependency — DEEP LOCK-IN
 
-**The risk.** Stripe is the only vendor in the Trendly stack with **customer-data lock-in**. Moving off Stripe means re-establishing every customer's payment relationship from scratch.
+**The risk.** Stripe is the only vendor in the Botdog stack with **customer-data lock-in**. Moving off Stripe means re-establishing every customer's payment relationship from scratch.
 
 **The mitigation.** None. Migrating away from Stripe pre-listing is **not recommended** because:
 

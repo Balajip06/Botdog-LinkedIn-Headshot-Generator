@@ -1,21 +1,21 @@
 ---
-name: Trend suggestion
-about: A viral trend you want to see on Trendly
-labels: trend-suggestion
+name: Style or feature suggestion
+about: A profession style or feature you'd like to see on Botdog
+labels: suggestion
 ---
 
-## Trend name
+## What are you suggesting?
 
-## Reference (TikTok / IG / X URL)
+<!-- A new profession style (e.g. "Legal", "Academia") or a product feature. -->
 
-## Why is this trend a fit for Trendly?
+## Why would it help?
 
-<!-- Describe the visual hook + photo input required. -->
+<!-- Who is it for, and what does it unlock for them? -->
 
-## Suggested prompt template (optional)
+## Reference (optional)
 
-<!-- Don't worry if you don't have one — we'll write it. -->
+<!-- A link or example of the look/feature you have in mind. -->
 
 ## Anything to avoid?
 
-<!-- Franchise-IP concerns, NSFW risk, demographic-specific concerns. -->
+<!-- IP concerns, NSFW risk, demographic-specific concerns. -->

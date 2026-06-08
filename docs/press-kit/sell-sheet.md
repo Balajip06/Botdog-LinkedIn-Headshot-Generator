@@ -1,4 +1,4 @@
-# Trendly — Sell Sheet
+# Botdog — Sell Sheet
 
 **Last updated:** 2026-05-29
 **Status at send-time:** Pre-launch (revenue not yet accruing)
@@ -10,13 +10,13 @@
 
 ## One-liner
 
-A curated viral-trend image generator with a self-refilling content catalog.
+A single-purpose AI LinkedIn-headshot generator with a 14-profession style picker.
 
 ---
 
 ## The pitch
 
-Trendly turns trending visual styles on TikTok, Instagram, and Reddit into one-tap image generators. Users pick a trend, upload a photo, and get a stylized output in 8–15 seconds. The defensibility is in the curation pipeline — every trend ships with a passed Gemini eval, an SEO landing page, and a documented prompt template, so the catalog is a moat rather than a feature. The asset is transferable because the entity is an LLC, the runbooks are written, the Stripe history is clean, and every vendor account is documented in a per-service migration plan.
+Botdog turns a user-uploaded selfie into a LinkedIn-ready professional headshot. Users upload a photo, pick one of 14 profession styles, and get a polished headshot in 8–15 seconds. The defensibility is in the curation pipeline — the headshot style ships with a passed Gemini eval, an SEO landing page, and a documented prompt template, so output quality is a moat rather than a feature. The asset is transferable because the entity is an LLC, the runbooks are written, the Stripe history is clean, and every vendor account is documented in a per-service migration plan.
 
 ---
 
@@ -57,7 +57,7 @@ If any of these is missed at listing time, mark it explicitly as "target, not hi
 ## What you are buying
 
 - Codebase: Next.js 16 + Supabase, 49 build routes, 354 passing tests across 37 files, approximately 30,000 lines of TypeScript. Strict mode, lint-clean, typecheck-clean.
-- Curated catalog: 15+ launch trends, each with a passed Gemini eval, a documented prompt template (v2 — 694 to 1214 characters per template), an SSR landing page with HowTo + FAQ JSON-LD, and an OG image.
+- Curated headshot tool: a single `linkedin-headshot` trend with a 14-profession style picker, a passed Gemini eval, a documented prompt template (v2 — 694 to 1214 characters), an SSR landing page with HowTo + FAQ JSON-LD, and an OG image.
 - SEO surface: 3+ long-tail landing pages indexed at acquisition, sitemap.xml + robots.txt configured, canonical URLs set, OG images via the @vercel/og runtime.
 - Customer + revenue data: an anonymized CSV export of profiles, generations, and Stripe checkout sessions, ready for buyer-side data review without exposing PII.
 - LLC entity: Wyoming LLC formed in W0, transferable via standard membership-interest transfer at close.
@@ -73,7 +73,7 @@ If any of these is missed at listing time, mark it explicitly as "target, not hi
 
 - Frontend: Next.js 16 (App Router, Turbopack), React 19, TypeScript 5.9 strict, Tailwind v4 CSS-first, shadcn/ui (14 primitives ejected).
 - Backend: Supabase — Postgres with row-level security, Auth (Google OAuth + magic-link), Storage (uploads + outputs buckets), Edge Functions (Deno), Realtime (postgres_changes channel), pg_cron (weekly free-tier reset + daily purges).
-- Image generation: Google Gemini Nano Banana Pro by default, v1 quick toggle, per-trend model override. Provider abstraction in `lib/gemini/` with an OpenAI-compatible stub already wired for a one-day failover migration.
+- Image generation: Google Gemini Nano Banana 2 by default, v1 quick toggle, per-trend model override. Provider abstraction in `lib/gemini/` with an OpenAI-compatible stub already wired for a one-day failover migration.
 - Payments: Stripe Checkout in one-time credit-pack mode. Subscription product slot is reserved (Creator Pro on the deferred roadmap) but not enabled.
 - Email: Resend for magic-link sign-in and push-fallback notifications.
 - Observability: PostHog (product analytics, IP-anonymization on, opt-out per privacy policy) + Sentry (errors, performance, replay with mask-all-text).
@@ -132,8 +132,8 @@ ADRs at `docs/adr/` explain why each decision in the current build was made. The
 
 ## Contact
 
-- Purchase inquiries: sale@trendly.app (placeholder until domain registered)
-- IP, takedowns, legal: legal@trendly.app (placeholder until domain registered)
-- Founder advisory inquiries: founder@trendly.app (placeholder until domain registered)
+- Purchase inquiries: sale@botdog.ai (placeholder until domain registered)
+- IP, takedowns, legal: legal@botdog.ai (placeholder until domain registered)
+- Founder advisory inquiries: founder@botdog.ai (placeholder until domain registered)
 
 Until the domain is registered and DNS is live, route inquiries via the Acquire.com listing messaging system.

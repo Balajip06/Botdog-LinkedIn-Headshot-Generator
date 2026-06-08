@@ -7,7 +7,7 @@
  * which keeps tests + offline dev deterministic.
  *
  * Aggregation strategy: per-call SQL count() against the (slug, occurred_at)
- * composite index. For Trendly's scale (single-digit MAU at listing, low
+ * composite index. For Botdog's scale (single-digit MAU at listing, low
  * hundreds at the 90-day proof window), this is well within the 50ms p95
  * envelope and avoids the operational cost of materialized views. Revisit
  * when daily event count crosses ~50k.

@@ -61,8 +61,8 @@ describe('AdminShell', () => {
     const adminHome = screen.getByRole('link', { name: 'Admin home' })
     expect(adminHome).toBeInTheDocument()
     expect(adminHome).toHaveAttribute('href', '/admin')
-    // The Logo glyph is an inline svg inside this link.
-    expect(adminHome.querySelector('svg')).not.toBeNull()
+    // The Logo renders the brand wordmark image inside this link.
+    expect(adminHome.querySelector('img')).not.toBeNull()
   })
 
   it('renders the primary section links with the correct hrefs', () => {

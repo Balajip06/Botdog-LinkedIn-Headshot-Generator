@@ -6,7 +6,7 @@
 
 ## Why this exists
 
-When Trendly is sold, customer payment methods don't transfer between Stripe
+When Botdog is sold, customer payment methods don't transfer between Stripe
 accounts. Stripe holds PCI-scoped card data tied to the merchant account that
 originally collected it — handing those tokens to a new account is not legal or
 operationally possible. Every existing paying customer must re-enter their card
@@ -26,7 +26,7 @@ explained.
 | D28 | Mark inactive | CRM     | n/a                | Stop emailing, move to "lapsed" segment   |
 
 Discount codes (`TRANSITION20`, `TRANSITION30`) are one-time-use per customer,
-expire D60, and apply only to credit packs (no recurring product on Trendly).
+expire D60, and apply only to credit packs (no recurring product on Botdog).
 
 ---
 
@@ -34,14 +34,14 @@ expire D60, and apply only to credit packs (no recurring product on Trendly).
 
 All emails:
 
-- From: the buyer's voice (signed by the new owner), not "Team Trendly"
+- From: the buyer's voice (signed by the new owner), not "Team Botdog"
 - Plain-text-first; HTML version optional
 - Single primary CTA button (re-auth link)
 - Preserve UTM convention: `?utm_source=re_auth&utm_medium=email&utm_campaign=stripe_migration&utm_content=d{0,3,7,14}`
 
 ### D0 — Announce
 
-**Subject:** A quick heads-up about Trendly
+**Subject:** A quick heads-up about Botdog
 
 **Preheader:** New owner, same product, one small ask.
 
@@ -49,9 +49,9 @@ All emails:
 
 > Hey {{first_name}},
 >
-> I'm {{new_owner_name}}, the new owner of Trendly. As of {{close_date}}, I've
-> taken over the product — same trends, same generation flow, same team behind
-> the AI.
+> I'm {{new_owner_name}}, the new owner of Botdog. As of {{close_date}}, I've
+> taken over the product — same headshot styles, same generation flow, same team
+> behind the AI.
 >
 > One quick housekeeping note: we've moved to new payment infrastructure. For
 > security reasons, Stripe doesn't let us transfer saved cards between
@@ -116,7 +116,7 @@ All emails:
 >
 > [Claim 30% off and re-auth →]({{re_auth_url}}&promo=TRANSITION30)
 >
-> If you've decided Trendly isn't for you anymore, that's totally fine and I
+> If you've decided Botdog isn't for you anymore, that's totally fine and I
 > won't follow up. Just wanted to make sure the discount actually reached you
 > while it's still available.
 >
@@ -145,7 +145,7 @@ All emails:
 >
 > [Re-auth at 30% off →]({{re_auth_url}}&promo=TRANSITION30)
 >
-> Either way, thanks for being part of the early Trendly run. It mattered.
+> Either way, thanks for being part of the early Botdog run. It mattered.
 >
 > — {{new_owner_name}}
 > {{new_owner_email}}
@@ -194,17 +194,17 @@ captures `utm_*` automatically on the page-view event; build a funnel from
 ## Resend Audience setup steps
 
 The buyer's new Stripe account contains the post-acquisition customer list with
-clear email addresses (the Trendly app exports emails through a hashing step
+clear email addresses (the Botdog app exports emails through a hashing step
 at `app/admin/export/download` — that path is for GDPR/portability, not
 campaign sourcing). Use Stripe's own customer export to seed the audience.
 
 1. **Export from Stripe (new account).** Dashboard → Customers → filter
-   `Imported from Trendly migration` (the buyer applies this tag during the
+   `Imported from Botdog migration` (the buyer applies this tag during the
    merchant-of-record handoff) → Export to CSV. Confirm columns: `email`,
    `name`, `description`, `created`. Drop any row without an email.
 
 2. **Create Resend audience.** Resend dashboard → Audiences → New Audience →
-   name it `trendly-transition-d0`. Generate the audience ID; store it in the
+   name it `botdog-transition-d0`. Generate the audience ID; store it in the
    buyer's secret manager as `RESEND_AUDIENCE_TRANSITION_ID`.
 
 3. **Bulk import contacts.** Resend → Audience → Add contacts → CSV upload.
@@ -230,7 +230,7 @@ Before the buyer fires D0:
       Checkout if the customer has no existing subscription) on the new account
 - [ ] `TRANSITION20` and `TRANSITION30` promo codes exist in Stripe with
       D60 expiry, single-use per customer, credit-pack price-IDs only
-- [ ] Resend audience `trendly-transition-d0` populated and verified
+- [ ] Resend audience `botdog-transition-d0` populated and verified
 - [ ] PostHog funnel `re_auth_email_clicked → checkout_completed` saved with
       `utm_campaign=stripe_migration` filter
 - [ ] D28 CRM rule active: move non-re-authed customers to `lapsed_post_acquisition`

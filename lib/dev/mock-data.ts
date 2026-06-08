@@ -90,7 +90,7 @@ export const MOCK_GENERATIONS: MockGeneration[] = [
     user_id: MOCK_USER.id,
     trend_id: HEADSHOT_ID,
     status: 'completed',
-    output_image_url: '/mock/sample-1.svg',
+    output_image_url: '/mock/sample-1.jpg',
     error_message: null,
     attempts: 1,
     idempotency_key: 'mock-key-completed',

@@ -5,7 +5,7 @@ Status: Accepted
 
 ## Context
 
-Trendly is a consumer-facing viral-trend image generator. Pricing model had to be decided at MVP so [lib/payments/packs.ts](../../lib/payments/packs.ts), the Stripe Checkout flow ([app/api/stripe/checkout/route.ts](../../app/api/stripe/checkout/route.ts)), and the credit-balance schema ([supabase/migrations/20260527000001_profiles.sql](../../supabase/migrations/20260527000001_profiles.sql)) could be built around it.
+Botdog is a consumer-facing AI LinkedIn-headshot generator. Pricing model had to be decided at MVP so [lib/payments/packs.ts](../../lib/payments/packs.ts), the Stripe Checkout flow ([app/api/stripe/checkout/route.ts](../../app/api/stripe/checkout/route.ts)), and the credit-balance schema ([supabase/migrations/20260527000001_profiles.sql](../../supabase/migrations/20260527000001_profiles.sql)) could be built around it.
 
 Constraints from the amended plan:
 

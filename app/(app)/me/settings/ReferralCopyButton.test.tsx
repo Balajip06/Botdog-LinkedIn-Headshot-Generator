@@ -15,7 +15,7 @@ vi.mock('sonner', () => ({
 // Import after vi.mock so the SUT picks up the mocked module.
 import { ReferralCopyButton } from './ReferralCopyButton'
 
-const REFERRAL_URL = 'https://trendly.app/?ref=a1b2c3d4'
+const REFERRAL_URL = 'https://botdog-headshot.vercel.app/?ref=a1b2c3d4'
 
 beforeEach(() => {
   vi.useFakeTimers()

@@ -1,12 +1,12 @@
-# Trendly
+# Botdog
 
-A curated viral-trend image generator. Pick a trend, upload your photo, ship the moment everyone is making.
+An AI LinkedIn headshot generator. Upload a selfie, pick a profession style, get a polished, true-to-you LinkedIn headshot in seconds.
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-black) ![React 19](https://img.shields.io/badge/React-19-149eca) ![TypeScript 5](https://img.shields.io/badge/TypeScript-5-3178c6) ![Tailwind v4](https://img.shields.io/badge/Tailwind-v4-38bdf8) ![Tests 404 passing](https://img.shields.io/badge/tests-404%20passing-22c55e) ![Routes 50](https://img.shields.io/badge/routes-50-8b5cf6) ![License Proprietary](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
 > Stack: Next.js 16 · React 19 · TypeScript 5 · Tailwind v4 · Backend: Supabase (Auth · DB · Storage · Edge Functions · pg_cron) · Tests: 404 passing across 43 files · Routes: 50 built · License: Proprietary
 
-Trendly turns a phone photo into a viral-trend image (Ghibli portrait, plushie maker, Pixar-style, etc.) by calling Google Gemini's Nano Banana / Pro image model through a provider-agnostic shim. Admins curate the trend catalogue with a JSONB-schema-driven editor + an eval gate; consumers upload, watch the result render, and share — anonymous trial, free weekly quota, and Stripe credit-packs cover the conversion funnel. The codebase is the asset: 50 routes, 404 tests, full admin dashboard suite, 7 ADRs, 5 SOPs, complete diligence data-room.
+Botdog turns a phone selfie into a studio-quality LinkedIn headshot by calling Google Gemini's Nano Banana 2 image model through a provider-agnostic shim. A 14-profession style picker sets the outfit, background, and lighting; the homepage `/` IS the generator. Consumers upload, watch the result render, and share — anonymous trial, free weekly quota, and Stripe credit-packs cover the conversion funnel. The codebase is the asset: full admin dashboard suite, ADRs, SOPs, complete diligence data-room.
 
 ---
 
@@ -54,8 +54,8 @@ Full system diagram, sequence diagrams, data model, RLS posture, and infra cost 
 
 ## Key features
 
-- **Curated viral-trend pipeline** — admin CRUD with JSONB schema editor + eval gate (`is_active=true` requires `eval_status='passed'` via DB constraint) + auto-detector polling Reddit for emerging trends
-- **Schema-driven trend inputs** — `trends.input_schema jsonb` renders a dynamic upload form; never hardcode "1 photo"
+- **Single headshot tool with a style picker** — one `linkedin-headshot` trend (14 profession styles) curated via admin CRUD + an eval gate (`is_active=true` requires `eval_status='passed'` via DB constraint)
+- **Schema-driven inputs** — `trends.input_schema jsonb` renders the dynamic upload form (photo + required style select); never hardcode "1 photo"
 - **Anonymous trial** — exactly 1 generation per `(fingerprint_hash, ip_hash)` lifetime, gated by Cloudflare Turnstile and a global $20/day cost ceiling
 - **RLS-enforced free-tier quota** — DB trigger blocks `generations` INSERT when `free_used_this_week >= 5 AND credits_balance <= 0`; pg_cron refills every Sunday 00:00 UTC
 - **Stripe credit packs** — three SKUs ($4.99 / $14.99 / $39.99 = 50 / 200 / 600 credits); idempotent webhook handler dedups via `webhook_events.event_id`

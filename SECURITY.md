@@ -1,12 +1,12 @@
 # Security Policy
 
-Trendly is a consumer-facing SaaS handling user images, email addresses, payment metadata, and authentication state. We take security reports seriously and respond in good faith. This document covers what's in scope, how to report, what to expect, and the safe-harbor language under which research must be conducted.
+Botdog is a consumer-facing SaaS handling user images, email addresses, payment metadata, and authentication state. We take security reports seriously and respond in good faith. This document covers what's in scope, how to report, what to expect, and the safe-harbor language under which research must be conducted.
 
 ---
 
 ## Supported versions
 
-Only the `main` branch — deployed at the production domain (registration in progress; current placeholder `trendly.app`) — receives security updates. Forks, archived branches, and local dev clones are not supported. Pre-release tags before `0.4.0` are not supported.
+Only the `main` branch — deployed at the production domain (registration in progress; current deployment `botdog-headshot.vercel.app`) — receives security updates. Forks, archived branches, and local dev clones are not supported. Pre-release tags before `0.4.0` are not supported.
 
 | Version                   | Supported |
 | ------------------------- | --------- |
@@ -46,7 +46,7 @@ We will acknowledge the report, triage severity, communicate a fix timeline, and
 
 ### In scope
 
-- The production web application at the canonical domain (and any `*.trendly.app` subdomain once registered)
+- The production web application at the canonical domain (and any production subdomain once registered)
 - All `/api/*` endpoints — including `/api/generate`, `/api/stripe/webhook`, `/api/push/*`, `/api/me/export`
 - All `/admin/*` endpoints behind the admin gate (the gate itself, plus admin-only data access)
 - The Supabase Edge Function `generate-image` (publicly callable webhook URL)
@@ -96,7 +96,7 @@ If you accidentally cross a safe-harbor line during legitimate research, tell us
 
 ## What we don't currently offer
 
-- **No paid bug bounty program.** Trendly is pre-revenue at the time of writing; we cannot offer cash rewards for reports. We may offer a Trendly Pro account credit or swag once the production domain is live, but this is not guaranteed.
+- **No paid bug bounty program.** Botdog is pre-revenue at the time of writing; we cannot offer cash rewards for reports. We may offer a Botdog Pro account credit or swag once the production domain is live, but this is not guaranteed.
 - **No formal CVE assignment process.** If a finding warrants a CVE we will coordinate with MITRE; this has not happened to date.
 - **No bug bounty platform integration** (HackerOne, Bugcrowd, Intigriti). Reports come direct to email.
 - **No PGP-encrypted email channel yet** (see below).

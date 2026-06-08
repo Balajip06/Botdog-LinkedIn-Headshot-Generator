@@ -37,7 +37,7 @@ function isoDaysAgo(n: number): string {
 export const MOCK_REFERRERS: MockReferrer[] = [
   {
     id: '00000000-0000-4000-8000-000000000101',
-    email: 'maya@trendly.dev',
+    email: 'maya@botdog.dev',
     referral_code: 'a1b2c3d4e5f6',
     referrals_total: 14,
     referrals_rewarded: 11,
@@ -46,7 +46,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000102',
-    email: 'jordan@trendly.dev',
+    email: 'jordan@botdog.dev',
     referral_code: 'b2c3d4e5f6a1',
     referrals_total: 9,
     referrals_rewarded: 7,
@@ -55,7 +55,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000103',
-    email: 'sam@trendly.dev',
+    email: 'sam@botdog.dev',
     referral_code: 'c3d4e5f6a1b2',
     referrals_total: 6,
     referrals_rewarded: 4,
@@ -64,7 +64,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000104',
-    email: 'priya@trendly.dev',
+    email: 'priya@botdog.dev',
     referral_code: 'd4e5f6a1b2c3',
     referrals_total: 5,
     referrals_rewarded: 5,
@@ -73,7 +73,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000105',
-    email: 'alex@trendly.dev',
+    email: 'alex@botdog.dev',
     referral_code: 'e5f6a1b2c3d4',
     referrals_total: 4,
     referrals_rewarded: 2,
@@ -82,7 +82,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000106',
-    email: 'noah@trendly.dev',
+    email: 'noah@botdog.dev',
     referral_code: 'f6a1b2c3d4e5',
     referrals_total: 3,
     referrals_rewarded: 2,
@@ -91,7 +91,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000107',
-    email: 'leila@trendly.dev',
+    email: 'leila@botdog.dev',
     referral_code: '6f5e4d3c2b1a',
     referrals_total: 2,
     referrals_rewarded: 1,
@@ -100,7 +100,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
   },
   {
     id: '00000000-0000-4000-8000-000000000108',
-    email: 'kai@trendly.dev',
+    email: 'kai@botdog.dev',
     referral_code: '1a2b3c4d5e6f',
     referrals_total: 1,
     referrals_rewarded: 0,
@@ -112,7 +112,7 @@ export const MOCK_REFERRERS: MockReferrer[] = [
 export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   {
     id: 'mock-ref-001',
-    referrer_email: 'maya@trendly.dev',
+    referrer_email: 'maya@botdog.dev',
     referred_email: 'taylor@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(1),
@@ -120,7 +120,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-002',
-    referrer_email: 'jordan@trendly.dev',
+    referrer_email: 'jordan@botdog.dev',
     referred_email: 'casey@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(1),
@@ -128,7 +128,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-003',
-    referrer_email: 'priya@trendly.dev',
+    referrer_email: 'priya@botdog.dev',
     referred_email: 'avery@example.com',
     status: 'pending',
     created_at: isoDaysAgo(2),
@@ -136,7 +136,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-004',
-    referrer_email: 'maya@trendly.dev',
+    referrer_email: 'maya@botdog.dev',
     referred_email: 'morgan@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(3),
@@ -144,7 +144,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-005',
-    referrer_email: 'sam@trendly.dev',
+    referrer_email: 'sam@botdog.dev',
     referred_email: 'sky@example.com',
     status: 'pending',
     created_at: isoDaysAgo(3),
@@ -152,7 +152,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-006',
-    referrer_email: 'noah@trendly.dev',
+    referrer_email: 'noah@botdog.dev',
     referred_email: 'jess@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(4),
@@ -160,7 +160,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-007',
-    referrer_email: 'leila@trendly.dev',
+    referrer_email: 'leila@botdog.dev',
     referred_email: 'rowan@example.com',
     status: 'pending',
     created_at: isoDaysAgo(5),
@@ -168,7 +168,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-008',
-    referrer_email: 'jordan@trendly.dev',
+    referrer_email: 'jordan@botdog.dev',
     referred_email: 'remi@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(6),
@@ -176,7 +176,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-009',
-    referrer_email: 'alex@trendly.dev',
+    referrer_email: 'alex@botdog.dev',
     referred_email: 'quinn@example.com',
     status: 'rewarded',
     created_at: isoDaysAgo(7),
@@ -184,7 +184,7 @@ export const MOCK_REFERRAL_EVENTS: MockReferralEvent[] = [
   },
   {
     id: 'mock-ref-010',
-    referrer_email: 'kai@trendly.dev',
+    referrer_email: 'kai@botdog.dev',
     referred_email: 'devon@example.com',
     status: 'pending',
     created_at: isoDaysAgo(8),

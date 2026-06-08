@@ -82,7 +82,7 @@ export function buildExportPayload(
     },
     notes: {
       article: 'GDPR Article 15',
-      contact: 'privacy@trendly.app',
+      contact: 'privacy@botdog.ai',
       signed_url_expiry: 'Download URLs expire 1 hour after this export was generated.',
     },
   }

@@ -194,7 +194,7 @@ function Sidebar({
                       className={cn(
                         'focus-visible:ring-ring/60 flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none',
                         active
-                          ? 'bg-muted text-foreground font-semibold'
+                          ? 'bg-primary/10 text-primary font-semibold'
                           : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                       )}
                     >
@@ -202,7 +202,7 @@ function Sidebar({
                         className={cn(
                           'grid size-7 place-items-center rounded-lg border border-transparent',
                           active
-                            ? 'border-border bg-background text-foreground shadow-sm'
+                            ? 'border-primary/20 bg-primary/5 text-primary shadow-sm'
                             : 'bg-muted/60 text-muted-foreground'
                         )}
                       >

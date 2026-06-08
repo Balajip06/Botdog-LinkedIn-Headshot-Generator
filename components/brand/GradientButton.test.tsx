@@ -14,11 +14,11 @@ describe('GradientButton', () => {
     expect(screen.getByRole('button')).toHaveAttribute('data-slot', 'gradient-button')
   })
 
-  it('applies brand-grad + brand-glow classes', () => {
+  it('applies brand-grad + shadow-button classes', () => {
     render(<GradientButton>Go</GradientButton>)
     const btn = screen.getByRole('button')
     expect(btn).toHaveClass('brand-grad')
-    expect(btn).toHaveClass('brand-glow')
+    expect(btn).toHaveClass('shadow-button')
   })
 
   it('applies h-9 height at size="sm"', () => {

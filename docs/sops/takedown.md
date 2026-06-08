@@ -5,13 +5,15 @@
 **Target response time:** Acknowledge within 24 hours. Remove offending content within 48 hours.
 **Authority:** Operationalizes [`docs/TERMS_OF_SERVICE.md`](../TERMS_OF_SERVICE.md) §4 (style references + takedown protocol).
 
-Trendly operates a curated trend catalog. Most takedown emails will target either (a) a specific user-generated output that the rights holder believes infringes, or (b) the underlying trend prompt itself (e.g., "your 'Ghibli-style' trend infringes Studio Ghibli's trade dress"). The branching is critical — the response differs significantly.
+> Note: Botdog is now a single-purpose LinkedIn-headshot tool; the multi-trend / franchise-IP workflow below is retained for historical context / potential future multi-style expansion.
+
+Botdog operates a curated trend catalog. Most takedown emails will target either (a) a specific user-generated output that the rights holder believes infringes, or (b) the underlying trend prompt itself (e.g., "your 'Ghibli-style' trend infringes Studio Ghibli's trade dress"). The branching is critical — the response differs significantly.
 
 ---
 
 ## Operating principle
 
-Good-faith takedown without admission of liability. Trendly's TOS §4 commits to:
+Good-faith takedown without admission of liability. Botdog's TOS §4 commits to:
 
 1. Remove the affected trend within 24 hours.
 2. Re-prompt the trend to drop the named reference.
@@ -27,7 +29,7 @@ Read the inbound email carefully. The rights holder usually includes one of:
 
 - A direct URL: `/result/<id>` or `/anonymous/<id>` or `/trend/<slug>`.
 - A description of the trend by name: e.g., "your Ghibli-style trend."
-- A screenshot with a visible watermark including the generation ID (watermark format is `trendly.app/r/<short_id>`).
+- A screenshot with a visible watermark including the generation ID (watermark format is `botdog-headshot.vercel.app/r/<short_id>`).
 
 **If they provided a URL** — parse the ID:
 
@@ -194,7 +196,7 @@ This log is the artifact that survives an acquisition. A holdco buyer will ask "
 
 ## Step 5 — Counter-notice handling
 
-Trendly does not adjudicate disputes between rights holders and users. Per TOS §4, the takedown is final from Trendly's side — Trendly's role ends after good-faith removal.
+Botdog does not adjudicate disputes between rights holders and users. Per TOS §4, the takedown is final from Botdog's side — Botdog's role ends after good-faith removal.
 
 If the affected user disputes the takedown:
 
@@ -217,7 +219,7 @@ DMCA is US-law specific. For non-US rights holders, follow the same procedural s
 ### Template A — Acknowledgement to rights holder (send within 24h)
 
 ```
-Subject: Re: takedown request — Trendly
+Subject: Re: takedown request — Botdog
 
 Hi <name>,
 
@@ -232,7 +234,7 @@ For our records, could you confirm:
 
 This is purely for our internal documentation and does not delay the takedown.
 
-— Trendly
+— Botdog
 ```
 
 ### Template B — Confirmation of removal to rights holder
@@ -252,13 +254,13 @@ The trend has been added to our internal banlist so future curation will avoid r
 
 If you have additional URLs or believe related content remains, please reply with details and we'll handle them under the same case.
 
-— Trendly
+— Botdog
 ```
 
 ### Template C — Notification to affected user
 
 ```
-Subject: A generation has been removed from your Trendly account
+Subject: A generation has been removed from your Botdog account
 
 Hi <name>,
 
@@ -266,17 +268,17 @@ We received a takedown request from <rights holder> regarding a generation in yo
 
 Your account is in good standing — this is not a strike against you, and your credits / Pro status are unaffected. The trend itself may have been retired or re-prompted; if you used a similar trend in the past, your other generations are unaffected.
 
-If you believe this was in error and want to dispute the takedown directly with <rights holder>, you'd need to do so through your own legal channels. Trendly's role here is operational — we honor good-faith takedowns from rights holders.
+If you believe this was in error and want to dispute the takedown directly with <rights holder>, you'd need to do so through your own legal channels. Botdog's role here is operational — we honor good-faith takedowns from rights holders.
 
 Questions about your account: reply to this email.
 
-— Trendly
+— Botdog
 ```
 
 ### Template D — Holding reply (when you need more time)
 
 ```
-Subject: Re: takedown request — Trendly
+Subject: Re: takedown request — Botdog
 
 Hi <name>,
 
@@ -284,7 +286,7 @@ Confirming we received your request. We're investigating the specific generation
 
 You'll hear back from us within 48 hours of your original email with confirmation of removal.
 
-— Trendly
+— Botdog
 ```
 
 ---
@@ -307,7 +309,7 @@ Pre-acquisition, your "counsel" is whoever you've retained for the asset sale. T
 
 ## DMCA safe-harbor logic (US, summary)
 
-Trendly is a "service provider" under 17 U.S.C. §512 if all of these hold:
+Botdog is a "service provider" under 17 U.S.C. §512 if all of these hold:
 
 - We don't have actual knowledge of infringement.
 - We don't financially benefit directly from infringement (gray area — we sell credits; the trend catalog is curated by us).

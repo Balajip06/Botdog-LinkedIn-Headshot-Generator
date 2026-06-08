@@ -21,7 +21,7 @@ Decide which bucket the request falls into **before** opening Supabase. The righ
 | "I bought credits, used some, want partial refund" | Mixed                 | **Credits-only refund** for the unused portion. Stripe refund only if you decide to be generous (logged).                                                                                                |
 | "Charged twice / duplicate purchase"               | Billing bug           | **Full Stripe refund** of the duplicate + verify the dedup logic (`webhook_events.event_id` UNIQUE — should have caught this). Credits do not need adjustment since the dedup prevents the second grant. |
 | "Charge I don't recognize / fraud"                 | Chargeback risk       | Respond immediately. Refund preemptively if claim looks legitimate. Suspend account if you suspect compromised card on our side.                                                                         |
-| "Subscription / monthly charge" (we have neither)  | Misdirected           | Polite reply: "We only sell one-time credit packs. Are you sure the charge is from Trendly?" Ask for the last 4 of the card + date.                                                                      |
+| "Subscription / monthly charge" (we have neither)  | Misdirected           | Polite reply: "We only sell one-time credit packs. Are you sure the charge is from Botdog?" Ask for the last 4 of the card + date.                                                                      |
 
 ---
 
@@ -169,7 +169,7 @@ Replace `<>` placeholders before sending. Keep paragraphs short.
 ### Template A — Safety-reject auto-refund confirmation
 
 ```
-Subject: Re: refund — your Trendly generation
+Subject: Re: refund — your Botdog generation
 
 Hi <name>,
 
@@ -177,7 +177,7 @@ Thanks for reaching out. I checked your account and the generation from <date> h
 
 If the photo was something you expected to work, please reply with a quick description — we adjust prompts when a trend's safety rate drops, and your feedback helps.
 
-— Trendly
+— Botdog
 ```
 
 ### Template B — Quality complaint, denied with goodwill credit
@@ -191,7 +191,7 @@ Thanks for the feedback. AI image generation is non-deterministic — sometimes 
 
 That said, you've been a great customer, so I've added <n> goodwill credits to your account. Please give the trend another try — sometimes a slightly different photo angle changes the output significantly.
 
-— Trendly
+— Botdog
 ```
 
 ### Template C — Buyer's remorse, full pack refund
@@ -207,7 +207,7 @@ Your account will keep the credits you've already used; the unused balance has b
 
 If you change your mind, you can re-purchase any time from the Settings page.
 
-— Trendly
+— Botdog
 ```
 
 ### Template D — Denial for abuse pattern
@@ -221,7 +221,7 @@ I've reviewed your account history and I'm not able to issue another refund. Our
 
 If you have a specific bug to report (a generation that returned a clearly broken image, a failed payment, etc.), please share details and I'll take another look.
 
-— Trendly
+— Botdog
 ```
 
 ---

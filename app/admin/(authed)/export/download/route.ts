@@ -244,7 +244,7 @@ export async function GET(request: NextRequest): Promise<Response> {
     status: 200,
     headers: {
       'content-type': 'text/csv; charset=utf-8',
-      'content-disposition': `attachment; filename="trendly-${dataset}-${isoDate}.csv"`,
+      'content-disposition': `attachment; filename="botdog-${dataset}-${isoDate}.csv"`,
       'cache-control': 'no-store',
     },
   })
